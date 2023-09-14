@@ -21,8 +21,8 @@ import net.bestcompany.foliowatch.security.services.UserDetailsServiceImpl;
 
 @Configuration
 @EnableMethodSecurity
-@Profile("prod")
-public class WebSecurityConfig {
+@Profile("!prod")
+public class WebSecurityConfigDev {
     @Autowired
     UserDetailsServiceImpl userDetailsService;
 
@@ -59,7 +59,7 @@ public class WebSecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(
                         auth -> auth.requestMatchers("/api/auth/**", "/api/test/**").permitAll()
-                                .requestMatchers("/api/docs/**").hasRole("DEVELOPER").requestMatchers("/api/**")
+                                .requestMatchers("/api/docs/**").permitAll().requestMatchers("/api/**")
                                 .authenticated().anyRequest()
                                 .permitAll());
 
