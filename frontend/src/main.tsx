@@ -1,13 +1,20 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App.tsx";
-import "./index.css";
+//import App from "./views/App.tsx";
+import Navbar from "./views/Navbar.tsx";
+import LoginPage from "./views/LoginPage.tsx";
+//import "./css/index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />,
+    element: (
+      <React.StrictMode>
+        <Navbar/>
+        <LoginPage />
+      </React.StrictMode>
+    )
   },
 ]);
 
