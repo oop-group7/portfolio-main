@@ -19,7 +19,7 @@ public class SignupRequest {
     private Set<String> roles;
 
     @NotBlank
-    @Size(min = 8, max = 40)
+    @Size(min = 8, max = 80) // https://en.wikipedia.org/wiki/Password_policy#2017
     private String password;
 
     public String getUsername() {
