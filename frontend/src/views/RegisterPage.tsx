@@ -24,6 +24,7 @@ function RegisterPage(){
 
                     <form className="m-5">
                         <div className="mb-4">
+                            First Name
                             <input
                             type="text"
                             className="form-control"
@@ -35,6 +36,7 @@ function RegisterPage(){
                         </div>
 
                         <div className="mb-4">
+                            Last Name
                             <input
                             type="text"
                             className="form-control"
@@ -46,6 +48,7 @@ function RegisterPage(){
                         </div>
 
                         <div className="mb-4">
+                            Username
                             <input
                             type="text"
                             className="form-control"
@@ -57,6 +60,7 @@ function RegisterPage(){
                         </div>
 
                         <div className="mb-4">
+                            Email
                             <input
                             type="email"
                             className="form-control"
@@ -69,6 +73,7 @@ function RegisterPage(){
                         </div>
 
                         <div className="mb-4">
+                            Password
                             <input
                             type="password"
                             className="form-control"
