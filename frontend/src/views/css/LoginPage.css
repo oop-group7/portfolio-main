@@ -7,7 +7,7 @@ body{
 
 main {
     overflow-x: hidden;
-    }
+}
 
 .logo{
     height: 90px;
@@ -22,17 +22,7 @@ main {
     top: 30%;
     transform: translateY(-20%) translateX(50%);
     width: 50%;
-    height: 400px;
-    border: 1px solid grey;
-    padding: 10px;
-}
-
-.register{ 
-    position: absolute;
-    top: 30%;
-    transform: translateY(-25%) translateX(50%);
-    width: 50%;
-    height: 550px;
+    height: 500px;
     border: 1px solid grey;
     padding: 10px;
 }

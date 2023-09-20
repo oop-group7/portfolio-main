@@ -1,0 +1,9 @@
+.register{ 
+    position: absolute;
+    top: 30%;
+    transform: translateY(-25%) translateX(50%);
+    width: 50%;
+    height: 550px;
+    border: 1px solid grey;
+    padding: 10px;
+}

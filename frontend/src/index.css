@@ -1,4 +1,4 @@
-:root {
+/* :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
@@ -66,4 +66,32 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+} */
+
+main {
+  overflow-x: hidden;
+}
+
+.logo{
+  height: 90px;
+}
+
+body{
+  font-family: 'Montserrat', sans-serif;
+  font-size: 15px;
+  background-color: #1A1E43;
+}
+
+.container{
+  height: 90vh;
+}
+
+
+.formstyles{
+  color: #1A1E43;
+  font-size: 13px;
+}
+
+a{
+  cursor: pointer;
 }
