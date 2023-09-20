@@ -4,7 +4,7 @@ import ReactDOM from "react-dom/client";
 import Navbar from "./views/Navbar.tsx";
 import LoginPage from "./views/LoginPage.tsx";
 import RegisterPage from "./views/RegisterPage.tsx";
-//import "./css/index.css";
+import "./views/css/index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 const router = createBrowserRouter([
