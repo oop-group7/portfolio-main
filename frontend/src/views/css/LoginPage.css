@@ -1,22 +1,3 @@
-
-body{
-    font-family: 'Montserrat', sans-serif;
-    font-size: 15px;
-    background-color: #1A1E43;
-}
-
-main {
-    overflow-x: hidden;
-}
-
-.logo{
-    height: 90px;
-}
-
-.container{
-    height: 90vh;
-}
-
 .login{ 
     position: absolute;
     top: 30%;
@@ -36,12 +17,4 @@ main {
     font-size: 10px;
 }
 
-.formstyles{
-    color: #1A1E43;
-    font-size: 13px;
-}
-
-a{
-    cursor: pointer;
-}
   

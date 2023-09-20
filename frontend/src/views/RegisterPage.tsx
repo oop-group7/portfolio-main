@@ -7,8 +7,8 @@ function RegisterPage(){
 
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
+    const [userName, setUserName] = useState('');
     const [email, setEmail] = useState('');
-    const [dob, setDOB] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
 
@@ -47,6 +47,17 @@ function RegisterPage(){
 
                         <div className="mb-4">
                             <input
+                            type="text"
+                            className="form-control"
+                            id="username"
+                            placeholder="Username"
+                            value={userName}
+                            onChange={(e) => setUserName(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="mb-4">
+                            <input
                             type="email"
                             className="form-control"
                             id="email"
@@ -54,17 +65,6 @@ function RegisterPage(){
                             v-model="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            />
-                        </div>
-
-                        <div className="mb-4">
-                            <input
-                            type="date"
-                            className="form-control"
-                            id="dob"
-                            placeholder="Birthdate"
-                            value={dob}
-                            onChange={(e) => setDOB(e.target.value)}
                             />
                         </div>
 
