@@ -12,10 +12,10 @@ const router = createBrowserRouter([
     path: "/",
     element: (
       <React.StrictMode>
-        <Navbar/>
+        <Navbar />
         <LoginPage />
       </React.StrictMode>
-    )
+    ),
   },
   {
     path: "/register", // Add a route for the register page
@@ -24,7 +24,7 @@ const router = createBrowserRouter([
         <Navbar />
         <RegisterPage />
       </React.StrictMode>
-    )
+    ),
   },
 ]);
 
