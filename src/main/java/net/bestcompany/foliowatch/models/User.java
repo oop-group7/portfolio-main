@@ -16,6 +16,8 @@ public class User {
     @Id
     private String id;
 
+    private boolean enabled;
+
     @NotBlank
     @Size(max = 20)
     private String username;
@@ -39,6 +41,7 @@ public class User {
         this.username = username;
         this.email = email;
         this.password = password;
+        enabled = false;
     }
 
     public String getId() {
@@ -47,6 +50,14 @@ public class User {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public String getUsername() {

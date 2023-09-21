@@ -62,11 +62,8 @@ public class WebSecurityConfigDev {
                                 .requestMatchers("/api/docs/**").permitAll().requestMatchers("/api/**")
                                 .authenticated().anyRequest()
                                 .permitAll());
-
         http.authenticationProvider(authenticationProvider());
-
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-
         return http.build();
     }
 }
