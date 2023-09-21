@@ -1,6 +1,21 @@
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import "./css/LoginPage.css";
 
 function LoginPage(){
+
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const navigate = useNavigate();
+
+    function checkLogin(){
+        console.log('Email:', email);
+        console.log('Password:', password);
+    }
+
+    function routeToRegister() {
+        navigate('/register');
+    }
 
     return (
         <>
@@ -17,7 +32,8 @@ function LoginPage(){
                             id="email"
                             aria-describedby="emailHelp"
                             placeholder="Enter email"
-                            v-model="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                             />
                         <div id="emailHelp" className="form-text">
                         We'll never share your email with anyone else.
@@ -31,7 +47,8 @@ function LoginPage(){
                         className="form-control"
                         id="password"
                         placeholder="Password"
-                        v-model="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
                         />
                     </div>
 
@@ -40,8 +57,14 @@ function LoginPage(){
                     </div>
 
                     <div className="d-grid gap-2 mb-3">
-                        <button type="submit" className="btn btn-primary">
+                        <button type="submit" className="btn btn-primary" onClick={checkLogin}>
                         Login
+                        </button>
+                    </div>
+
+                    <div className="d-grid gap-2 mb-3">
+                        <button type="submit" className="btn btn-primary" onClick={routeToRegister}>
+                            Register
                         </button>
                     </div>
                 </form>

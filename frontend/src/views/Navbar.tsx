@@ -1,5 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.css';
-import "./css/Navbar.css";
+// import "./css/Navbar.css";
 
 function Navbar(){
 
