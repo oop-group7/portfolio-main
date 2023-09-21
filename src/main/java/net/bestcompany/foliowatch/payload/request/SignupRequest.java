@@ -19,6 +19,12 @@ public class SignupRequest {
     private Set<String> roles;
 
     @NotBlank
+    private String firstName;
+
+    @NotBlank
+    private String lastName;
+
+    @NotBlank
     @Size(min = 8, max = 80) // https://en.wikipedia.org/wiki/Password_policy#2017
     private String password;
 
@@ -52,5 +58,21 @@ public class SignupRequest {
 
     public void setRole(Set<String> roles) {
         this.roles = roles;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 }
