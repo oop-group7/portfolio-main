@@ -17,8 +17,8 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
     @Autowired
     private VerificationTokenRepository tokenRepository;
 
-    @Value("${foliowatch.app.registrationConfirmUrl}")
-    private String registrationConfirmBaseUrl;
+    @Value("${foliowatch.app.baseUrl}")
+    private String baseUrl;
 
     @Override
     public void onApplicationEvent(OnRegistrationCompleteEvent event) {
