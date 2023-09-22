@@ -22,7 +22,7 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
 
     @Override
     public void onApplicationEvent(OnRegistrationCompleteEvent event) {
-        this.confirmRegistration(event);
+        confirmRegistration(event);
     }
 
     private void confirmRegistration(OnRegistrationCompleteEvent event) {
@@ -32,5 +32,6 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
         tokenRepository.save(verificationToken);
         String recipientAddress = user.getEmail();
         String subject = "Registration confirmation";
+        // TODO: Send email
     }
 }

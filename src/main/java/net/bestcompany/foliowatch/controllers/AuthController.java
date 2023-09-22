@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +23,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.context.request.WebRequest;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import net.bestcompany.foliowatch.events.OnRegistrationCompleteEvent;
+import net.bestcompany.foliowatch.events.Utils;
 import net.bestcompany.foliowatch.models.ERole;
 import net.bestcompany.foliowatch.models.Role;
 import net.bestcompany.foliowatch.models.User;
@@ -114,12 +115,12 @@ public class AuthController {
         }
         user.setRoles(roles);
         userRepository.save(user);
-        eventPublisher.publishEvent(new OnRegistrationCompleteEvent(user));
+        eventPublisher.publishEvent(new OnRegistrationCompleteEvent(user, request));
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
 
     @GetMapping("/registrationconfirm")
-    public String confirmRegistration(WebRequest request, Model model, @RequestParam("token") String token) {
+    public String confirmRegistration(HttpServletRequest request, Model model, @RequestParam("token") String token) {
         VerificationToken verificationToken = tokenRepository.findByToken(token);
         if (verificationToken == null) {
             model.addAttribute("message", "Invalid token");
@@ -129,10 +130,26 @@ public class AuthController {
         Calendar cal = Calendar.getInstance();
         if ((verificationToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
             model.addAttribute("message", "Your registration token has expired. Please register again.");
+            model.addAttribute("expired", true);
+            model.addAttribute("resendUrl",
+                    Utils.constructBaseUrl(request) + "/api/auth/resendregistrationtoken?token=" + token);
             return "baduser";
         }
         user.setEnabled(true);
         userRepository.save(user);
+        model.addAttribute("message", "Your account verified successfully!");
         return "gooduser";
+    }
+
+    @GetMapping("/resendregistrationtoken")
+    @ResponseBody
+    public ResponseEntity<?> resendRegistrationToken(HttpServletRequest request,
+            @RequestParam("token") String existingToken) {
+        VerificationToken verificationToken = tokenRepository.findByToken(existingToken);
+        verificationToken.updateToken(UUID.randomUUID().toString());
+        VerificationToken newToken = tokenRepository.save(verificationToken);
+        User user = verificationToken.getUser();
+        // TODO: Send email
+        return ResponseEntity.ok(new MessageResponse("Re-sent registration token"));
     }
 }

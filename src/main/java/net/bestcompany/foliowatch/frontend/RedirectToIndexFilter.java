@@ -20,13 +20,10 @@ public class RedirectToIndexFilter implements Filter {
 
         HttpServletRequest req = (HttpServletRequest) request;
         String requestURI = req.getRequestURI();
-
         if (requestURI.startsWith("/api") || requestURI.startsWith("/assets")) {
             chain.doFilter(request, response);
             return;
         }
-
         request.getRequestDispatcher("/").forward(request, response);
     }
-
 }

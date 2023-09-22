@@ -7,6 +7,19 @@
 </head>
 <body>
   <h1 th:text="'An error occurred: ' + ${message}" />
+  <div id="confirmation"></div>
+  <div th:if="${expired}">
+    <button onclick="resendToken()">Resend</button>
+    <script th:inline="javascript">
+      const resendUrl = [[${resendUrl}]];
+      const confirmationElement = document.getElementById("confirmation");
+      fetch(resendUrl).then(() => {
+        confirmationElement.innerText = "Successfully sent email!";
+      }).catch(() => {
+        confirmationElement.innerText = "An error occurred, contact the administrator.";
+      })
+    </script>
+  </div>
   <a href="/login">Return to login screen</a>
 </body>
 </html>
