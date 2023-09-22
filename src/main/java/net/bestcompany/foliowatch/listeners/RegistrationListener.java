@@ -3,8 +3,9 @@ package net.bestcompany.foliowatch.listeners;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
 
 import net.bestcompany.foliowatch.events.OnRegistrationCompleteEvent;
@@ -16,6 +17,9 @@ import net.bestcompany.foliowatch.repository.VerificationTokenRepository;
 public class RegistrationListener implements ApplicationListener<OnRegistrationCompleteEvent> {
     @Autowired
     private VerificationTokenRepository tokenRepository;
+
+    @Autowired
+    private JavaMailSender mailSender;
 
     @Override
     public void onApplicationEvent(OnRegistrationCompleteEvent event) {
@@ -29,6 +33,12 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
         tokenRepository.save(verificationToken);
         String recipientAddress = user.getEmail();
         String subject = "Registration confirmation";
-        // TODO: Send email
+        String confirmationUrl = event.getBaseUrl() + "/api/auth/registrationconfirm?=token" + token;
+        String message = "You registered successfully. We will send you a confirmation message to your email account.";
+        SimpleMailMessage email = new SimpleMailMessage();
+        email.setTo(recipientAddress);
+        email.setSubject(subject);
+        email.setText(message + "\r\n" + confirmationUrl);
+        mailSender.send(email);
     }
 }

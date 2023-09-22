@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -65,6 +67,9 @@ public class AuthController {
 
     @Autowired
     VerificationTokenRepository tokenRepository;
+
+    @Autowired
+    JavaMailSender mailSender;
 
     @PostMapping("/signin")
     @ResponseBody
@@ -149,7 +154,20 @@ public class AuthController {
         verificationToken.updateToken(UUID.randomUUID().toString());
         VerificationToken newToken = tokenRepository.save(verificationToken);
         User user = verificationToken.getUser();
-        // TODO: Send email
+        SimpleMailMessage email = constructResendVerificationTokenEmail(request, newToken, user);
+        mailSender.send(email);
         return ResponseEntity.ok(new MessageResponse("Re-sent registration token"));
+    }
+
+    private SimpleMailMessage constructResendVerificationTokenEmail(HttpServletRequest request,
+            VerificationToken newToken, User user) {
+        String confirmationUrl = Utils.constructBaseUrl(request) + "/api/auth/registrationconfirm?=token"
+                + newToken.getToken();
+        String message = "We will send an email with a new registration token to your email account.";
+        SimpleMailMessage email = new SimpleMailMessage();
+        email.setSubject("Resend registration token");
+        email.setText(message + "\r\n" + confirmationUrl);
+        email.setTo(user.getEmail());
+        return email;
     }
 }
