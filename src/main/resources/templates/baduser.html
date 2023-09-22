@@ -7,8 +7,8 @@
 </head>
 <body>
   <h1 th:text="'An error occurred: ' + ${message}" />
-  <div id="confirmation"></div>
   <div th:if="${expired}">
+    <div id="confirmation"></div>
     <button onclick="resendToken()">Resend</button>
     <script th:inline="javascript">
       const resendUrl = [[${resendUrl}]];
