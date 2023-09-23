@@ -16,6 +16,7 @@ public class User {
     @Id
     private String id;
 
+    @NotBlank
     private boolean enabled;
 
     @NotBlank
@@ -72,15 +73,15 @@ public class User {
         return username;
     }
 
-    public String getFirstName(){
+    public String getFirstName() {
         return firstName;
     }
 
-    public String getLastName(){
+    public String getLastName() {
         return lastName;
     }
 
-    public String getFullName(){
+    public String getFullName() {
         return firstName + " " + lastName;
     }
 

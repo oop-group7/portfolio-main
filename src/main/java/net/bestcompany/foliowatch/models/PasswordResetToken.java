@@ -9,13 +9,14 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import jakarta.validation.constraints.NotBlank;
 
-@Document(collection = "verificationtokens")
-public class VerificationToken {
+@Document(collection = "passwordresettokens")
+public class PasswordResetToken {
     private static final int EXPIRATION = 60 * 24;
 
     @Id
     private String id;
 
+    @NotBlank
     private String token;
 
     @DBRef
@@ -25,25 +26,22 @@ public class VerificationToken {
     @NotBlank
     private Date expiryDate;
 
-    public VerificationToken() {
+    public PasswordResetToken() {
     }
 
-    public VerificationToken(String token, User user) {
-        this.user = user;
+    public PasswordResetToken(final String token) {
         this.token = token;
+        this.expiryDate = calculateExpiryDate(EXPIRATION);
+    }
+
+    public PasswordResetToken(String token, User user) {
+        this.token = token;
+        this.user = user;
         this.expiryDate = calculateExpiryDate(EXPIRATION);
     }
 
     public String getId() {
         return id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 
     public String getToken() {
@@ -54,16 +52,24 @@ public class VerificationToken {
         this.token = token;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     public Date getExpiryDate() {
         return expiryDate;
     }
 
-    public void setExpiryDate(final Date expiryDate) {
+    public void setExpiryDate(Date expiryDate) {
         this.expiryDate = expiryDate;
     }
 
     private Date calculateExpiryDate(int expiryTimeInMinutes) {
-        Calendar cal = Calendar.getInstance();
+        final Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(new Date().getTime());
         cal.add(Calendar.MINUTE, expiryTimeInMinutes);
         return new Date(cal.getTime().getTime());
