@@ -1,16 +1,26 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { login } from '../utils/fetcher';
 import "./css/LoginPage.css";
 
 function LoginPage(){
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
     const navigate = useNavigate();
 
-    function checkLogin(){
+    async function handleLogin(){
         console.log('Email:', email);
         console.log('Password:', password);
+        try {
+            // Call the login function from fetcher.ts
+            await login(email, password);
+            // If the login function does not throw an error, it's successful
+        } catch (error) {
+            // Handle login error
+            setError('Login failed. Please check your credentials.');
+        }
     }
 
     function routeToRegister() {
@@ -23,11 +33,11 @@ function LoginPage(){
             <div className="login shadow-lg p-3 bg-body rounded">
                 <h1 className="heading">Login</h1>
 
-                <form className="m-5">
+                <div className="m-5">
                     <div className="mb-3" id="emailinput">
                         Username/Email
                         <input
-                            type="email"
+                            type="text"
                             className="form-control"
                             id="email"
                             aria-describedby="emailHelp"
@@ -57,7 +67,7 @@ function LoginPage(){
                     </div>
 
                     <div className="d-grid gap-2 mb-3">
-                        <button type="submit" className="btn btn-primary" onClick={checkLogin}>
+                        <button type="submit" className="btn btn-primary" onClick={handleLogin}>
                         Login
                         </button>
                     </div>
@@ -67,7 +77,7 @@ function LoginPage(){
                             Register
                         </button>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
         </>

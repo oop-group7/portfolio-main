@@ -5,7 +5,7 @@ import {
 } from "../types/Authentication";
 
 const ACCESS_TOKEN_KEY = "accessToken";
-
+const API_BASE_URL = 'http://localhost:8080';
 /**Throws an error on request fail. Remember to catch it.
  * If you are not expecting to get any output, use `setter()` instead.
  * If you are not going to pass any JSON body in your request, leave the `TResponse` generic, and the `body` field as undefined.
@@ -14,10 +14,11 @@ export async function fetcher<
   TRequest extends object | undefined,
   TResponse extends object
 >(
-  url: string,
+  endpoint: string,
   method: "GET" | "POST" | "PUT" | "DELETE",
   body: TRequest
 ): Promise<TResponse> {
+  const url = `${API_BASE_URL}${endpoint}`;
   const res = await fetch(url, {
     method,
     credentials: "same-origin",
@@ -84,7 +85,7 @@ export async function login(username: string, password: string) {
     }
   );
   localStorage.setItem(ACCESS_TOKEN_KEY, res.accessToken);
-  window.location.href = "/dashboard";
+  window.location.href = "/homepage";
 }
 
 export function logout() {
