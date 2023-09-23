@@ -1,12 +1,14 @@
 package net.bestcompany.foliowatch.payload.request;
 
 import jakarta.validation.constraints.NotBlank;
+import net.bestcompany.foliowatch.validators.Password;
 
 public class LoginRequest {
     @NotBlank
     private String username;
 
     @NotBlank
+    @Password
     private String password;
 
     public String getUsername() {
