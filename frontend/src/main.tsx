@@ -5,6 +5,7 @@ import Navbar from "./views/Navbar.tsx";
 import LoginPage from "./views/LoginPage.tsx";
 import RegisterPage from "./views/RegisterPage.tsx";
 import HomePage from "./views/HomePage.tsx";
+import ProfilePage from "./views/ProfilePage.tsx"; 
 import "./views/css/index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
@@ -33,6 +34,16 @@ const router = createBrowserRouter([
       <React.StrictMode>
         <Navbar />
         <HomePage />
+      </React.StrictMode>
+    ),
+  },
+
+  {
+    path: "/profilepage",
+    element: (
+      <React.StrictMode>
+        <Navbar />
+        <ProfilePage />
       </React.StrictMode>
     ),
   }

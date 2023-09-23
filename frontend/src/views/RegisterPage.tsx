@@ -12,7 +12,7 @@ function RegisterPage() {
   const navigate = useNavigate();
 
   function register() {
-    console.log(dob);
+
   }
 
   return (
