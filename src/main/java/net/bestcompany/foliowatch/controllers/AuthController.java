@@ -80,8 +80,6 @@ public class AuthController {
     @Autowired
     PasswordTokenRepository passwordTokenRepository;
 
-    @Autowired
-
     @PostMapping("/signin")
     @ResponseBody
     @CrossOrigin(origins = "http://localhost:5173")
