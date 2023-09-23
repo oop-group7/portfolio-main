@@ -183,7 +183,7 @@ public class AuthController {
     }
 
     @GetMapping("/changepassword")
-    public String showChangePasswordPage(Model model, @RequestParam("token") String token) {
+    public String showChangePasswordPage(HttpServletRequest request, Model model, @RequestParam("token") String token) {
         Optional<PasswordResetToken> rawPassToken = passwordTokenRepository.findByToken(token);
         if (rawPassToken.isEmpty()) {
             model.addAttribute("message", "Invalid token");
@@ -196,6 +196,7 @@ public class AuthController {
             return "resetbadduser";
         }
         model.addAttribute("token", token);
+        model.addAttribute("submitUrl", Utils.constructBaseUrl(request) + "/api/auth/savepassword");
         return "resetgooduser";
     }
 

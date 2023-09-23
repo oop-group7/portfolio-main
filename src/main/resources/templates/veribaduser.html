@@ -1,25 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registration unsuccessful</title>
-</head>
-<body>
-  <h1 th:text="'An error occurred: ' + ${message}" />
-  <div th:if="${expired}">
-    <div id="confirmation"></div>
-    <button onclick="resendToken()">Resend</button>
-    <script th:inline="javascript">
-      const resendUrl = [[${resendUrl}]];
-      const confirmationElement = document.getElementById("confirmation");
-      fetch(resendUrl).then(() => {
-        confirmationElement.innerText = "Successfully sent email!";
-      }).catch(() => {
-        confirmationElement.innerText = "An error occurred, contact the administrator.";
-      })
-    </script>
-  </div>
-  <a href="/login">Return to login screen</a>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registration unsuccessful</title>
+  </head>
+  <body>
+    <h1 th:text="'An error occurred: ' + ${message}" />
+    <div th:if="${expired}">
+      <div id="confirmation"></div>
+      <button onclick="resendToken()">Resend</button>
+      <script th:inline="javascript">
+        function resendToken() {
+          const resendUrl = [[${resendUrl}]];
+          const confirmationElement = document.getElementById("confirmation");
+          fetch(resendUrl)
+            .then((res) => {
+              if (res.ok) {
+                confirmationElement.innerText = "Successfully sent email!";
+              } else {
+                confirmationElement.innerText =
+                  "An error occurred, contact the administrator.";
+              }
+            })
+            .catch(() => {
+              confirmationElement.innerText =
+                "An error occurred.";
+            });
+        }
+      </script>
+    </div>
+    <a href="/login">Return to login screen</a>
+  </body>
 </html>

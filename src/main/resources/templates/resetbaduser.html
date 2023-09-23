@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Registration successful</title>
+    <title>Password reset unsuccessful</title>
   </head>
   <body>
-    <h1 th:text="${message}" />
+    <h1 th:text="'An error occurred: ' + ${message}" />
     <a href="/login">Return to login screen</a>
   </body>
 </html>
