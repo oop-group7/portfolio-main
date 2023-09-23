@@ -8,13 +8,19 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import jakarta.validation.constraints.NotBlank;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Document(collection = "passwordresettokens")
+@Getter
+@Setter
+@NoArgsConstructor
 public class PasswordResetToken {
     private static final int EXPIRATION = 60 * 24;
 
-    @Id
-    private String id;
+    private @Id @Setter(AccessLevel.PROTECTED) String id;
 
     @NotBlank
     private String token;
@@ -26,9 +32,6 @@ public class PasswordResetToken {
     @NotBlank
     private Date expiryDate;
 
-    public PasswordResetToken() {
-    }
-
     public PasswordResetToken(final String token) {
         this.token = token;
         this.expiryDate = calculateExpiryDate(EXPIRATION);
@@ -38,34 +41,6 @@ public class PasswordResetToken {
         this.token = token;
         this.user = user;
         this.expiryDate = calculateExpiryDate(EXPIRATION);
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Date getExpiryDate() {
-        return expiryDate;
-    }
-
-    public void setExpiryDate(Date expiryDate) {
-        this.expiryDate = expiryDate;
     }
 
     private Date calculateExpiryDate(int expiryTimeInMinutes) {

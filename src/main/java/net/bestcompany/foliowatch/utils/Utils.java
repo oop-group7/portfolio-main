@@ -1,10 +1,9 @@
-package net.bestcompany.foliowatch.events;
+package net.bestcompany.foliowatch.utils;
 
 import org.springframework.mail.SimpleMailMessage;
 
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
-import net.bestcompany.foliowatch.models.PasswordResetToken;
 import net.bestcompany.foliowatch.models.User;
 import net.bestcompany.foliowatch.models.VerificationToken;
 
@@ -31,10 +30,9 @@ public class Utils {
         return constructEmail("Resend registration token", message + "\r\n" + confirmationUrl, user);
     }
 
-    public static SimpleMailMessage constructResetTokenEmail(HttpServletRequest request, PasswordResetToken newToken,
+    public static SimpleMailMessage constructResetTokenEmail(HttpServletRequest request, String newToken,
             User user) {
-        String confirmationUrl = Utils.constructBaseUrl(request) + "/api/auth/resetpassword?=token"
-                + newToken.getToken();
+        String confirmationUrl = Utils.constructBaseUrl(request) + "/api/auth/resetpassword?=token" + newToken;
         String message = "Reset password";
         return constructEmail(message, message + "\r\n" + confirmationUrl, user);
     }

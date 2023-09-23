@@ -4,6 +4,7 @@ import org.springframework.context.ApplicationEvent;
 
 import jakarta.servlet.http.HttpServletRequest;
 import net.bestcompany.foliowatch.models.User;
+import net.bestcompany.foliowatch.utils.Utils;
 
 public class OnRegistrationCompleteEvent extends ApplicationEvent {
     private User user;

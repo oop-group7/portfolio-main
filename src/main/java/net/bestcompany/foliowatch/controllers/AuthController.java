@@ -1,6 +1,5 @@
 package net.bestcompany.foliowatch.controllers;
 
-import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -17,11 +16,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,9 +29,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import net.bestcompany.foliowatch.events.OnRegistrationCompleteEvent;
-import net.bestcompany.foliowatch.events.Utils;
 import net.bestcompany.foliowatch.models.ERole;
-import net.bestcompany.foliowatch.models.PasswordResetToken;
 import net.bestcompany.foliowatch.models.Role;
 import net.bestcompany.foliowatch.models.User;
 import net.bestcompany.foliowatch.models.VerificationToken;
@@ -43,46 +38,47 @@ import net.bestcompany.foliowatch.payload.request.ResetPasswordRequest;
 import net.bestcompany.foliowatch.payload.request.SignupRequest;
 import net.bestcompany.foliowatch.payload.response.JwtResponse;
 import net.bestcompany.foliowatch.payload.response.MessageResponse;
-import net.bestcompany.foliowatch.repository.PasswordTokenRepository;
 import net.bestcompany.foliowatch.repository.RoleRepository;
 import net.bestcompany.foliowatch.repository.UserRepository;
-import net.bestcompany.foliowatch.repository.VerificationTokenRepository;
 import net.bestcompany.foliowatch.security.jwt.JwtUtils;
+import net.bestcompany.foliowatch.security.services.ISecurityUserService;
+import net.bestcompany.foliowatch.security.services.IUserService;
+import net.bestcompany.foliowatch.security.services.TokenState;
 import net.bestcompany.foliowatch.security.services.UserDetailsImpl;
+import net.bestcompany.foliowatch.utils.Utils;
 
 @Controller
 @RequestMapping("/api/auth")
 public class AuthController {
     @Autowired
-    AuthenticationManager authenticationManager;
+    private AuthenticationManager authenticationManager;
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    RoleRepository roleRepository;
+    private RoleRepository roleRepository;
 
     @Autowired
-    PasswordEncoder encoder;
+    private PasswordEncoder encoder;
 
     @Autowired
-    JwtUtils jwtUtils;
+    private JwtUtils jwtUtils;
 
     @Autowired
-    ApplicationEventPublisher eventPublisher;
+    private ApplicationEventPublisher eventPublisher;
 
     @Autowired
-    VerificationTokenRepository verificationTokenRepository;
+    private JavaMailSender mailSender;
 
     @Autowired
-    JavaMailSender mailSender;
+    private IUserService userService;
 
     @Autowired
-    PasswordTokenRepository passwordTokenRepository;
+    private ISecurityUserService securityUserService;
 
     @PostMapping("/signin")
     @ResponseBody
-    @CrossOrigin(origins = "http://localhost:5173")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
@@ -136,35 +132,29 @@ public class AuthController {
 
     @GetMapping("/registrationconfirm")
     public String confirmRegistration(HttpServletRequest request, Model model, @RequestParam("token") String token) {
-        Optional<VerificationToken> rawVerificationToken = verificationTokenRepository.findByToken(token);
-        if (rawVerificationToken.isEmpty()) {
-            model.addAttribute("message", "Invalid token");
-            return "veribaduser";
+        TokenState result = userService.validateVerificationToken(token);
+        switch (result) {
+            case TokenValid:
+                model.addAttribute("message", "Your account verified successfully!");
+                return "verigooduser";
+            case TokenInvalid:
+                model.addAttribute("message", "Invalid token");
+                break;
+            case TokenExpired:
+                model.addAttribute("message", "Your registration token has expired. Please register again.");
+                model.addAttribute("expired", true);
+                model.addAttribute("resendUrl",
+                        Utils.constructBaseUrl(request) + "/api/auth/resendregistrationtoken?token=" + token);
         }
-        VerificationToken verificationToken = rawVerificationToken.get();
-        User user = verificationToken.getUser();
-        Calendar cal = Calendar.getInstance();
-        if ((verificationToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
-            model.addAttribute("message", "Your registration token has expired. Please register again.");
-            model.addAttribute("expired", true);
-            model.addAttribute("resendUrl",
-                    Utils.constructBaseUrl(request) + "/api/auth/resendregistrationtoken?token=" + token);
-            return "veribaduser";
-        }
-        user.setEnabled(true);
-        userRepository.save(user);
-        model.addAttribute("message", "Your account verified successfully!");
-        return "verigooduser";
+        return "veribaduser";
     }
 
     @GetMapping("/resendregistrationtoken")
     @ResponseBody
     public ResponseEntity<?> resendRegistrationToken(HttpServletRequest request,
             @RequestParam("token") String existingToken) {
-        VerificationToken verificationToken = verificationTokenRepository.findByToken(existingToken).get();
-        verificationToken.updateToken(UUID.randomUUID().toString());
-        VerificationToken newToken = verificationTokenRepository.save(verificationToken);
-        User user = verificationToken.getUser();
+        VerificationToken newToken = userService.generateNewVerificationToken(existingToken);
+        User user = userService.getUserByVerificationToken(newToken.getToken()).orElseThrow();
         SimpleMailMessage email = Utils.constructResendVerificationTokenEmail(request, newToken, user);
         mailSender.send(email);
         return ResponseEntity.ok(new MessageResponse("Re-sent registration token"));
@@ -173,51 +163,47 @@ public class AuthController {
     @GetMapping("/resetpassword")
     @ResponseBody
     public ResponseEntity<?> resetPassword(HttpServletRequest request, @RequestParam("email") String userEmail) {
-        User user = userRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + userEmail));
-        String myToken = UUID.randomUUID().toString();
-        PasswordResetToken token = new PasswordResetToken(myToken, user);
-        passwordTokenRepository.save(token);
-        mailSender.send(Utils.constructResetTokenEmail(request, token, user));
+        Optional<User> rawUser = userService.findUserByEmail(userEmail);
+        if (rawUser.isPresent()) {
+            User user = rawUser.get();
+            String myToken = UUID.randomUUID().toString();
+            userService.createPasswordResetTokenForUser(user, myToken);
+            mailSender.send(Utils.constructResetTokenEmail(request, myToken, user));
+        }
         return ResponseEntity.ok(new MessageResponse("You should receive an password reset email shortly."));
     }
 
     @GetMapping("/changepassword")
     public String showChangePasswordPage(HttpServletRequest request, Model model, @RequestParam("token") String token) {
-        Optional<PasswordResetToken> rawPassToken = passwordTokenRepository.findByToken(token);
-        if (rawPassToken.isEmpty()) {
-            model.addAttribute("message", "Invalid token");
-            return "resetbaduser";
+        TokenState result = securityUserService.validatePasswordResetToken(token);
+        switch (result) {
+            case TokenValid:
+                model.addAttribute("token", token);
+                model.addAttribute("submitUrl", Utils.constructBaseUrl(request) + "/api/auth/savepassword");
+                return "resetgooduser";
+            case TokenInvalid:
+                model.addAttribute("message", "Invalid token");
+                break;
+            case TokenExpired:
+                model.addAttribute("message", "Your registration token has expired, please register again.");
         }
-        PasswordResetToken passToken = rawPassToken.get();
-        Calendar cal = Calendar.getInstance();
-        if (passToken.getExpiryDate().before(cal.getTime())) {
-            model.addAttribute("message", "Your registration token has expired, please register again.");
-            return "resetbadduser";
-        }
-        model.addAttribute("token", token);
-        model.addAttribute("submitUrl", Utils.constructBaseUrl(request) + "/api/auth/savepassword");
-        return "resetgooduser";
+        return "resetbadduser";
     }
 
     @GetMapping("/savepassword")
     public ResponseEntity<?> savePassword(@Valid @RequestBody ResetPasswordRequest resetPasswordRequest) {
-        Optional<PasswordResetToken> rawPassToken = passwordTokenRepository
-                .findByToken(resetPasswordRequest.getToken());
-        if (rawPassToken.isEmpty()) {
-            return ResponseEntity.badRequest().body("Invalid token");
+        TokenState result = securityUserService.validatePasswordResetToken(resetPasswordRequest.getToken());
+        switch (result) {
+            case TokenInvalid:
+                return ResponseEntity.badRequest().body("Invalid token");
+            case TokenExpired:
+                return ResponseEntity.badRequest().body("Your registration token has expired, please register again.");
+            default:
+                break;
         }
-        PasswordResetToken passToken = rawPassToken.get();
-        Calendar cal = Calendar.getInstance();
-        if (passToken.getExpiryDate().before(cal.getTime())) {
-            return ResponseEntity.badRequest().body("Your registration token has expired, please register again.");
-        }
-        Optional<User> rawUser = passwordTokenRepository.findByToken(resetPasswordRequest.getToken())
-                .map(token -> token.getUser());
+        Optional<User> rawUser = userService.getUserByPasswordResetToken(resetPasswordRequest.getToken());
         if (rawUser.isPresent()) {
-            User user = rawUser.get();
-            user.setPassword(encoder.encode(resetPasswordRequest.getNewPassword()));
-            userRepository.save(user);
+            userService.changeUserPassword(rawUser.get(), resetPasswordRequest.getNewPassword());
             return ResponseEntity.ok("Password reset successfully.");
         } else {
             return ResponseEntity.badRequest().body("");
