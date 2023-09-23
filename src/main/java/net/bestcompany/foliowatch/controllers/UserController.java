@@ -12,14 +12,14 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import net.bestcompany.foliowatch.models.User;
 import net.bestcompany.foliowatch.payload.request.UpdatePasswordRequest;
+import net.bestcompany.foliowatch.security.services.IUserService;
 import net.bestcompany.foliowatch.security.services.UserDetailsImpl;
-import net.bestcompany.foliowatch.security.services.UserDetailsServiceImpl;
 
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
     @Autowired
-    private UserDetailsServiceImpl userService;
+    private IUserService userService;
 
     @PostMapping("/updatepassword")
     @PreAuthorize("hasRole('USER') or hasRole('DEVELOPER')")
