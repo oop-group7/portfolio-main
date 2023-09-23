@@ -18,10 +18,11 @@
       <label>Confirm password</label>
       <input id="matchPassword" type="password" value="" />
 
-      <button type="submit" onclick="savePass()">Submit</button>
+      <button type="submit">Submit</button>
     </form>
     <script th:inline="javascript">
-      function savePass() {
+      document.addEventListener("submit", (event) => {
+        event.preventDefault();
         const submitUrl = [[${submitUrl}]];
         const token = [[${token}]];
         const password = document.getElementById("password").value;
@@ -38,22 +39,18 @@
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ token, oldPassword, newPassword: password }),
-        }).then((res) => {
-          if (res.ok) {
-            confirmationElement.innerText = "Successfully reset password!";
-          } else {
-            confirmationElem.innerText = res.text;
-          }
-        }).catch(() => {
-          confirmationElem.innerText = "An error occurred.";
-        });
-      }
-      // const confirmationElement = document.getElementById("confirmation");
-      // fetch(resendUrl).then(() => {
-      //   confirmationElement.innerText = "Successfully sent email!";
-      // }).catch(() => {
-      //   confirmationElement.innerText = "An error occurred, contact the administrator.";
-      // })
+        })
+          .then((res) => {
+            if (res.ok) {
+              confirmationElement.innerText = "Successfully reset password!";
+            } else {
+              confirmationElem.innerText = res.text;
+            }
+          })
+          .catch(() => {
+            confirmationElem.innerText = "An error occurred.";
+          });
+      });
     </script>
     <a href="/login">Return to login screen</a>
   </body>
