@@ -6,7 +6,6 @@ import jakarta.validation.ConstraintValidatorContext;
 public class PasswordValidator implements ConstraintValidator<Password, String> {
     @Override
     public void initialize(Password password) {
-
     }
 
     @Override
