@@ -9,14 +9,13 @@
     <h1>Reset your password</h1>
     <div id="confirmation"></div>
     <form>
-      <label>Enter your old password</label>
-      <input id="oldPassword" type="password" value="" />
-
       <label>Enter your password</label>
       <input id="password" type="password" value="" />
+      <br />
 
       <label>Confirm password</label>
       <input id="matchPassword" type="password" value="" />
+      <br />
 
       <button type="submit">Submit</button>
     </form>
@@ -42,7 +41,7 @@
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ token, oldPassword, newPassword: password }),
+          body: JSON.stringify({ token, newPassword: password }),
         })
           .then((res) => {
             if (res.ok) {

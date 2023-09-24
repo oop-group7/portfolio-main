@@ -8,9 +8,6 @@ import net.bestcompany.foliowatch.validators.Password;
 @Getter
 @Setter
 public class ResetPasswordRequest {
-    @Password
-    private String oldPassword;
-
     @NotBlank
     private String token;
 
