@@ -94,40 +94,44 @@ public class AuthController {
     @PostMapping("/signup")
     @ResponseBody
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest, HttpServletRequest request) {
-        if (userRepository.existsByUsername(signUpRequest.getUsername())) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is already taken!"));
+        try {
+            if (userRepository.existsByUsername(signUpRequest.getUsername())) {
+                return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is already taken!"));
+            }
+            if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+                return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
+            }
+            User user = new User(signUpRequest.getUsername(), signUpRequest.getFirstName(), signUpRequest.getLastName(),
+                    signUpRequest.getEmail(),
+                    encoder.encode(signUpRequest.getPassword()));
+            Set<String> strRoles = signUpRequest.getRoles();
+            Set<Role> roles = new HashSet<>();
+            if (strRoles == null) {
+                Role userRole = roleRepository.findByName(ERole.ROLE_USER)
+                        .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                roles.add(userRole);
+            } else {
+                strRoles.forEach(role -> {
+                    switch (role) {
+                        case "dev":
+                            Role devRole = roleRepository.findByName(ERole.ROLE_DEVELOPER)
+                                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                            roles.add(devRole);
+                            break;
+                        default:
+                            Role userRole = roleRepository.findByName(ERole.ROLE_USER)
+                                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                            roles.add(userRole);
+                    }
+                });
+            }
+            user.setRoles(roles);
+            userRepository.save(user);
+            eventPublisher.publishEvent(new OnRegistrationCompleteEvent(user, request));
+            return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+        } catch (RuntimeException e) {
+            return ResponseEntity.internalServerError().body("Error in Java mail configuration");
         }
-        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
-        }
-        User user = new User(signUpRequest.getUsername(), signUpRequest.getFirstName(), signUpRequest.getLastName(),
-                signUpRequest.getEmail(),
-                encoder.encode(signUpRequest.getPassword()));
-        Set<String> strRoles = signUpRequest.getRoles();
-        Set<Role> roles = new HashSet<>();
-        if (strRoles == null) {
-            Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-            roles.add(userRole);
-        } else {
-            strRoles.forEach(role -> {
-                switch (role) {
-                    case "dev":
-                        Role devRole = roleRepository.findByName(ERole.ROLE_DEVELOPER)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(devRole);
-                        break;
-                    default:
-                        Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(userRole);
-                }
-            });
-        }
-        user.setRoles(roles);
-        userRepository.save(user);
-        eventPublisher.publishEvent(new OnRegistrationCompleteEvent(user, request));
-        return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
 
     @GetMapping("/registrationconfirm")
