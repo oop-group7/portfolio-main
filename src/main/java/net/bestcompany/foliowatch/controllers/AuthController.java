@@ -101,8 +101,7 @@ public class AuthController {
             if (userRepository.existsByEmail(signUpRequest.getEmail())) {
                 return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
             }
-            User user = new User(signUpRequest.getUsername(), signUpRequest.getFirstName(), signUpRequest.getLastName(),
-                    signUpRequest.getEmail(),
+            User user = new User(signUpRequest.getUsername(), signUpRequest.getEmail(),
                     encoder.encode(signUpRequest.getPassword()));
             Set<String> strRoles = signUpRequest.getRoles();
             Set<Role> roles = new HashSet<>();
@@ -130,6 +129,7 @@ public class AuthController {
             eventPublisher.publishEvent(new OnRegistrationCompleteEvent(user, request));
             return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
         } catch (RuntimeException e) {
+            e.printStackTrace();
             return ResponseEntity.internalServerError().body("Error in Java mail configuration");
         }
     }

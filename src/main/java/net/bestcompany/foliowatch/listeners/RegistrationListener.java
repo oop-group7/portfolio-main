@@ -33,7 +33,7 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
         tokenRepository.save(verificationToken);
         String recipientAddress = user.getEmail();
         String subject = "Registration confirmation";
-        String confirmationUrl = event.getBaseUrl() + "/api/auth/registrationconfirm?=token" + token;
+        String confirmationUrl = event.getBaseUrl() + "/api/auth/registrationconfirm?token=" + token;
         String message = "You registered successfully. We will send you a confirmation message to your email account.";
         SimpleMailMessage email = new SimpleMailMessage();
         email.setTo(recipientAddress);
