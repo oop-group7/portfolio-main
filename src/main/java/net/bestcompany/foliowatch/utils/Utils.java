@@ -32,7 +32,8 @@ public class Utils {
 
     public static SimpleMailMessage constructResetTokenEmail(HttpServletRequest request, String newToken,
             User user) {
-        String confirmationUrl = Utils.constructBaseUrl(request) + "/api/auth/resetpassword?token=" + newToken;
+        String confirmationUrl = Utils.constructBaseUrl(request) + "/api/auth/changeforgottenpassword?token="
+                + newToken;
         String message = "Reset password";
         return constructEmail(message, message + "\r\n" + confirmationUrl, user);
     }

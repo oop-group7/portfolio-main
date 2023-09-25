@@ -2,13 +2,13 @@ package net.bestcompany.foliowatch.controllers;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -28,7 +28,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import net.bestcompany.foliowatch.events.OnRegistrationCompleteEvent;
 import net.bestcompany.foliowatch.models.ERole;
 import net.bestcompany.foliowatch.models.Role;
 import net.bestcompany.foliowatch.models.User;
@@ -38,9 +37,11 @@ import net.bestcompany.foliowatch.payload.request.ResetPasswordRequest;
 import net.bestcompany.foliowatch.payload.request.SignupRequest;
 import net.bestcompany.foliowatch.payload.response.JwtResponse;
 import net.bestcompany.foliowatch.payload.response.MessageResponse;
+import net.bestcompany.foliowatch.payload.response.SignUpResponse;
 import net.bestcompany.foliowatch.repository.RoleRepository;
 import net.bestcompany.foliowatch.repository.UserRepository;
 import net.bestcompany.foliowatch.security.jwt.JwtUtils;
+import net.bestcompany.foliowatch.security.services.IRegistrationUserService;
 import net.bestcompany.foliowatch.security.services.ISecurityUserService;
 import net.bestcompany.foliowatch.security.services.IUserService;
 import net.bestcompany.foliowatch.security.services.TokenState;
@@ -66,9 +67,6 @@ public class AuthController {
     private JwtUtils jwtUtils;
 
     @Autowired
-    private ApplicationEventPublisher eventPublisher;
-
-    @Autowired
     private JavaMailSender mailSender;
 
     @Autowired
@@ -77,31 +75,31 @@ public class AuthController {
     @Autowired
     private ISecurityUserService securityUserService;
 
+    @Autowired
+    private IRegistrationUserService registrationUserService;
+
     @PostMapping("/signin")
     @ResponseBody
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+                new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken(authentication);
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
                 .collect(Collectors.toList());
         return ResponseEntity.ok(
-                new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), userDetails.getEmail(), roles));
+                new JwtResponse(jwt, userDetails.getId(), userDetails.getFirstName(), userDetails.getEmail(), roles));
     }
 
     @PostMapping("/signup")
     @ResponseBody
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest, HttpServletRequest request) {
         try {
-            if (userRepository.existsByUsername(signUpRequest.getUsername())) {
-                return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is already taken!"));
-            }
             if (userRepository.existsByEmail(signUpRequest.getEmail())) {
                 return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
             }
-            User user = new User(signUpRequest.getUsername(), signUpRequest.getEmail(),
+            User user = new User(signUpRequest.getFirstName(), signUpRequest.getEmail(),
                     encoder.encode(signUpRequest.getPassword()));
             Set<String> strRoles = signUpRequest.getRoles();
             Set<Role> roles = new HashSet<>();
@@ -126,8 +124,8 @@ public class AuthController {
             }
             user.setRoles(roles);
             userRepository.save(user);
-            eventPublisher.publishEvent(new OnRegistrationCompleteEvent(user, request));
-            return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+            VerificationToken token = registrationUserService.sendRegistrationVerificationEmail(user, request);
+            return ResponseEntity.ok(new SignUpResponse(token.getToken()));
         } catch (RuntimeException e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().body("Error in Java mail configuration");
@@ -157,16 +155,21 @@ public class AuthController {
     @ResponseBody
     public ResponseEntity<?> resendRegistrationToken(HttpServletRequest request,
             @RequestParam("token") String existingToken) {
-        VerificationToken newToken = userService.generateNewVerificationToken(existingToken);
+        VerificationToken newToken;
+        try {
+            newToken = userService.generateNewVerificationToken(existingToken);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.badRequest().body("Invalid token");
+        }
         User user = userService.getUserByVerificationToken(newToken.getToken()).orElseThrow();
         SimpleMailMessage email = Utils.constructResendVerificationTokenEmail(request, newToken, user);
         mailSender.send(email);
         return ResponseEntity.ok(new MessageResponse("Re-sent registration token"));
     }
 
-    @GetMapping("/resetpassword")
+    @GetMapping("/forgotpassword")
     @ResponseBody
-    public ResponseEntity<?> resetPassword(HttpServletRequest request, @RequestParam("email") String userEmail) {
+    public ResponseEntity<?> forgotPassword(HttpServletRequest request, @RequestParam("email") String userEmail) {
         Optional<User> rawUser = userService.findUserByEmail(userEmail);
         if (rawUser.isPresent()) {
             User user = rawUser.get();
@@ -177,13 +180,14 @@ public class AuthController {
         return ResponseEntity.ok(new MessageResponse("You should receive an password reset email shortly."));
     }
 
-    @GetMapping("/changepassword")
-    public String showChangePasswordPage(HttpServletRequest request, Model model, @RequestParam("token") String token) {
+    @GetMapping("/changeforgottenpassword")
+    public String changeForgottenPassword(HttpServletRequest request, Model model,
+            @RequestParam("token") String token) {
         TokenState result = securityUserService.validatePasswordResetToken(token);
         switch (result) {
             case TokenValid:
                 model.addAttribute("token", token);
-                model.addAttribute("submitUrl", Utils.constructBaseUrl(request) + "/api/auth/savepassword");
+                model.addAttribute("submitUrl", Utils.constructBaseUrl(request) + "/api/auth/saveforgottenpassword");
                 return "resetgooduser";
             case TokenInvalid:
                 model.addAttribute("message", "Invalid token");
@@ -191,10 +195,10 @@ public class AuthController {
             case TokenExpired:
                 model.addAttribute("message", "Your registration token has expired, please register again.");
         }
-        return "resetbadduser";
+        return "resetbaduser";
     }
 
-    @GetMapping("/savepassword")
+    @PostMapping("/saveforgottenpassword")
     public ResponseEntity<?> savePassword(@Valid @RequestBody ResetPasswordRequest resetPasswordRequest) {
         TokenState result = securityUserService.validatePasswordResetToken(resetPasswordRequest.getToken());
         switch (result) {
@@ -205,12 +209,9 @@ public class AuthController {
             default:
                 break;
         }
-        Optional<User> rawUser = userService.getUserByPasswordResetToken(resetPasswordRequest.getToken());
-        if (rawUser.isPresent()) {
-            userService.changeUserPassword(rawUser.get(), resetPasswordRequest.getNewPassword());
-            return ResponseEntity.ok("Password reset successfully.");
-        } else {
-            return ResponseEntity.badRequest().body("");
-        }
+        User user = userService.getUserByPasswordResetToken(resetPasswordRequest.getToken()).orElseThrow();
+        userService.changeUserPassword(user, resetPasswordRequest.getNewPassword());
+        securityUserService.deletePasswordResetToken(resetPasswordRequest.getToken());
+        return ResponseEntity.ok("Password reset successfully.");
     }
 }

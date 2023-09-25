@@ -26,7 +26,6 @@
         const token = [[${token}]];
         const password = document.getElementById("password").value;
         const matchPassword = document.getElementById("matchPassword").value;
-        const oldPassword = document.getElementById("oldPassword").value;
         const confirmationElem = document.getElementById("confirmation");
         if (password !== matchPassword) {
           confirmationElem.innerText = "Passwords do not match";
@@ -45,12 +44,15 @@
         })
           .then((res) => {
             if (res.ok) {
-              confirmationElement.innerText = "Successfully reset password!";
+              confirmationElem.innerText = "Successfully reset password!";
             } else {
-              confirmationElem.innerText = res.text;
+              res.text().then((t) => {
+                confirmationElem.innerText = t;
+              })
             }
           })
-          .catch(() => {
+          .catch((e) => {
+            console.error(e);
             confirmationElem.innerText = "An error occurred.";
           });
       });

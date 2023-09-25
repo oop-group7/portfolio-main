@@ -47,6 +47,7 @@ public class UserService implements IUserService {
         }
         user.setEnabled(true);
         userRepository.save(user);
+        tokenRepository.delete(verificationToken);
         return TokenState.TokenValid;
     }
 

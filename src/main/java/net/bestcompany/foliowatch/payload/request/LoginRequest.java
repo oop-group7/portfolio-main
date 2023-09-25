@@ -9,7 +9,7 @@ import net.bestcompany.foliowatch.validators.Password;
 @Setter
 public class LoginRequest {
     @NotBlank
-    private String username;
+    private String email;
 
     @Password
     private String password;

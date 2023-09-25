@@ -1,6 +1,7 @@
 package net.bestcompany.foliowatch.security.services;
 
 import java.util.Calendar;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,11 @@ public class UserSecurityService implements ISecurityUserService {
             return TokenState.TokenExpired;
         }
         return TokenState.TokenValid;
+    }
+
+    public void deletePasswordResetToken(String token) throws NoSuchElementException {
+        PasswordResetToken passToken = passwordTokenRepository.findByToken(token).orElseThrow();
+        passwordTokenRepository.delete(passToken);
     }
 
     private boolean isTokenExpired(PasswordResetToken passToken) {

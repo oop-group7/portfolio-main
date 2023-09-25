@@ -7,13 +7,14 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import net.bestcompany.foliowatch.validators.Password;
 
 @Getter
 @Setter
 public class SignupRequest {
     @NotBlank
     @Size(min = 3, max = 20)
-    private String username;
+    private String firstName;
 
     @NotBlank
     @Size(max = 50)
@@ -22,6 +23,6 @@ public class SignupRequest {
 
     private Set<String> roles;
 
-    @NotBlank
+    @Password
     private String password;
 }
