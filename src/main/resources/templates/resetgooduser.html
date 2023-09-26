@@ -46,8 +46,8 @@
             if (res.ok) {
               confirmationElem.innerText = "Successfully reset password!";
             } else {
-              res.text().then((t) => {
-                confirmationElem.innerText = t;
+              res.json().then((j) => {
+                confirmationElem.innerText = j.error;
               })
             }
           })
