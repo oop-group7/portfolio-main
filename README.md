@@ -4,7 +4,7 @@
 
 ### Installation
 
-- Ensure that the `.env` file is loaded.
+- Obtain the latest `.env` file and ensure that it is situated in the root directory of this repo.
 
 ### Running in production
 
