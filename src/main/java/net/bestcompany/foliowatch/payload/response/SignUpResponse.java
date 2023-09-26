@@ -8,5 +8,5 @@ import lombok.Setter;
 @Setter
 @RequiredArgsConstructor
 public class SignUpResponse {
-    private final String token;
+    private final String resendEmailToken;
 }
