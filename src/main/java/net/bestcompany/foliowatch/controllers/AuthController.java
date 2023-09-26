@@ -26,6 +26,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import net.bestcompany.foliowatch.models.ERole;
@@ -35,6 +41,7 @@ import net.bestcompany.foliowatch.models.VerificationToken;
 import net.bestcompany.foliowatch.payload.request.LoginRequest;
 import net.bestcompany.foliowatch.payload.request.ResetPasswordRequest;
 import net.bestcompany.foliowatch.payload.request.SignupRequest;
+import net.bestcompany.foliowatch.payload.response.ErrorResponse;
 import net.bestcompany.foliowatch.payload.response.JwtResponse;
 import net.bestcompany.foliowatch.payload.response.MessageResponse;
 import net.bestcompany.foliowatch.payload.response.SignUpResponse;
@@ -50,6 +57,7 @@ import net.bestcompany.foliowatch.utils.Utils;
 
 @Controller
 @RequestMapping("/api/auth")
+@Tag(name = "Authentication", description = "Authentication APIs")
 public class AuthController {
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -80,6 +88,11 @@ public class AuthController {
 
     @PostMapping("/signin")
     @ResponseBody
+    @Operation(summary = "Sign in to the website", description = "Authenticates a user with the provided login credentials and returns a JWT token upon successful authentication.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful sign in", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = JwtResponse.class)) })
+    })
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
@@ -94,15 +107,26 @@ public class AuthController {
 
     @PostMapping("/signup")
     @ResponseBody
+    @Operation(summary = "Register new user", description = "Registers a new user with the provided signup credentials. If the user is successfully registered, a verification email is sent to the user. The user must verify their email before they can login.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful registration", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = JwtResponse.class)) }),
+            @ApiResponse(responseCode = "400", description = Constants.GENERIC_BAD_REQUEST, content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }),
+            @ApiResponse(responseCode = "500", description = "Error in Java mail configuration.", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) })
+    })
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest, HttpServletRequest request) {
+        User user;
+        Set<Role> roles;
         try {
             if (userRepository.existsByEmail(signUpRequest.getEmail())) {
                 return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
             }
-            User user = new User(signUpRequest.getFirstName(), signUpRequest.getEmail(),
+            user = new User(signUpRequest.getFirstName(), signUpRequest.getEmail(),
                     encoder.encode(signUpRequest.getPassword()));
             Set<String> strRoles = signUpRequest.getRoles();
-            Set<Role> roles = new HashSet<>();
+            roles = new HashSet<>();
             if (strRoles == null) {
                 Role userRole = roleRepository.findByName(ERole.ROLE_USER)
                         .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
@@ -122,13 +146,16 @@ public class AuthController {
                     }
                 });
             }
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
+        }
+        try {
             user.setRoles(roles);
             userRepository.save(user);
             VerificationToken token = registrationUserService.sendRegistrationVerificationEmail(user, request);
             return ResponseEntity.ok(new SignUpResponse(token.getToken()));
         } catch (RuntimeException e) {
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().body("Error in Java mail configuration");
+            return ResponseEntity.internalServerError().body(new ErrorResponse("Error in Java mail configuration"));
         }
     }
 
@@ -153,13 +180,20 @@ public class AuthController {
 
     @GetMapping("/resendregistrationtoken")
     @ResponseBody
+    @Operation(summary = "Resend registration token", description = "Resends a user's registration token. This is useful if the user did not receive the initial registration token.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Re-sent registration token.", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class)) }),
+            @ApiResponse(responseCode = "400", description = "Invalid token.", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) })
+    })
     public ResponseEntity<?> resendRegistrationToken(HttpServletRequest request,
             @RequestParam("token") String existingToken) {
         VerificationToken newToken;
         try {
             newToken = userService.generateNewVerificationToken(existingToken);
         } catch (NoSuchElementException e) {
-            return ResponseEntity.badRequest().body("Invalid token");
+            return ResponseEntity.badRequest().body(new ErrorResponse("Invalid token"));
         }
         User user = userService.getUserByVerificationToken(newToken.getToken()).orElseThrow();
         SimpleMailMessage email = Utils.constructResendVerificationTokenEmail(request, newToken, user);
@@ -169,6 +203,11 @@ public class AuthController {
 
     @GetMapping("/forgotpassword")
     @ResponseBody
+    @Operation(summary = "Forgot password", description = "This method is used to send a password reset email to the user. The user is not required to be logged in.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Send password recovery email.", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class)) })
+    })
     public ResponseEntity<?> forgotPassword(HttpServletRequest request, @RequestParam("email") String userEmail) {
         Optional<User> rawUser = userService.findUserByEmail(userEmail);
         if (rawUser.isPresent()) {
@@ -199,6 +238,13 @@ public class AuthController {
     }
 
     @PostMapping("/saveforgottenpassword")
+    @ResponseBody
+    @Operation(summary = "Update forgotten password", description = "This method is used to save the new password for a user who has forgotten their password. The user is not required to be logged in.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Password successfully reset.", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class)) }),
+            @ApiResponse(responseCode = "400", description = Constants.GENERIC_BAD_REQUEST, content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }) })
     public ResponseEntity<?> savePassword(@Valid @RequestBody ResetPasswordRequest resetPasswordRequest) {
         TokenState result = securityUserService.validatePasswordResetToken(resetPasswordRequest.getToken());
         switch (result) {
@@ -212,6 +258,6 @@ public class AuthController {
         User user = userService.getUserByPasswordResetToken(resetPasswordRequest.getToken()).orElseThrow();
         userService.changeUserPassword(user, resetPasswordRequest.getNewPassword());
         securityUserService.deletePasswordResetToken(resetPasswordRequest.getToken());
-        return ResponseEntity.ok("Password reset successfully.");
+        return ResponseEntity.ok(new MessageResponse("Password reset successfully."));
     }
 }
