@@ -18,10 +18,10 @@ import net.bestcompany.foliowatch.utils.Utils;
 @Transactional
 public class RegistrationUserService implements IRegistrationUserService {
     @Autowired
-    VerificationTokenRepository tokenRepository;
+    private VerificationTokenRepository tokenRepository;
 
     @Autowired
-    JavaMailSender mailSender;
+    private JavaMailSender mailSender;
 
     @Override
     public VerificationToken sendRegistrationVerificationEmail(User user, ServletRequest request) {

@@ -24,7 +24,7 @@ import net.bestcompany.foliowatch.security.services.UserDetailsServiceImpl;
 @Profile("!prod")
 public class WebSecurityConfigDev {
     @Autowired
-    UserDetailsServiceImpl userDetailsService;
+    private UserDetailsServiceImpl userDetailsService;
 
     @Autowired
     private AuthEntryPointJwt unauthorizedHandler;
