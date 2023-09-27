@@ -95,6 +95,8 @@ export function logout() {
 /**Throws an error on request failure, remember to catch it. */
 export async function register(
   firstName: string,
+  lastName: string,
+  userName: string,
   email: string,
   password: string
 ) {
@@ -103,6 +105,8 @@ export async function register(
     "POST", 
     {
       firstName,
+      lastName,
+      userName,
       email,
       password,
       roles: ["user"],

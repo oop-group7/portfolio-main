@@ -1,3 +1,5 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { register } from '../utils/fetcher';
@@ -15,12 +17,17 @@ function RegisterPage() {
   async function registerUser() {
     try {
         // Call the registration function from fetcher.ts
-        await register(firstName, email, password);
+        await register(firstName, lastName, userName, email, password);
         // If the registration function does not throw an error, it's successful
+        window.location.href = "http://localhost:8080/validation";
     } catch (error) {
         // Handle registration error
         console.log(error)
     }
+  }
+
+  function routeToLogin() {
+      navigate('/');
   }
 
   return (
@@ -30,7 +37,7 @@ function RegisterPage() {
           <h1 className="heading">New Account</h1>
 
           <div className="m-5">
-            <div className="mb-4">
+            <div className="mb-2">
               First Name
               <input
                 type="text"
@@ -81,6 +88,10 @@ function RegisterPage() {
 
             <div className="mb-4">
               Password
+              <div className="icon-container">
+                <FontAwesomeIcon className="mx-2" icon={faCircleInfo} />
+                <div className="message">Between 8-25 characters, has at least a symbol, a numeric character, and an upper and lowercase letter</div>
+              </div>
               <input
                 type="password"
                 className="form-control"
@@ -99,6 +110,12 @@ function RegisterPage() {
               >
                 Register
               </button>
+
+              <div className="d-grid gap-2 mb-3">
+                  <button type="submit" className="btn btn-primary" onClick={routeToLogin}>
+                  Back to Login
+                  </button>
+              </div>
             </div>
           </div>
         </div>
