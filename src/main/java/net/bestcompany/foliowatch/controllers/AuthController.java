@@ -19,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -93,6 +94,7 @@ public class AuthController {
             @ApiResponse(responseCode = "200", description = "Successful sign in", content = {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = JwtResponse.class)) })
     })
+    @CrossOrigin(origins = "http://localhost:5173")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
@@ -108,6 +110,7 @@ public class AuthController {
     @PostMapping("/signup")
     @ResponseBody
     @Operation(summary = "Register new user", description = "Registers a new user with the provided signup credentials. If the user is successfully registered, a verification email is sent to the user. The user must verify their email before they can login. Remember to check that your password meets the required password requirements (between 8-25 characters, has at least a symbol, a numeric character, and an upper and lowercase letter).")
+     @CrossOrigin(origins = "http://localhost:5173")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful registration", content = {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = JwtResponse.class)) }),

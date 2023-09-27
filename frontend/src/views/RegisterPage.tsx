@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { register } from '../utils/fetcher';
 import "bootstrap/dist/css/bootstrap.css";
 import "./css/RegisterPage.css";
 
@@ -11,8 +12,15 @@ function RegisterPage() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  function register() {
-
+  async function registerUser() {
+    try {
+        // Call the registration function from fetcher.ts
+        await register(userName, email, password);
+        // If the registration function does not throw an error, it's successful
+    } catch (error) {
+        // Handle registration error
+        console.log(error)
+    }
   }
 
   return (
@@ -21,7 +29,7 @@ function RegisterPage() {
         <div className="register shadow-lg p-3 bg-body rounded">
           <h1 className="heading">New Account</h1>
 
-          <form className="m-5">
+          <div className="m-5">
             <div className="mb-4">
               First Name
               <input
@@ -87,12 +95,12 @@ function RegisterPage() {
               <button
                 type="submit"
                 className="btn btn-primary"
-                onClick={register}
+                onClick={registerUser}
               >
                 Register
               </button>
             </div>
-          </form>
+          </div>
         </div>
       </div>
     </>

@@ -75,12 +75,12 @@ export async function setter<TRequest extends object | undefined>(
 }
 
 /**Throws an error on request fail. Remember to catch it. */
-export async function login(username: string, password: string) {
+export async function login(email: string, password: string) {
   const res = await fetcher<SignInRequest, SignInResponse>(
     "/api/auth/signin",
     "POST",
     {
-      username,
+      email,
       password,
     }
   );
