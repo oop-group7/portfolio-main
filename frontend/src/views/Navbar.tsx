@@ -1,5 +1,6 @@
 import "bootstrap/dist/css/bootstrap.css";
-// import "./css/Navbar.css";
+import logo from "../assets/GoldmanSachsLogo.png";
+import "./css/Navbar.css";
 
 function Navbar() {
   return (
@@ -7,7 +8,7 @@ function Navbar() {
       <div>
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
           <div className="container-fluid">
-            <img className="logo mx-3" src="/GoldmanSachsLogo.png" />
+            <img className="logo mx-3" src={logo}/>
             <button
               className="navbar-toggler"
               type="button"

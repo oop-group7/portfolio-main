@@ -13,7 +13,7 @@ export type SignInRequest = {
 };
 
 export type RegisterRequest = {
-  username: string;
+  firstName: string;
   password: string;
   email: string;
   roles: ("user" | "dev")[];

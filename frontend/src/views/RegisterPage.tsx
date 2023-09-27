@@ -15,7 +15,7 @@ function RegisterPage() {
   async function registerUser() {
     try {
         // Call the registration function from fetcher.ts
-        await register(userName, email, password);
+        await register(firstName, email, password);
         // If the registration function does not throw an error, it's successful
     } catch (error) {
         // Handle registration error
