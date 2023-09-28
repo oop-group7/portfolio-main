@@ -8,12 +8,14 @@ export type SignInResponse = {
 };
 
 export type SignInRequest = {
-  username: string;
+  email: string;
   password: string;
 };
 
 export type RegisterRequest = {
-  username: string;
+  firstName: string;
+  lastName: string,
+  userName: string,
   password: string;
   email: string;
   roles: ("user" | "dev")[];

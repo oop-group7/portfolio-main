@@ -19,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -123,7 +124,7 @@ public class AuthController {
             if (userRepository.existsByEmail(signUpRequest.getEmail())) {
                 return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
             }
-            user = new User(signUpRequest.getFirstName(), signUpRequest.getEmail(),
+            user = new User(signUpRequest.getFirstName(), signUpRequest.getLastName(), signUpRequest.getUserName(), signUpRequest.getEmail(),
                     encoder.encode(signUpRequest.getPassword()));
             Set<String> strRoles = signUpRequest.getRoles();
             roles = new HashSet<>();

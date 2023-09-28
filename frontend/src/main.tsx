@@ -4,6 +4,7 @@ import ReactDOM from "react-dom/client";
 import Navbar from "./views/Navbar.tsx";
 import LoginPage from "./views/LoginPage.tsx";
 import RegisterPage from "./views/RegisterPage.tsx";
+import ValidationPage from "./views/ValidationPage.tsx";
 import HomePage from "./views/HomePage.tsx";
 import ProfilePage from "./views/ProfilePage.tsx"; 
 import "./views/css/index.css";
@@ -39,11 +40,21 @@ const router = createBrowserRouter([
   },
 
   {
-    path: "/profilepage",
+    path: "/profile",
     element: (
       <React.StrictMode>
         <Navbar />
         <ProfilePage />
+      </React.StrictMode>
+    ),
+  },
+
+  {
+    path: "/validation",
+    element: (
+      <React.StrictMode>
+        <Navbar />
+        <ValidationPage />
       </React.StrictMode>
     ),
   }

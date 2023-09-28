@@ -1,11 +1,11 @@
 import {
   RegisterRequest,
+  RegisterResponse,
   SignInRequest,
   SignInResponse,
 } from "../types/Authentication";
 
 const ACCESS_TOKEN_KEY = "accessToken";
-const API_BASE_URL = 'http://localhost:8080';
 /**Throws an error on request fail. Remember to catch it.
  * If you are not expecting to get any output, use `setter()` instead.
  * If you are not going to pass any JSON body in your request, leave the `TResponse` generic, and the `body` field as undefined.
@@ -14,11 +14,10 @@ export async function fetcher<
   TRequest extends object | undefined,
   TResponse extends object
 >(
-  endpoint: string,
+  url: string,
   method: "GET" | "POST" | "PUT" | "DELETE",
   body: TRequest
 ): Promise<TResponse> {
-  const url = `${API_BASE_URL}${endpoint}`;
   const res = await fetch(url, {
     method,
     credentials: "same-origin",
@@ -75,12 +74,12 @@ export async function setter<TRequest extends object | undefined>(
 }
 
 /**Throws an error on request fail. Remember to catch it. */
-export async function login(username: string, password: string) {
+export async function login(email: string, password: string) {
   const res = await fetcher<SignInRequest, SignInResponse>(
     "/api/auth/signin",
     "POST",
     {
-      username,
+      email,
       password,
     }
   );
@@ -88,21 +87,28 @@ export async function login(username: string, password: string) {
   window.location.href = "/homepage";
 }
 
-export function logout() {
+export function logout() { 
   localStorage.removeItem(ACCESS_TOKEN_KEY);
   window.location.href = "/";
 }
 
 /**Throws an error on request failure, remember to catch it. */
 export async function register(
-  username: string,
+  firstName: string,
+  lastName: string,
+  userName: string,
   email: string,
   password: string
 ) {
-  await setter<RegisterRequest>("/api/auth/signup", "POST", {
-    username,
-    password,
-    email,
-    roles: ["user"],
+  await setter<RegisterRequest>(
+    "/api/auth/signup", 
+    "POST", 
+    {
+      firstName,
+      lastName,
+      userName,
+      email,
+      password,
+      roles: ["user"],
   });
 }

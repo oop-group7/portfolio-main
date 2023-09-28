@@ -11,8 +11,6 @@ function LoginPage(){
     const navigate = useNavigate();
 
     async function handleLogin(){
-        console.log('Email:', email);
-        console.log('Password:', password);
         try {
             // Call the login function from fetcher.ts
             await login(email, password);
