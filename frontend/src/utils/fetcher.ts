@@ -92,6 +92,11 @@ export function logout() {
   window.location.href = "/";
 }
 
+// Export a function to get the access token from localStorage
+export function ifLogin() { 
+  return localStorage.getItem(ACCESS_TOKEN_KEY);
+}
+
 /**Throws an error on request failure, remember to catch it. */
 export async function register(
   firstName: string,

@@ -6,3 +6,7 @@ nav{
     height: 100px !important;
     width: auto;
 }
+
+#isLoginDisplay{
+    text-align: center;
+}
