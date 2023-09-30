@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import "bootstrap/dist/css/bootstrap.css";
+import "./css/HomePage.css";
 
 function HomePage() {
 
