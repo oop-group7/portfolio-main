@@ -2,9 +2,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { register } from "../utils/fetcher";
 import "bootstrap/dist/css/bootstrap.css";
 import "./css/RegisterPage.css";
+import { AuthenticationService } from "../generated";
 
 function RegisterPage() {
   const [firstName, setFirstName] = useState("");
@@ -16,8 +16,15 @@ function RegisterPage() {
 
   async function registerUser() {
     try {
-      // Call the registration function from fetcher.ts
-      await register(firstName, lastName, userName, email, password);
+      await AuthenticationService.registerUser({
+        requestBody: {
+          email,
+          firstName,
+          lastName,
+          password,
+          userName,
+        },
+      });
       // If the registration function does not throw an error, it's successful
       window.location.href = "http://localhost:8080/validation";
     } catch (error) {
