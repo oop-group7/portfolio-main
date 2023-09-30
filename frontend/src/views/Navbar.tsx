@@ -11,13 +11,25 @@ function Navbar() {
 
 
   if (!accessToken) {
-    // User is not logged in, redirect to the root ("/") or login page
-    if (window.location.pathname !== '/' && window.location.pathname !== '/register' && window.location.pathname !== '/validation') {
+    if (
+      window.location.pathname !== '/' && 
+      window.location.pathname !== '/register' && 
+      window.location.pathname !== '/validation' && 
+      window.location.pathname !== '/password' && 
+      window.location.pathname !== '/passwordvalidation'
+    ) 
+    {
       window.location.href = '/';
     }
   } else {
-    // User is logged in, redirect to the homepage if on one of the specified paths
-    if (window.location.pathname === '/' || window.location.pathname === '/register' || window.location.pathname === '/validation') {
+    if (
+      window.location.pathname === '/' || 
+      window.location.pathname === '/register' || 
+      window.location.pathname === '/validation' ||
+       window.location.pathname === '/password' || 
+       window.location.pathname === '/passwordvalidation'
+    ) 
+    {
       window.location.href = '/homepage';
     }
   }

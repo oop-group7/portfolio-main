@@ -61,7 +61,7 @@ function LoginPage(){
                     </div>
 
                     <div className="mb-3">
-                        <a href="#" className="formstyles">Forgot password?</a>
+                        <a href="/password" className="formstyles">Forgot password?</a>
                     </div>
 
                     <div className="d-grid gap-2 mb-3">

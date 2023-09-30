@@ -117,3 +117,15 @@ export async function register(
       roles: ["user"],
   });
 }
+
+//Password reset
+export async function resetPassword(email: string) {
+  const resetUrl = `/api/auth/forgotpassword?email=${encodeURIComponent(email)}`;
+  const res = await fetch(resetUrl, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      ...getAuthHeader(),
+    }
+  })
+}

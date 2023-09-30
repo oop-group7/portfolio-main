@@ -68,29 +68,9 @@ function ProfilePage() {
                                 />
                       </h5>
                     </div>
-
-                    <div className="mb-3">
-                      <h5 className="text-left d-flex align-items-center">Password:
-                        <input
-                                type="text"
-                                className="form-control"
-                                id="password"
-                                placeholder= "New Password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                />
-                      </h5>
-                    </div>
-
                     <div className="d-grid gap-2 mb-3">
                         <button type="submit" className="btn btn-primary">
-                          Update Profile
-                        </button>
-                    </div>
-
-                    <div className="d-grid gap-2 mb-3">
-                        <button type="submit" className="btn btn-primary">
-                            Delete Profile
+                          Send
                         </button>
                     </div>
                 </div>
