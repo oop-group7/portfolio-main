@@ -1,9 +1,8 @@
-import {
-  RegisterRequest,
-  RegisterResponse,
-  SignInRequest,
-  SignInResponse,
-} from "../types/Authentication";
+import { AuthenticationService, OpenAPI } from "../generated";
+import { RegisterRequest } from "../types/Authentication";
+
+OpenAPI.CREDENTIALS = "same-origin";
+OpenAPI.BASE = window.location.origin;
 
 const ACCESS_TOKEN_KEY = "accessToken";
 /**Throws an error on request fail. Remember to catch it.
@@ -73,27 +72,29 @@ export async function setter<TRequest extends object | undefined>(
   }
 }
 
-/**Throws an error on request fail. Remember to catch it. */
+/**
+ * Sign in to the website
+ * Authenticates a user with the provided login credentials and returns a JWT token upon successful authentication.
+ * @returns JwtResponse Successful sign in
+ * @throws ApiError
+ */
 export async function login(email: string, password: string) {
-  const res = await fetcher<SignInRequest, SignInResponse>(
-    "/api/auth/signin",
-    "POST",
-    {
+  const res = await AuthenticationService.authenticateUser({
+    requestBody: {
       email,
       password,
-    }
-  );
-  localStorage.setItem(ACCESS_TOKEN_KEY, res.accessToken);
-  window.location.href = "/homepage";
+    },
+  });
+  OpenAPI.TOKEN = res.token;
+  return res;
 }
 
-export function logout() { 
-  localStorage.removeItem(ACCESS_TOKEN_KEY);
-  window.location.href = "/";
+export function logout() {
+  OpenAPI.TOKEN = undefined;
 }
 
 // Export a function to get the access token from localStorage
-export function ifLogin() { 
+export function ifLogin() {
   return localStorage.getItem(ACCESS_TOKEN_KEY);
 }
 
@@ -105,27 +106,26 @@ export async function register(
   email: string,
   password: string
 ) {
-  await setter<RegisterRequest>(
-    "/api/auth/signup", 
-    "POST", 
-    {
-      firstName,
-      lastName,
-      userName,
-      email,
-      password,
-      roles: ["user"],
+  await setter<RegisterRequest>("/api/auth/signup", "POST", {
+    firstName,
+    lastName,
+    userName,
+    email,
+    password,
+    roles: ["user"],
   });
 }
 
 //Password reset
 export async function resetPassword(email: string) {
-  const resetUrl = `/api/auth/forgotpassword?email=${encodeURIComponent(email)}`;
+  const resetUrl = `/api/auth/forgotpassword?email=${encodeURIComponent(
+    email
+  )}`;
   const res = await fetch(resetUrl, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
       ...getAuthHeader(),
-    }
-  })
+    },
+  });
 }

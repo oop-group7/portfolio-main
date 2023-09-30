@@ -14,7 +14,7 @@ import jakarta.validation.Payload;
 @Target({ ElementType.METHOD, ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Password {
-    String message() default "Invalid password";
+    String message() default "Please ensure that your password is between 8-25 characters, has at least a symbol, a numeric character, and an upper and lowercase letter.";
 
     Class<?>[] groups() default {};
 

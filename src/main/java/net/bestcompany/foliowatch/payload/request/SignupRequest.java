@@ -1,7 +1,5 @@
 package net.bestcompany.foliowatch.payload.request;
 
-import java.util.Set;
-
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -29,8 +27,7 @@ public class SignupRequest {
     @Email
     private String email;
 
-    private Set<String> roles;
-
     @Password
+    @NotBlank
     private String password;
 }

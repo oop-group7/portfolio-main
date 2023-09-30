@@ -2,7 +2,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { register } from '../utils/fetcher';
+import { register } from "../utils/fetcher";
 import "bootstrap/dist/css/bootstrap.css";
 import "./css/RegisterPage.css";
 
@@ -16,18 +16,18 @@ function RegisterPage() {
 
   async function registerUser() {
     try {
-        // Call the registration function from fetcher.ts
-        await register(firstName, lastName, userName, email, password);
-        // If the registration function does not throw an error, it's successful
-        window.location.href = "http://localhost:8080/validation";
+      // Call the registration function from fetcher.ts
+      await register(firstName, lastName, userName, email, password);
+      // If the registration function does not throw an error, it's successful
+      window.location.href = "http://localhost:8080/validation";
     } catch (error) {
-        // Handle registration error
-        console.log(error)
+      // Handle registration error
+      console.log(error);
     }
   }
 
   function routeToLogin() {
-      navigate('/');
+    navigate("/");
   }
 
   return (
@@ -90,7 +90,10 @@ function RegisterPage() {
               Password
               <div className="icon-container">
                 <FontAwesomeIcon className="mx-2" icon={faCircleInfo} />
-                <div className="message">Between 8-25 characters, has at least a symbol, a numeric character, and an upper and lowercase letter</div>
+                <div className="message">
+                  Between 8-25 characters, has at least a symbol, a numeric
+                  character, and an upper and lowercase letter
+                </div>
               </div>
               <input
                 type="password"
@@ -112,9 +115,13 @@ function RegisterPage() {
               </button>
 
               <div className="d-grid gap-2 mb-3">
-                  <button type="submit" className="btn btn-primary" onClick={routeToLogin}>
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  onClick={routeToLogin}
+                >
                   Back to Login
-                  </button>
+                </button>
               </div>
             </div>
           </div>

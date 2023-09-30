@@ -12,5 +12,6 @@ public class ResetPasswordRequest {
     private String token;
 
     @Password
+    @NotBlank
     private String newPassword;
 }

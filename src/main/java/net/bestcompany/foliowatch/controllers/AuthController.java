@@ -19,7 +19,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -119,34 +118,17 @@ public class AuthController {
     })
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest, HttpServletRequest request) {
         User user;
-        Set<Role> roles;
+        Set<Role> roles = new HashSet<>();
         try {
             if (userRepository.existsByEmail(signUpRequest.getEmail())) {
                 return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
             }
-            user = new User(signUpRequest.getFirstName(), signUpRequest.getLastName(), signUpRequest.getUserName(), signUpRequest.getEmail(),
+            user = new User(signUpRequest.getFirstName(), signUpRequest.getLastName(), signUpRequest.getUserName(),
+                    signUpRequest.getEmail(),
                     encoder.encode(signUpRequest.getPassword()));
-            Set<String> strRoles = signUpRequest.getRoles();
-            roles = new HashSet<>();
-            if (strRoles == null) {
-                Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-                        .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                roles.add(userRole);
-            } else {
-                strRoles.forEach(role -> {
-                    switch (role) {
-                        case "dev":
-                            Role devRole = roleRepository.findByName(ERole.ROLE_DEVELOPER)
-                                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                            roles.add(devRole);
-                            break;
-                        default:
-                            Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-                                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                            roles.add(userRole);
-                    }
-                });
-            }
+            Role userRole = roleRepository.findByName(ERole.ROLE_USER)
+                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+            roles.add(userRole);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
         }
