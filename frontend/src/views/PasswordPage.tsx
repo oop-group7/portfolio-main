@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./css/PasswordPage.css";
-import { AuthenticationService } from "../generated";
+import { client } from "../utils/apihelper";
 
 function RegisterPage() {
   const [email, setEmail] = useState("");
@@ -9,12 +9,14 @@ function RegisterPage() {
   const navigate = useNavigate();
 
   async function sendVerification() {
-    try {
-      const res = await AuthenticationService.forgotPassword({
-        email,
-      });
-      window.location.href = "/validation";
-    } catch (error) {
+    const res = await client.get().GET("/api/auth/forgotpassword", {
+      params: {
+        query: {
+          email,
+        },
+      },
+    });
+    if (!res.response.ok) {
       // Handle registration error
       console.log(error);
       setError("Failed");

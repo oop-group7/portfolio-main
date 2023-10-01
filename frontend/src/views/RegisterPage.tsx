@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.css";
 import "./css/RegisterPage.css";
-import { AuthenticationService } from "../generated";
+import { client } from "../utils/apihelper";
 
 function RegisterPage() {
   const [firstName, setFirstName] = useState("");
@@ -15,22 +15,17 @@ function RegisterPage() {
   const navigate = useNavigate();
 
   async function registerUser() {
-    try {
-      await AuthenticationService.registerUser({
-        requestBody: {
-          email,
-          firstName,
-          lastName,
-          password,
-          userName,
-        },
-      });
-      // If the registration function does not throw an error, it's successful
-      window.location.href = "http://localhost:8080/validation";
-    } catch (error) {
-      // Handle registration error
-      console.log(error);
-    }
+    const res = await client.get().POST("/api/auth/signup", {
+      body: {
+        email,
+        firstName,
+        lastName,
+        password,
+        userName,
+      },
+    });
+    // If the registration function does not throw an error, it's successful
+    window.location.href = "http://localhost:8080/validation";
   }
 
   function routeToLogin() {

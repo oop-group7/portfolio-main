@@ -12,7 +12,7 @@ import lombok.Setter;
 @RequiredArgsConstructor
 public class JwtResponse {
     @NotBlank
-    private final String token;
+    private final String accessToken;
 
     @NotBlank
     private final String type = "Bearer";
@@ -28,4 +28,7 @@ public class JwtResponse {
 
     @NotBlank
     private final List<String> roles;
+
+    @NotBlank
+    private final String refreshToken;
 }

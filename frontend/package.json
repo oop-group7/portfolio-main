@@ -9,7 +9,7 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "watch": "vite build --watch --emptyOutDir",
-    "generate": "openapi --input http://localhost:8080/api/docs/raw --output src/generated --useOptions --useUnionTypes"
+    "generate": "openapi-typescript http://localhost:8080/api/docs/raw -o ./src/utils/api.d.ts"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.4.2",
@@ -17,6 +17,9 @@
     "@fortawesome/react-fontawesome": "^0.2.0",
     "babel-plugin-macros": "^3.1.0",
     "bootstrap": "^5.3.2",
+    "fetch-hooks": "^4.1.2",
+    "nanostores": "^0.9.3",
+    "openapi-fetch": "^0.7.8",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.15.0"
@@ -30,7 +33,7 @@
     "eslint": "^8.45.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",
-    "openapi-typescript-codegen": "^0.25.0",
+    "openapi-typescript": "^6.7.0",
     "typescript": "^5.0.2",
     "vite": "^4.4.9"
   }

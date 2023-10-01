@@ -34,20 +34,25 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import net.bestcompany.foliowatch.exceptions.TokenRefreshException;
 import net.bestcompany.foliowatch.models.ERole;
+import net.bestcompany.foliowatch.models.RefreshToken;
 import net.bestcompany.foliowatch.models.Role;
 import net.bestcompany.foliowatch.models.User;
 import net.bestcompany.foliowatch.models.VerificationToken;
 import net.bestcompany.foliowatch.payload.request.LoginRequest;
 import net.bestcompany.foliowatch.payload.request.ResetPasswordRequest;
 import net.bestcompany.foliowatch.payload.request.SignupRequest;
+import net.bestcompany.foliowatch.payload.request.TokenRefreshRequest;
 import net.bestcompany.foliowatch.payload.response.ErrorResponse;
 import net.bestcompany.foliowatch.payload.response.JwtResponse;
 import net.bestcompany.foliowatch.payload.response.MessageResponse;
 import net.bestcompany.foliowatch.payload.response.SignUpResponse;
+import net.bestcompany.foliowatch.payload.response.TokenRefreshResponse;
 import net.bestcompany.foliowatch.repository.RoleRepository;
 import net.bestcompany.foliowatch.repository.UserRepository;
 import net.bestcompany.foliowatch.security.jwt.JwtUtils;
+import net.bestcompany.foliowatch.security.services.IRefreshTokenService;
 import net.bestcompany.foliowatch.security.services.IRegistrationUserService;
 import net.bestcompany.foliowatch.security.services.ISecurityUserService;
 import net.bestcompany.foliowatch.security.services.IUserService;
@@ -86,6 +91,9 @@ public class AuthController {
     @Autowired
     private IRegistrationUserService registrationUserService;
 
+    @Autowired
+    private IRefreshTokenService refreshTokenService;
+
     @PostMapping("/signin")
     @ResponseBody
     @Operation(summary = "Sign in to the website", description = "Authenticates a user with the provided login credentials and returns a JWT token upon successful authentication.")
@@ -101,8 +109,38 @@ public class AuthController {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
                 .collect(Collectors.toList());
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
         return ResponseEntity.ok(
-                new JwtResponse(jwt, userDetails.getId(), userDetails.getFirstName(), userDetails.getEmail(), roles));
+                new JwtResponse(jwt, userDetails.getId(), userDetails.getFirstName(), userDetails.getEmail(), roles,
+                        refreshToken.getToken()));
+    }
+
+    @PostMapping("/refresh")
+    @ResponseBody
+    @Operation(summary = "Get new access token upon expiration", description = "This endpoint is used to refresh a user's JWT token. The user must be logged in to use this endpoint. The user must also have a valid refresh token. If the user does not have a valid refresh token, they must log in again. If the user has a valid refresh token, a new JWT token is generated and returned to the user. The user's refresh token is also updated in the database. The user must use the new JWT token for all future requests. The old JWT token will no longer be valid.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful refresh.", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = TokenRefreshResponse.class)) }),
+            @ApiResponse(responseCode = "403", description = Constants.GENERIC_BAD_REQUEST, content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) })
+    })
+    public ResponseEntity<?> refreshToken(@Valid @RequestBody TokenRefreshRequest request) {
+        try {
+            String requestRefreshToken = request.getRefreshToken();
+            var res = refreshTokenService.findByToken(requestRefreshToken)
+                    .map(refreshTokenService::verifyExpiration)
+                    .map(RefreshToken::getUser).map(user -> {
+                        String token = jwtUtils.generateTokenFromEmail(user.getEmail());
+                        return ResponseEntity.ok(new TokenRefreshResponse(token, requestRefreshToken));
+                    });
+            if (res.isPresent()) {
+                return res.get();
+            } else {
+                return ResponseEntity.status(403).body(new ErrorResponse("Refresh token is not in database."));
+            }
+        } catch (TokenRefreshException e) {
+            return ResponseEntity.status(403).body(new ErrorResponse(e.getMessage()));
+        }
     }
 
     @PostMapping("/signup")

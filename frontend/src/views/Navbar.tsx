@@ -2,7 +2,7 @@ import "bootstrap/dist/css/bootstrap.css";
 import logo from "../assets/GoldmanSachsLogo.png";
 import "./css/Navbar.css";
 import { useState, useEffect } from "react";
-import { isCurrentlyLoggedIn, logout } from "../utils/apihelper";
+import { getUserData, logout } from "../utils/apihelper";
 
 function Navbar() {
   const isLoggedOut = !useIsLoggedIn();
@@ -78,7 +78,7 @@ function Navbar() {
 function useIsLoggedIn() {
   const [isLoggedIn, setIsLoggedIn] = useState(true);
   useEffect(() => {
-    setIsLoggedIn(isCurrentlyLoggedIn());
+    setIsLoggedIn(getUserData() !== undefined);
   }, []);
 
   return isLoggedIn;

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { login } from "../utils/apihelper";
+import { client } from "../utils/apihelper";
 import "./css/LoginPage.css";
 
 function LoginPage() {
@@ -10,12 +10,13 @@ function LoginPage() {
   const navigate = useNavigate();
 
   async function handleLogin() {
-    try {
-      // Call the login function from fetcher.ts
-      await login(email, password);
-      // If the login function does not throw an error, it's successful
-    } catch (error) {
-      // Handle login error
+    const res = await client.get().POST("/api/auth/signin", {
+      body: {
+        email,
+        password,
+      },
+    });
+    if (!res.response.ok) {
       setError("Login failed. Please check your credentials.");
     }
   }
