@@ -24,8 +24,14 @@ function RegisterPage() {
         userName,
       },
     });
-    // If the registration function does not throw an error, it's successful
-    window.location.href = "http://localhost:8080/validation";
+    if (!res.response.ok) {
+      const error = res.error; // Error message, might have a message or might not, hence you must handle both cases (if the type of the error is undefined only, don't bother)
+      // Not all API endpoints return back an
+      // Do something
+    } else {
+      // If the registration function does not throw an error, it's successful
+      window.location.href = "http://localhost:8080/validation";
+    }
   }
 
   function routeToLogin() {
