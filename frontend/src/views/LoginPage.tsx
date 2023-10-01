@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { client } from "../utils/apihelper";
+import { POST } from "../utils/apihelper";
 import "./css/LoginPage.css";
 
 function LoginPage() {
@@ -10,7 +10,7 @@ function LoginPage() {
   const navigate = useNavigate();
 
   async function handleLogin() {
-    const res = await client.get().POST("/api/auth/signin", {
+    const res = await POST("/api/auth/signin", {
       body: {
         email,
         password,

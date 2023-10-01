@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./css/PasswordPage.css";
-import { client } from "../utils/apihelper";
+import { GET } from "../utils/apihelper";
 
 function RegisterPage() {
   const [email, setEmail] = useState("");
@@ -9,7 +9,7 @@ function RegisterPage() {
   const navigate = useNavigate();
 
   async function sendVerification() {
-    const res = await client.get().GET("/api/auth/forgotpassword", {
+    const res = await GET("/api/auth/forgotpassword", {
       params: {
         query: {
           email,

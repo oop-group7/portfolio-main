@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.css";
 import "./css/RegisterPage.css";
-import { client } from "../utils/apihelper";
+import { POST } from "../utils/apihelper";
 
 function RegisterPage() {
   const [firstName, setFirstName] = useState("");
@@ -15,7 +15,7 @@ function RegisterPage() {
   const navigate = useNavigate();
 
   async function registerUser() {
-    const res = await client.get().POST("/api/auth/signup", {
+    const res = await POST("/api/auth/signup", {
       body: {
         email,
         firstName,
