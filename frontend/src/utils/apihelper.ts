@@ -51,6 +51,7 @@ async function middleware(
         };
         return "repeat";
       } else {
+        userData = undefined;
         window.location.href = "/";
       }
     }
