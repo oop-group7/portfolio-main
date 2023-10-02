@@ -62,7 +62,7 @@ function RegisterPage() {
                 className="btn btn-primary"
                 onClick={routeToLogin}
               >
-                Send
+                Back to Login
               </button>
             </div>
           </div>
