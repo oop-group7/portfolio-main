@@ -44,7 +44,7 @@ function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
               />
               <div id="emailHelp" className="form-text">
-                We'll never share your email with anyone else.
+                We'll never share your email with anyone else
               </div>
             </div>
 

@@ -3,30 +3,25 @@ import { components, paths } from "./api";
 
 type AuthResponse = components["schemas"]["JwtResponse"];
 
-let userData: AuthResponse | undefined = undefined;
-
-const baseClient = createClient<paths>({
+export const { GET, POST } = createClient<paths>({
   baseUrl: window.location.origin,
-});
-
-export const { GET, POST } = new Proxy(baseClient, {
-  get(_, key: keyof typeof baseClient) {
-    const newClient = createClient<paths>({
-      credentials: "same-origin",
-      headers: userData
-        ? { Authorization: `Bearer ${userData.accessToken}` }
-        : {},
-      fetch: async (input, init) => {
-        let res = await fetch(input, init);
-        const isLogin = input.toString().includes("/api/auth/signin");
-        const midRes = await middleware(res, isLogin);
-        if (midRes === "repeat") {
-          res = await fetch(input, init);
-        }
-        return res;
-      },
-    });
-    return newClient[key];
+  credentials: "same-origin",
+  fetch: async (input, init) => {
+    if (init) {
+      const userData = getUserData();
+      init.headers = userData
+        ? {
+            Authorization: `Bearer ${userData.accessToken}`,
+          }
+        : {};
+    }
+    let res = await fetch(input, init);
+    const isLogin = input.toString().includes("/api/auth/signin");
+    const midRes = await middleware(res, isLogin);
+    if (midRes === "repeat") {
+      res = await fetch(input, init);
+    }
+    return res;
   },
 });
 
@@ -35,7 +30,8 @@ async function middleware(
   isLogin: boolean
 ): Promise<"repeat" | "done"> {
   if (res.status === 401) {
-    if (userData === undefined) {
+    let userData = getUserData();
+    if (userData === null) {
       window.location.href = "/";
     } else {
       const res = await POST("/api/auth/refresh", {
@@ -49,25 +45,27 @@ async function middleware(
           accessToken: res.data.accessToken,
           refreshToken: res.data.refreshToken,
         };
+        localStorage.setItem("user", JSON.stringify(userData));
         return "repeat";
       } else {
-        userData = undefined;
+        localStorage.removeItem("user");
         window.location.href = "/";
       }
     }
   }
   if (isLogin && res.ok) {
     const authRes: AuthResponse = await res.json();
-    userData = authRes;
+    localStorage.setItem("user", JSON.stringify(authRes));
   }
   return "done";
 }
 
-export function getUserData() {
-  return userData;
+export function getUserData(): AuthResponse | null {
+  const data = localStorage.getItem("user");
+  return data && JSON.parse(data);
 }
 
 export function logout() {
-  userData = undefined;
+  localStorage.removeItem("user");
   window.location.href = "/";
 }
