@@ -50,9 +50,4 @@ public class RefreshTokenService implements IRefreshTokenService {
         }
         return token;
     }
-
-    @Override
-    public int deleteByUserId(String userId) {
-        return refreshTokenRepository.deleteByUser(userRepository.findById(userId).get());
-    }
 }

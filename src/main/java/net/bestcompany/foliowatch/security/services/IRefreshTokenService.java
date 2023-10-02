@@ -10,6 +10,4 @@ public interface IRefreshTokenService {
     RefreshToken createRefreshToken(String userId);
 
     RefreshToken verifyExpiration(RefreshToken token);
-
-    int deleteByUserId(String userId);
 }
