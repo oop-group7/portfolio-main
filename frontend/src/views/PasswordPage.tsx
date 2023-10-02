@@ -20,7 +20,13 @@ function RegisterPage() {
       // Handle registration error
       console.log(error);
       setError("Failed");
+    } else{
+      
     }
+  }
+
+  function routeToLogin() {
+    navigate("/");
   }
 
   return (
@@ -48,6 +54,13 @@ function RegisterPage() {
                 type="submit"
                 className="btn btn-primary"
                 onClick={sendVerification}
+              >
+                Send
+              </button>
+              <button
+                type="submit"
+                className="btn btn-primary"
+                onClick={routeToLogin}
               >
                 Send
               </button>

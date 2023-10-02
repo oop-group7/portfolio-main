@@ -7,29 +7,29 @@ import { getUserData, logout } from "../utils/apihelper";
 function Navbar() {
   const isLoggedOut = !useIsLoggedIn();
 
-  useEffect(() => {
-    if (isLoggedOut) {
-      if (
-        window.location.pathname !== "/" &&
-        window.location.pathname !== "/register" &&
-        window.location.pathname !== "/validation" &&
-        window.location.pathname !== "/password" &&
-        window.location.pathname !== "/passwordvalidation"
-      ) {
-        window.location.href = "/";
-      }
-    } else {
-      if (
-        window.location.pathname === "/" ||
-        window.location.pathname === "/register" ||
-        window.location.pathname === "/validation" ||
-        window.location.pathname === "/password" ||
-        window.location.pathname === "/passwordvalidation"
-      ) {
-        window.location.href = "/homepage";
-      }
-    }
-  }, [isLoggedOut]);
+  // useEffect(() => {
+  //   if (isLoggedOut) {
+  //     if (
+  //       window.location.pathname !== "/" &&
+  //       window.location.pathname !== "/register" &&
+  //       window.location.pathname !== "/validation" &&
+  //       window.location.pathname !== "/password" &&
+  //       window.location.pathname !== "/passwordvalidation"
+  //     ) {
+  //       window.location.href = "/";
+  //     }
+  //   } else {
+  //     if (
+  //       window.location.pathname === "/" ||
+  //       window.location.pathname === "/register" ||
+  //       window.location.pathname === "/validation" ||
+  //       window.location.pathname === "/password" ||
+  //       window.location.pathname === "/passwordvalidation"
+  //     ) {
+  //       window.location.href = "/homepage";
+  //     }
+  //   }
+  // }, [isLoggedOut]);
 
   async function handleLogout() {
     logout();
