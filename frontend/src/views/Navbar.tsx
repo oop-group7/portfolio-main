@@ -5,31 +5,32 @@ import { useState, useEffect } from "react";
 import { getUserData, logout } from "../utils/apihelper";
 
 function Navbar() {
-  const isLoggedOut = !useIsLoggedIn();
+  const userData = getUserData();
 
-  // useEffect(() => {
-  //   if (isLoggedOut) {
-  //     if (
-  //       window.location.pathname !== "/" &&
-  //       window.location.pathname !== "/register" &&
-  //       window.location.pathname !== "/validation" &&
-  //       window.location.pathname !== "/password" &&
-  //       window.location.pathname !== "/passwordvalidation"
-  //     ) {
-  //       window.location.href = "/";
-  //     }
-  //   } else {
-  //     if (
-  //       window.location.pathname === "/" ||
-  //       window.location.pathname === "/register" ||
-  //       window.location.pathname === "/validation" ||
-  //       window.location.pathname === "/password" ||
-  //       window.location.pathname === "/passwordvalidation"
-  //     ) {
-  //       window.location.href = "/homepage";
-  //     }
-  //   }
-  // }, [isLoggedOut]);
+  useEffect(() => {
+    if (userData == null) {
+      if (
+        window.location.pathname !== "/" &&
+        window.location.pathname !== "/register" &&
+        window.location.pathname !== "/validation" &&
+        window.location.pathname !== "/password" &&
+        window.location.pathname !== "/passwordvalidation"
+      ) {
+        window.location.href = "/";
+      }
+    } 
+    else {
+      if (
+        window.location.pathname === "/" ||
+        window.location.pathname === "/register" ||
+        window.location.pathname === "/validation" ||
+        window.location.pathname === "/password" ||
+        window.location.pathname === "/passwordvalidation"
+      ) {
+        window.location.href = "/homepage";
+      }
+    }
+  }, [window.location.pathname]);
 
   async function handleLogout() {
     logout();
@@ -42,7 +43,7 @@ function Navbar() {
             <img className="logo mx-3" src={logo} />
             <div id="#isLoginDisplay">
               <a href="#" className="formstyles" onClick={handleLogout}>
-                {isLoggedOut ? "" : "Logout"}
+                {(userData == null) ? "" : "Logout" }
               </a>
             </div>
             <button
@@ -75,13 +76,17 @@ function Navbar() {
   );
 }
 
-function useIsLoggedIn() {
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
-  useEffect(() => {
-    setIsLoggedIn(getUserData() !== undefined);
-  }, []);
-
-  return isLoggedIn;
-}
+// function useIsLoggedIn() {
+//   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  
+//   useEffect(() => {
+//     const userData = getUserData();
+//     console.log("User data:", userData);
+//     setIsLoggedIn(getUserData() !== null);
+//   }, []);
+  
+//   console.log(isLoggedIn);
+//   return isLoggedIn;
+// }
 
 export default Navbar;
