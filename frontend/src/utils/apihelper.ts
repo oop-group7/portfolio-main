@@ -66,7 +66,8 @@ async function middleware(
     }
   }
   if (isLogin && res.ok) {
-    const authRes: AuthResponse = await res.json();
+    const clonedRes = res.clone();
+    const authRes: AuthResponse = await clonedRes.json();
     localStorage.setItem(LOCAL_STORAGE_USER_KEY, JSON.stringify(authRes));
   }
   return "done";
