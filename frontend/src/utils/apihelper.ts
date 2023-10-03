@@ -11,11 +11,15 @@ export const { GET, POST } = createClient<paths>({
   fetch: async (input, init) => {
     if (init) {
       const userData = getUserData();
-      init.headers = userData
+      const extraHeaders: { Authorization: string } | {} = userData
         ? {
             Authorization: `Bearer ${userData.accessToken}`,
           }
         : {};
+      init.headers = {
+        ...init.headers,
+        ...extraHeaders,
+      };
     }
     let res = await fetch(input, init);
     const isLogin = input.toString().includes("/api/auth/signin");
