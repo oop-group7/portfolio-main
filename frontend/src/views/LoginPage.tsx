@@ -15,6 +15,9 @@ function LoginPage() {
         email,
         password,
       },
+      headers: {
+        'Content-Type': 'application/json',
+      },
     });
     if (!res.response.ok) {
       setError("Login failed. Please check your credentials.");
