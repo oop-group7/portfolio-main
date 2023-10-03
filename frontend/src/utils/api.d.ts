@@ -64,11 +64,11 @@ export interface components {
       oldPassword: string;
       newPassword: string;
     };
-    ErrorResponse: {
-      error: string;
-    };
     MessageResponse: {
       message: string;
+    };
+    ErrorResponse: {
+      error: string;
     };
     SignupRequest: {
       firstName: string;
