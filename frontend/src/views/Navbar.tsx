@@ -5,7 +5,19 @@ import { useState, useEffect } from "react";
 import { getUserData, logout } from "../utils/apihelper";
 
 function Navbar() {
-  const isLoggedOut = !useIsLoggedIn();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  //const isLoggedOut = !useIsLoggedIn();
+  const isLoggedOut = false;
+  const userData = getUserData();
+
+  useEffect(() => {
+    console.log("User data:", userData);
+    setIsLoggedIn(getUserData() !== null);
+  }, []);
+
+  console.log(isLoggedIn);
+
+  //console.log("isLoggedOut:", isLoggedOut);
 
   // useEffect(() => {
   //   if (isLoggedOut) {
@@ -75,13 +87,17 @@ function Navbar() {
   );
 }
 
-function useIsLoggedIn() {
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
-  useEffect(() => {
-    setIsLoggedIn(getUserData() !== undefined);
-  }, []);
-
-  return isLoggedIn;
-}
+// function useIsLoggedIn() {
+//   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  
+//   useEffect(() => {
+//     const userData = getUserData();
+//     console.log("User data:", userData);
+//     setIsLoggedIn(getUserData() !== null);
+//   }, []);
+  
+//   console.log(isLoggedIn);
+//   return isLoggedIn;
+// }
 
 export default Navbar;

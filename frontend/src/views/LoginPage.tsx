@@ -8,6 +8,7 @@ function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  
 
   async function handleLogin() {
     const res = await POST("/api/auth/signin", {
@@ -15,12 +16,11 @@ function LoginPage() {
         email,
         password,
       },
-      headers: {
-        'Content-Type': 'application/json',
-      },
     });
     if (!res.response.ok) {
       setError("Login failed. Please check your credentials.");
+    } else{
+      navigate("/homepage");
     }
   }
 
