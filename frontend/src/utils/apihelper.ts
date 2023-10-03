@@ -10,16 +10,21 @@ export const { GET, POST } = createClient<paths>({
   credentials: "same-origin",
   fetch: async (input, init) => {
     if (init) {
-      console.log(init.headers);
       const userData = getUserData();
-      const extraHeaders: { Authorization: string } | {} = userData
+      const extraAuthorizationHeaders: { Authorization: string } | {} = userData
         ? {
             Authorization: `Bearer ${userData.accessToken}`,
           }
         : {};
+      const extraContentHeaders: { "Content-Type": string } | {} =
+        init.method === "POST"
+          ? {
+              "Content-Type": "application/json",
+            }
+          : {};
       init.headers = {
-        ...init.headers,
-        ...extraHeaders,
+        ...extraAuthorizationHeaders,
+        ...extraContentHeaders,
       };
     }
     let res = await fetch(input, init);
