@@ -21,7 +21,7 @@ function RegisterPage() {
       console.log(error);
       setError("Failed");
     } else{
-      
+      navigate("/passwordvalidation");
     }
   }
 
