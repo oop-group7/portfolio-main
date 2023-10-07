@@ -99,7 +99,8 @@ public class AuthController {
     @Operation(summary = "Sign in to the website", description = "Authenticates a user with the provided login credentials and returns a JWT token upon successful authentication.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful sign in", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = JwtResponse.class)) })
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = JwtResponse.class)) }),
+            @ApiResponse(responseCode = "401", description = "Wrong credentials.")
     })
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(

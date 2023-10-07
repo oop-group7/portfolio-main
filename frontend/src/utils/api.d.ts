@@ -64,11 +64,11 @@ export interface components {
       oldPassword: string;
       newPassword: string;
     };
-    MessageResponse: {
-      message: string;
-    };
     ErrorResponse: {
       error: string;
+    };
+    MessageResponse: {
+      message: string;
     };
     SignupRequest: {
       firstName: string;
@@ -187,6 +187,12 @@ export interface operations {
       200: {
         content: {
           "application/json": components["schemas"]["JwtResponse"];
+        };
+      };
+      /** @description Wrong credentials. */
+      401: {
+        content: {
+          "*/*": Record<string, never>;
         };
       };
     };
