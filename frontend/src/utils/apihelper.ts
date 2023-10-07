@@ -41,7 +41,7 @@ async function middleware(
   res: Response,
   isLogin: boolean
 ): Promise<"repeat" | "done"> {
-  if (res.status === 401) {
+  if (res.status === 401 || !isLogin) {
     let userData = getUserData();
     if (userData === null) {
       window.location.href = "/";
