@@ -44,7 +44,7 @@ async function middleware(
   if (res.status === 401 || !isLogin) {
     let userData = getUserData();
     if (userData === null) {
-      window.location.href = "/";
+      //window.location.href = "/";
     } else {
       localStorage.removeItem(LOCAL_STORAGE_USER_KEY);
       const res = await POST("/api/auth/refresh", {
