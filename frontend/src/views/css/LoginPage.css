@@ -17,4 +17,9 @@
     font-size: 10px;
 }
 
-  
+.error {
+  color: #ff0000; /* Red text color for errors */
+  font-size: 14px; /* Font size for error messages */
+  margin-top: 4px; /* Spacing between the error message and the input field */
+  white-space: pre-line
+}
