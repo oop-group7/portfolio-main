@@ -119,7 +119,7 @@ import { Inbox, Mail } from "@mui/icons-material";
 
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
-function ResponsiveAppBar() {
+function ResponsiveAppBar(props: React.PropsWithChildren) {
   const [drawer, toggleDrawer] = useState<boolean>(false)
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
@@ -132,7 +132,7 @@ function ResponsiveAppBar() {
   };
 
   return (
-    <Box sx={{ display: "flex"}}>
+    <Box sx={{ display: "flex" }}>
       <Drawer
         sx={{
           width: "200px",
@@ -143,7 +143,7 @@ function ResponsiveAppBar() {
         open={drawer}
         onClose={() => toggleDrawer(false)}
       >
-        <Toolbar />
+        <Toolbar sx={{ marginTop: "1rem" }} />
         <Box sx={{ overflow: 'auto' }}>
           <List>
             {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
@@ -157,27 +157,14 @@ function ResponsiveAppBar() {
               </ListItem>
             ))}
           </List>
-          <Divider />
-          <List>
-            {['All mail', 'Trash', 'Spam'].map((text, index) => (
-              <ListItem key={text} disablePadding>
-                <ListItemButton>
-                  <ListItemIcon>
-                    {index % 2 === 0 ? <Inbox /> : <Mail />}
-                  </ListItemIcon>
-                  <ListItemText primary={text} />
-                </ListItemButton>
-              </ListItem>
-            ))}
-          </List>
         </Box>
       </Drawer>
-      <AppBar position="fixed" sx={{ backgroundColor: "white", color: "#5e9ac9", zIndex: (theme) => theme.zIndex.drawer + 1, paddingX: 2, paddingY: 1 }}>
+      <AppBar position="fixed" sx={{ backgroundColor: "white", color: "#5e9ac9", zIndex: (theme) => theme.zIndex.drawer + 1, paddingX: 3, paddingY: 2 }}>
         <Grid container width={"100%"} justifyContent={"space-between"}>
           <Grid item>
             <img style={{ width: "7rem" }} src={logo} />
             <Button style={{ backgroundColor: 'transparent', color: "black" }} disableRipple onClick={() => toggleDrawer(!drawer)}>
-              <MenuIcon />
+              <MenuIcon fontSize="large" sx={{ marginX: "1.5rem" }} />
             </Button>
           </Grid>
           <Tooltip title="Open settings">
@@ -209,6 +196,10 @@ function ResponsiveAppBar() {
           </Menu>
         </Grid>
       </AppBar>
+      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+        <Toolbar />
+        {props.children}
+      </Box>
     </Box>
   );
 }
