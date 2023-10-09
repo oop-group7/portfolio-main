@@ -1,5 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from "axios"; /* for backend requests later */
 import "bootstrap/dist/css/bootstrap.css";
+
+/*
+To Do:
+1. Make the backend logic work
+2. Edit the design such that the title of the input box is above and smaller isntead of at the left
+3. Make all the texts smaller
+4. Make an alert/confirmation after performing an action (i.e, Changes saved)
+5. Remove or include the delete button?
+*/
 
 function ProfilePage() {
 
@@ -13,12 +23,11 @@ function ProfilePage() {
     <>
         <div className="container position-relative">
             <div className="login shadow-lg p-3 bg-body rounded">
-                <h1 className="heading">Profile</h1>
+                <h1 className="heading">Update Profile</h1>
 
                 <div className="m-3">
-
                     <div className="mb-3">
-                      <h5 className="text-left d-flex align-items-center">First Name:
+                      <h5 className="text-left d-flex align-items-center">First Name 
                         <input
                                 type="text"
                                 className="form-control"
@@ -31,7 +40,7 @@ function ProfilePage() {
                     </div>
 
                     <div className="mb-3">
-                      <h5 className="text-left d-flex align-items-center">Last Name:
+                      <h5 className="text-left d-flex align-items-center">Last Name 
                         <input
                                 type="text"
                                 className="form-control"
@@ -44,7 +53,7 @@ function ProfilePage() {
                     </div>
 
                     <div className="mb-3">
-                      <h5 className="text-left d-flex align-items-center">Username:
+                      <h5 className="text-left d-flex align-items-center">Username 
                         <input
                                 type="text"
                                 className="form-control"
@@ -57,7 +66,7 @@ function ProfilePage() {
                     </div>
 
                     <div className="mb-3">
-                      <h5 className="text-left d-flex align-items-center">Email:
+                      <h5 className="text-left d-flex align-items-center">Email 
                         <input
                                 type="text"
                                 className="form-control"
@@ -68,9 +77,26 @@ function ProfilePage() {
                                 />
                       </h5>
                     </div>
+
+                    <div className="mb-3">
+                      <h5 className="text-left d-flex align-items-center">Password 
+                        <input
+                                type="text"
+                                className="form-control"
+                                id="password"
+                                placeholder= { password }
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                />
+                      </h5>
+                    </div>
+
                     <div className="d-grid gap-2 mb-3">
                         <button type="submit" className="btn btn-primary">
-                          Send
+                          Save Changes
+                        </button>
+                        <button type="submit" className="btn btn-outline-danger">
+                          Discard Changes
                         </button>
                     </div>
                 </div>
