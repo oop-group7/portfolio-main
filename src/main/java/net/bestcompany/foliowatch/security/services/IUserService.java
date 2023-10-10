@@ -5,8 +5,6 @@ import java.util.Optional;
 import net.bestcompany.foliowatch.models.User;
 import net.bestcompany.foliowatch.models.VerificationToken;
 
-import org.springframework.data.mongodb.core.query.Query;
-
 public interface IUserService {
     TokenState validateVerificationToken(String token);
 
