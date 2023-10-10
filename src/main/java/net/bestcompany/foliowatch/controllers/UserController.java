@@ -1,9 +1,14 @@
 package net.bestcompany.foliowatch.controllers;
 
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,5 +55,29 @@ public class UserController {
         }
         userService.changeUserPassword(user, updatePasswordRequest.getNewPassword());
         return ResponseEntity.ok(new MessageResponse("Successfully changed password"));
+    }
+
+    @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasRole('USER') or hasRole('DEVELOPER')")
+    @Operation(summary = "Delete user", description = "Delete the user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully deleted.", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class)) }),
+            @ApiResponse(responseCode = "400", description = "Unsuccessful deletion", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) })
+    })
+    public ResponseEntity<String> deleteDocument(@PathVariable String id) {
+        try {
+            // Convert the id string to ObjectId
+            ObjectId objectId = new ObjectId(id);
+
+            Query query = new Query(Criteria.where("_id").is(objectId));
+
+            userService.removeByQuery(query, User.class);
+
+            return ResponseEntity.ok("Document with ID " + id + " deleted successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error deleting document: " + e.getMessage());
+        }
     }
 }
