@@ -25,5 +25,5 @@ public interface IUserService {
 
     boolean checkIfValidOldPassword(User user, String oldPassword);
 
-    void removeByQuery(Query query, Class<?> entityClass);
+    void deleteUser(User user);
 }

@@ -32,6 +32,9 @@ public class UserService implements IUserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private IRefreshTokenService tokenService;
+
     @Override
     public TokenState validateVerificationToken(String token) {
         Optional<VerificationToken> rawVerificationToken = tokenRepository.findByToken(token);
@@ -90,5 +93,13 @@ public class UserService implements IUserService {
     @Override
     public boolean checkIfValidOldPassword(User user, String oldPassword) {
         return passwordEncoder.matches(oldPassword, user.getPassword());
+    }
+
+    @Override
+    public void deleteUser(User user) {
+        userRepository.delete(user);
+        tokenService.deleteTokenByUser(user);
+        tokenRepository.deleteByUser(user);
+        passwordTokenRepository.deleteByUser(user);
     }
 }
