@@ -5,6 +5,13 @@
 
 
 export interface paths {
+  "/api/user/updateprofile": {
+    /**
+     * Update user profile
+     * @description Update user profile.
+     */
+    put: operations["updateUser"];
+  };
   "/api/user/updatepassword": {
     /**
      * Update user password
@@ -54,12 +61,27 @@ export interface paths {
      */
     get: operations["forgotPassword"];
   };
+  "/api/user/deleteuser": {
+    /**
+     * Delete user
+     * @description Delete the user
+     */
+    delete: operations["deleteUser"];
+  };
 }
 
 export type webhooks = Record<string, never>;
 
 export interface components {
   schemas: {
+    UpdateUserRequest: {
+      firstName: string;
+      username: string;
+      email: string;
+    };
+    MessageResponse: {
+      message: string;
+    };
     UpdatePasswordRequest: {
       oldPassword: string;
       newPassword: string;
@@ -67,13 +89,9 @@ export interface components {
     ErrorResponse: {
       error: string;
     };
-    MessageResponse: {
-      message: string;
-    };
     SignupRequest: {
       firstName: string;
-      lastName: string;
-      userName: string;
+      username: string;
       email: string;
       password: string;
     };
@@ -85,6 +103,7 @@ export interface components {
       email: string;
       roles: string[];
       refreshToken: string;
+      username: string;
     };
     LoginRequest: {
       email: string;
@@ -116,6 +135,25 @@ export type external = Record<string, never>;
 
 export interface operations {
 
+  /**
+   * Update user profile
+   * @description Update user profile.
+   */
+  updateUser: {
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["UpdateUserRequest"];
+      };
+    };
+    responses: {
+      /** @description Successfully updated profile. */
+      200: {
+        content: {
+          "application/json": components["schemas"]["MessageResponse"];
+        };
+      };
+    };
+  };
   /**
    * Update user password
    * @description Updates a user's password. If you are looking for the endpoint to update the password after a password reset request is sent, check the authentication controller docs.
@@ -284,6 +322,20 @@ export interface operations {
     };
     responses: {
       /** @description Send password recovery email. */
+      200: {
+        content: {
+          "application/json": components["schemas"]["MessageResponse"];
+        };
+      };
+    };
+  };
+  /**
+   * Delete user
+   * @description Delete the user
+   */
+  deleteUser: {
+    responses: {
+      /** @description Successfully deleted. */
       200: {
         content: {
           "application/json": components["schemas"]["MessageResponse"];

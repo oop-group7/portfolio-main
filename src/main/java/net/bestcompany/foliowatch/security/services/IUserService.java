@@ -7,7 +7,6 @@ import net.bestcompany.foliowatch.models.VerificationToken;
 
 import org.springframework.data.mongodb.core.query.Query;
 
-
 public interface IUserService {
     TokenState validateVerificationToken(String token);
 
@@ -26,4 +25,6 @@ public interface IUserService {
     boolean checkIfValidOldPassword(User user, String oldPassword);
 
     void deleteUser(User user);
+
+    void updateUser(User user);
 }

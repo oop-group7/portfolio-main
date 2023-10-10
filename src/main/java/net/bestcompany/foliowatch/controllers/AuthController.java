@@ -113,7 +113,7 @@ public class AuthController {
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
         return ResponseEntity.ok(
                 new JwtResponse(jwt, userDetails.getId(), userDetails.getFirstName(), userDetails.getEmail(), roles,
-                        refreshToken.getToken()));
+                        refreshToken.getToken(), userDetails.getUsername()));
     }
 
     @PostMapping("/refresh")
@@ -162,7 +162,7 @@ public class AuthController {
             if (userRepository.existsByEmail(signUpRequest.getEmail())) {
                 return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
             }
-            user = new User(signUpRequest.getFirstName(), signUpRequest.getLastName(), signUpRequest.getUserName(),
+            user = new User(signUpRequest.getFirstName(), signUpRequest.getUsername(),
                     signUpRequest.getEmail(),
                     encoder.encode(signUpRequest.getPassword()));
             Role userRole = roleRepository.findByName(ERole.ROLE_USER)

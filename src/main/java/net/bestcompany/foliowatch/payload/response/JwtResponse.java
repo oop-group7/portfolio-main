@@ -31,4 +31,7 @@ public class JwtResponse {
 
     @NotBlank
     private final String refreshToken;
+
+    @NotBlank
+    private final String username;
 }

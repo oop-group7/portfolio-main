@@ -102,4 +102,9 @@ public class UserService implements IUserService {
         tokenRepository.deleteByUser(user);
         passwordTokenRepository.deleteByUser(user);
     }
+
+    @Override
+    public void updateUser(User user) {
+        userRepository.save(user);
+    }
 }
