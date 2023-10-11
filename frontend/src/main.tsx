@@ -9,6 +9,7 @@ import ValidationPasswordPage from "./views/ValidationPasswordPage.tsx";
 import HomePage from "./views/HomePage.tsx";
 import ProfilePage from "./views/ProfilePage.tsx"; 
 import PasswordPage from "./views/PasswordPage.tsx"; 
+import CreatePortfolioPage from "./views/CreatePortfolioPage.tsx";
 import "./views/css/index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
@@ -84,6 +85,16 @@ const router = createBrowserRouter([
         <Navbar>
           <PasswordPage />
         </Navbar>
+      </React.StrictMode>
+    ),
+  },
+
+  {
+    path: "/createportfolio",
+    element: (
+      <React.StrictMode>
+        <Navbar />
+        <CreatePortfolioPage />
       </React.StrictMode>
     ),
   }
