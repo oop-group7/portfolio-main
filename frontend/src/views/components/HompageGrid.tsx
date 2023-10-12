@@ -1,5 +1,5 @@
-import { Box, Typography } from '@mui/material';
-import { DataGrid, GridRowsProp, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import { Box, Link, Typography } from '@mui/material';
+import { DataGrid, GridRowsProp, GridColDef } from '@mui/x-data-grid';
 import React from 'react';
 
 const rows: GridRowsProp = [
@@ -9,7 +9,7 @@ const rows: GridRowsProp = [
 ];
 
 const columns: GridColDef[] = [
-  { field: 'stockName', headerName: 'Stock Name', flex: 1/6, headerAlign: "left" },
+  { field: 'stockName', headerName: 'Stock Name', flex: 1/6, headerAlign: "left", renderCell: (params) => (<Link>{params.value}</Link>) },
   { field: 'quantity', headerName: 'Quantity', flex: 1/6, headerAlign: "left" },
   { field: 'totalCost', headerName: 'Total Cost', flex: 1/6, headerAlign: "left" },
   { field: 'currentPrice', headerName: 'Current Price', flex: 1/6, headerAlign: "left" },
