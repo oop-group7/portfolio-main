@@ -39,7 +39,7 @@ function HomePage() {
           </Table>
         </TableContainer>
       </Grid>
-      <Grid>
+      <Grid item width={"100%"}>
         <Portfolios/>
       </Grid>
     </Grid>
