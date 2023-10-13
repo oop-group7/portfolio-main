@@ -23,6 +23,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
+import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -56,6 +59,9 @@ import net.bestcompany.foliowatch.utils.Utils;
 @Controller
 @RequestMapping("/api/auth")
 @Tag(name = "Authentication", description = "Authentication APIs")
+@TimeLimiter(name = "db")
+@Retry(name = "db")
+@CircuitBreaker(name = "db")
 public class AuthController {
     @Autowired
     private AuthenticationManager authenticationManager;
