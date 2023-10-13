@@ -9,7 +9,7 @@ import com.crazzyghost.alphavantage.Config;
 
 @Configuration
 public class AlphaVantageConfig {
-    @Value("${foliowatch.app.alphavantageApiKey}")
+    @Value("${foliowatch.app.alphaVantageApiKey}")
     private String apiKey;
 
     @Bean
