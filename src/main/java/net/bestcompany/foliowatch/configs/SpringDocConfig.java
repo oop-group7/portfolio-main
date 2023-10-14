@@ -1,4 +1,4 @@
-package net.bestcompany.foliowatch.security;
+package net.bestcompany.foliowatch.configs;
 
 import org.springframework.context.annotation.Configuration;
 
