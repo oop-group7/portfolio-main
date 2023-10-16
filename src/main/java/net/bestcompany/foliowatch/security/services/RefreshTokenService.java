@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import net.bestcompany.foliowatch.exceptions.TokenRefreshException;
 import net.bestcompany.foliowatch.models.RefreshToken;
+import net.bestcompany.foliowatch.models.User;
 import net.bestcompany.foliowatch.repository.RefreshTokenRepository;
 import net.bestcompany.foliowatch.repository.UserRepository;
 
@@ -49,5 +50,10 @@ public class RefreshTokenService implements IRefreshTokenService {
                     "Refresh token was expired. Please make a new sign in request");
         }
         return token;
+    }
+
+    @Override
+    public void deleteTokenByUser(User user) {
+        refreshTokenRepository.deleteByUser(user);
     }
 }

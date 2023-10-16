@@ -2,8 +2,10 @@ package net.bestcompany.foliowatch.security.services;
 
 import java.util.Optional;
 
+import jakarta.servlet.http.HttpServletRequest;
 import net.bestcompany.foliowatch.models.User;
 import net.bestcompany.foliowatch.models.VerificationToken;
+import net.bestcompany.foliowatch.payload.request.SignupRequest;
 
 public interface IUserService {
     TokenState validateVerificationToken(String token);
@@ -21,4 +23,10 @@ public interface IUserService {
     void changeUserPassword(User user, String password);
 
     boolean checkIfValidOldPassword(User user, String oldPassword);
+
+    void deleteUser(User user);
+
+    void updateUser(User user);
+
+    User registerNewUserAccount(SignupRequest request, HttpServletRequest httpInfo) throws Exception;
 }

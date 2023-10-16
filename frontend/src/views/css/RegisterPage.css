@@ -3,7 +3,7 @@
     top: 30%;
     transform: translateY(-25%) translateX(50%);
     width: 50%;
-    height: 630px;
+    height: auto;
     border: 1px solid grey;
     padding: 10px;
 }
@@ -14,7 +14,7 @@
     align-items: center;
     position: relative;
 }
-  
+
 .icon-container .message {
     display: none;
     position: absolute;
@@ -29,8 +29,14 @@
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     z-index: 1;
 }
-  
+
 .icon-container:hover .message {
     display: block;
 }
-  
+
+.error {
+  color: #ff0000; /* Red text color for errors */
+  font-size: 14px; /* Font size for error messages */
+  margin-top: 4px; /* Spacing between the error message and the input field */
+  white-space: pre-line
+}

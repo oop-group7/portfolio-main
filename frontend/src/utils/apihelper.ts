@@ -29,9 +29,20 @@ export const { GET, POST } = createClient<paths>({
     }
     let res = await fetch(input, init);
     const isLogin = input.toString().includes("/api/auth/signin");
+    const isUpdateProfile = input.toString().includes("/updateprofile");
     const midRes = await middleware(res, isLogin);
     if (midRes === "repeat") {
       res = await fetch(input, init);
+    }
+    const userData = getUserData();
+    if (isUpdateProfile && res.ok && userData) {
+      const clonedRes = res.clone();
+      const authRes: components["schemas"]["UpdateUserRequest"] =
+        await clonedRes.json();
+      setUserData({
+        ...userData,
+        ...authRes,
+      });
     }
     return res;
   },
@@ -44,7 +55,7 @@ async function middleware(
   if (res.status === 401 || !isLogin) {
     let userData = getUserData();
     if (userData === null) {
-      window.location.href = "/";
+      //window.location.href = "/";
     } else {
       localStorage.removeItem(LOCAL_STORAGE_USER_KEY);
       const res = await POST("/api/auth/refresh", {
@@ -68,9 +79,13 @@ async function middleware(
   if (isLogin && res.ok) {
     const clonedRes = res.clone();
     const authRes: AuthResponse = await clonedRes.json();
-    localStorage.setItem(LOCAL_STORAGE_USER_KEY, JSON.stringify(authRes));
+    setUserData(authRes);
   }
   return "done";
+}
+
+function setUserData(res: AuthResponse) {
+  localStorage.setItem(LOCAL_STORAGE_USER_KEY, JSON.stringify(res));
 }
 
 export function getUserData(): AuthResponse | null {

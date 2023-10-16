@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useAuth } from "../componenets/contexts/AuthContext";
+import { Button, Card, Form, Alert } from 'react-bootstrap';
+import { Link, useHistory } from 'react-router-dom';
 import axios from "axios"; /* for backend requests later */
 import "bootstrap/dist/css/bootstrap.css";
 
@@ -11,6 +14,11 @@ To Do:
 5. Remove or include the delete button?
 */
 
+function handleSubmit(event){
+  event.preventDefault();
+  alert("Changes saved!");
+}
+
 function ProfilePage() {
 
   const [firstName, setFirstName] = useState("");
@@ -18,6 +26,11 @@ function ProfilePage() {
   const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const [error, setError] = useState(""); /* Store error message */
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+  const history = useHistory();
 
   return (
     <>

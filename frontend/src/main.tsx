@@ -9,6 +9,7 @@ import ValidationPasswordPage from "./views/ValidationPasswordPage.tsx";
 import HomePage from "./views/HomePage.tsx";
 import ProfilePage from "./views/ProfilePage.tsx"; 
 import PasswordPage from "./views/PasswordPage.tsx"; 
+import CreatePortfolioPage from "./views/CreatePortfolioPage.tsx";
 import "./views/css/index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
@@ -17,8 +18,9 @@ const router = createBrowserRouter([
     path: "/",
     element: (
       <React.StrictMode>
-        <Navbar />
-        <LoginPage />
+        <Navbar>
+          <LoginPage />
+        </Navbar>
       </React.StrictMode>
     ),
   },
@@ -26,17 +28,19 @@ const router = createBrowserRouter([
     path: "/register", // Add a route for the register page
     element: (
       <React.StrictMode>
-        <Navbar />
-        <RegisterPage />
+        <Navbar>
+          <RegisterPage />
+        </Navbar>
       </React.StrictMode>
     ),
   },
   {
     path: "/homepage",
     element: (
-      <React.StrictMode>
-        <Navbar />
-        <HomePage />
+      <React.StrictMode>\
+        <Navbar>
+          <HomePage />
+        </Navbar>
       </React.StrictMode>
     ),
   },
@@ -45,8 +49,9 @@ const router = createBrowserRouter([
     path: "/profile",
     element: (
       <React.StrictMode>
-        <Navbar />
-        <ProfilePage />
+        <Navbar>
+          <ProfilePage />
+        </Navbar>
       </React.StrictMode>
     ),
   },
@@ -55,8 +60,9 @@ const router = createBrowserRouter([
     path: "/validation",
     element: (
       <React.StrictMode>
-        <Navbar />
-        <ValidationPage />
+        <Navbar>
+          <ValidationPage />
+        </Navbar>
       </React.StrictMode>
     ),
   },
@@ -65,8 +71,9 @@ const router = createBrowserRouter([
     path: "/passwordvalidation",
     element: (
       <React.StrictMode>
-        <Navbar />
-        <ValidationPasswordPage />
+        <Navbar>
+          <ValidationPasswordPage />
+        </Navbar>
       </React.StrictMode>
     ),
   },
@@ -75,8 +82,19 @@ const router = createBrowserRouter([
     path: "/password",
     element: (
       <React.StrictMode>
+        <Navbar>
+          <PasswordPage />
+        </Navbar>
+      </React.StrictMode>
+    ),
+  },
+
+  {
+    path: "/createportfolio",
+    element: (
+      <React.StrictMode>
         <Navbar />
-        <PasswordPage />
+        <CreatePortfolioPage />
       </React.StrictMode>
     ),
   }

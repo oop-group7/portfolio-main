@@ -24,7 +24,7 @@ public class Utils {
 
     public static SimpleMailMessage constructResendVerificationTokenEmail(HttpServletRequest request,
             VerificationToken newToken, User user) {
-        String confirmationUrl = Utils.constructBaseUrl(request) + "/api/auth/registrationconfirm?=token"
+        String confirmationUrl = Utils.constructBaseUrl(request) + "/api/auth/registrationconfirm?token="
                 + newToken.getToken();
         String message = "We will send an email with a new registration token to your email account.";
         return constructEmail("Resend registration token", message + "\r\n" + confirmationUrl, user);

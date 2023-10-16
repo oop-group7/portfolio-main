@@ -1,10 +1,8 @@
 package net.bestcompany.foliowatch.controllers;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -16,7 +14,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +23,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
+import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -35,9 +35,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import net.bestcompany.foliowatch.exceptions.TokenRefreshException;
-import net.bestcompany.foliowatch.models.ERole;
 import net.bestcompany.foliowatch.models.RefreshToken;
-import net.bestcompany.foliowatch.models.Role;
 import net.bestcompany.foliowatch.models.User;
 import net.bestcompany.foliowatch.models.VerificationToken;
 import net.bestcompany.foliowatch.payload.request.LoginRequest;
@@ -49,8 +47,6 @@ import net.bestcompany.foliowatch.payload.response.JwtResponse;
 import net.bestcompany.foliowatch.payload.response.MessageResponse;
 import net.bestcompany.foliowatch.payload.response.SignUpResponse;
 import net.bestcompany.foliowatch.payload.response.TokenRefreshResponse;
-import net.bestcompany.foliowatch.repository.RoleRepository;
-import net.bestcompany.foliowatch.repository.UserRepository;
 import net.bestcompany.foliowatch.security.jwt.JwtUtils;
 import net.bestcompany.foliowatch.security.services.IRefreshTokenService;
 import net.bestcompany.foliowatch.security.services.IRegistrationUserService;
@@ -63,18 +59,12 @@ import net.bestcompany.foliowatch.utils.Utils;
 @Controller
 @RequestMapping("/api/auth")
 @Tag(name = "Authentication", description = "Authentication APIs")
+@TimeLimiter(name = "db")
+@Retry(name = "db")
+@CircuitBreaker(name = "db")
 public class AuthController {
     @Autowired
     private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
-    private PasswordEncoder encoder;
 
     @Autowired
     private JwtUtils jwtUtils;
@@ -113,7 +103,7 @@ public class AuthController {
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
         return ResponseEntity.ok(
                 new JwtResponse(jwt, userDetails.getId(), userDetails.getFirstName(), userDetails.getEmail(), roles,
-                        refreshToken.getToken()));
+                        refreshToken.getToken(), userDetails.getUsername()));
     }
 
     @PostMapping("/refresh")
@@ -156,28 +146,12 @@ public class AuthController {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) })
     })
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest, HttpServletRequest request) {
-        User user;
-        Set<Role> roles = new HashSet<>();
         try {
-            if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-                return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
-            }
-            user = new User(signUpRequest.getFirstName(), signUpRequest.getLastName(), signUpRequest.getUserName(),
-                    signUpRequest.getEmail(),
-                    encoder.encode(signUpRequest.getPassword()));
-            Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-            roles.add(userRole);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
-        }
-        try {
-            user.setRoles(roles);
-            userRepository.save(user);
+            User user = userService.registerNewUserAccount(signUpRequest, request);
             VerificationToken token = registrationUserService.sendRegistrationVerificationEmail(user, request);
             return ResponseEntity.ok(new SignUpResponse(token.getToken()));
-        } catch (RuntimeException e) {
-            return ResponseEntity.internalServerError().body(new ErrorResponse("Error in Java mail configuration"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
         }
     }
 

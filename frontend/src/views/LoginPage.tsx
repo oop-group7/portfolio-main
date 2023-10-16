@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { POST } from "../utils/apihelper";
 import "./css/LoginPage.css";
 
+
 function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -10,7 +11,8 @@ function LoginPage() {
   const navigate = useNavigate();
   
 
-  async function handleLogin() {
+  async function handleLogin(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
     const res = await POST("/api/auth/signin", {
       body: {
         email,
@@ -18,7 +20,7 @@ function LoginPage() {
       },
     });
     if (!res.response.ok) {
-      setError("Login failed. Please check your credentials.");
+      setError("Login failed. Please check your credentials");
     } else{
       navigate("/homepage");
     }
@@ -61,6 +63,7 @@ function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
+              <p className="error">{error}</p>
             </div>
 
             <div className="mb-3">
