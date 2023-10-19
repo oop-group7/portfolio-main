@@ -9,14 +9,12 @@ import { POST } from "../utils/apihelper";
 
 function RegisterPage() {
   const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [userName, setUserName] = useState("");
+  const [username, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   const [firstNameError, setFirstNameError] = useState("");
-  const [lastNameError, setLastNameError] = useState("");
   const [userNameError, setUserNameError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
@@ -25,7 +23,6 @@ function RegisterPage() {
 
     // Reset previous errors
       setFirstNameError("");
-      setLastNameError("");
       setUserNameError("");
       setEmailError("");
 
@@ -37,12 +34,7 @@ function RegisterPage() {
         hasErrors=true;
       }
 
-      if (lastName.trim()==="") {
-        setLastNameError("Last Name is required");
-        hasErrors=true;
-        }
-
-      if (userName.trim()==="") {
+      if (username.trim()==="") {
         setUserNameError("Username is required");
         hasErrors=true;
         }
@@ -98,13 +90,12 @@ function RegisterPage() {
 
     const res = await POST("/api/auth/signup", {
       body: {
-        email,
         firstName,
-        lastName,
+        username,
+        email,
         password,
-        userName,
       },
-    });
+    });a
     if (!res.response.ok) {
       const error = res.error; // Not all API endpoints return back an Error message, might have a message or might not, hence you must handle both cases (if the type of the error is undefined only, don't bother)
       setEmailError(error.message);
@@ -140,19 +131,6 @@ function RegisterPage() {
               <p className="error">{firstNameError}</p>
             </div>
 
-            <div className="mb-4" >
-              Last Name
-              <input
-                type="text"
-                className="form-control"
-                id="lastname"
-                placeholder="Last Name"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-              />
-              <p className="error">{lastNameError}</p>
-            </div>
-
             <div className="mb-4">
               Username
               <input
@@ -160,7 +138,7 @@ function RegisterPage() {
                 className="form-control"
                 id="username"
                 placeholder="Username"
-                value={userName}
+                value={username}
                 onChange={(e) => setUserName(e.target.value)}
               />
               <p className="error">{userNameError}</p>
