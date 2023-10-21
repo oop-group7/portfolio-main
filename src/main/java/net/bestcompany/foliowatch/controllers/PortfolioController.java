@@ -1,5 +1,8 @@
 package net.bestcompany.foliowatch.controllers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,12 +26,15 @@ import jakarta.validation.Valid;
 import net.bestcompany.foliowatch.externalapi.IAlphaVantageApi;
 import net.bestcompany.foliowatch.models.Portfolio;
 import net.bestcompany.foliowatch.models.User;
+import net.bestcompany.foliowatch.models.DesiredStock;
 import net.bestcompany.foliowatch.payload.request.PortfolioCreateRequest;
 import net.bestcompany.foliowatch.payload.response.ErrorResponse;
 import net.bestcompany.foliowatch.payload.response.MessageResponse;
 import net.bestcompany.foliowatch.security.services.IUserService;
 import net.bestcompany.foliowatch.security.services.UserDetailsImpl;
 import net.bestcompany.foliowatch.services.IportfolioService;
+
+
 
 @RestController
 @RequestMapping("/api/portfolio")
@@ -61,14 +67,30 @@ public class PortfolioController {
                 ((UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication()
                         .getPrincipal()).getEmail())
                 .orElseThrow();
+        
         Portfolio portfolio = new Portfolio();
         portfolio.setCapitalAmount(request.getCapitalAmount());
         portfolio.setName(request.getName());
-        portfolio.setPrice(request.getPrice());
-        portfolio.setQuantity(request.getQuantity());
-        portfolio.setStockName(request.getStockName());
         portfolio.setStrategy(request.getStrategy());
         portfolio.setUser(user);
+        // portfolio.setPrice(request.getPrice());
+        // portfolio.setQuantity(request.getQuantity());
+        // portfolio.setStockName(request.getStockName());
+
+        List<DesiredStock> portfolioDesiredStocks = new ArrayList<>();
+        
+        for (DesiredStock requestStock : request.getDesiredStocks()) {
+            DesiredStock desiredStock = new DesiredStock();
+            desiredStock.setStockName(requestStock.getStockName());
+            desiredStock.setPrice(requestStock.getPrice());
+            desiredStock.setQuantity(requestStock.getQuantity());
+            
+            // Add the desired stock to the list
+            portfolioDesiredStocks.add(desiredStock);
+        }
+        
+        // portfolio.setDesiredStocks(portfolioDesiredStocks);
+
         try {
             portfolioService.createPortfolio(portfolio);
             return ResponseEntity.status(201).body(new MessageResponse("Successfully created portfolio"));

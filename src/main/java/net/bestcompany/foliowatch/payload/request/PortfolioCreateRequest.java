@@ -1,9 +1,12 @@
 package net.bestcompany.foliowatch.payload.request;
 
+import java.util.List;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.Setter;
+import net.bestcompany.foliowatch.models.DesiredStock;
 
 @Getter
 @Setter
@@ -17,12 +20,22 @@ public class PortfolioCreateRequest {
     @Positive
     private double capitalAmount;
 
-    @NotBlank
-    private String stockName;
+    private List<DesiredStock> desiredStocks;
 
-    @Positive
-    private double price;
+    // public List<DesiredStock> getDesiredStocks() {
+    //     return desiredStocks;
+    // }
+    
+    // public void setDesiredStocks(List<DesiredStock> desiredStocks) {
+    //     this.desiredStocks = desiredStocks;
+    // }
 
-    @Positive
-    private int quantity;
+    // @NotBlank
+    // private String stockName;
+
+    // @Positive
+    // private double price;
+
+    // @Positive
+    // private int quantity;
 }

@@ -1,5 +1,7 @@
 package net.bestcompany.foliowatch.models;
 
+import java.util.List;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -30,12 +32,14 @@ public class Portfolio {
     @NotBlank
     private double capitalAmount;
 
-    @NotBlank
-    private String stockName;
+    private List<DesiredStock> desiredStocks;
 
-    @NotBlank
-    private double price;
+    // @NotBlank
+    // private String stockName;
 
-    @NotBlank
-    private int quantity;
+    // @NotBlank
+    // private double price;
+
+    // @NotBlank
+    // private int quantity;
 }

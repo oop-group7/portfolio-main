@@ -347,8 +347,6 @@ function CreatePortfolioPage() {
             {/* <p className="error">{userNameError}</p> */}
           </div>
 
-          <hr></hr>
-
           <div className="mb-2">
             Capital
             <input
@@ -362,6 +360,8 @@ function CreatePortfolioPage() {
             />
             {/* <p className="error">{userNameError}</p> */}
           </div>
+
+          <hr></hr>
 
           <div className="mb-2">
             Desired Stock:
