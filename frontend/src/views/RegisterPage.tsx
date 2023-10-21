@@ -95,7 +95,7 @@ function RegisterPage() {
         email,
         password,
       },
-    });a
+    });
     if (!res.response.ok) {
       const error = res.error; // Not all API endpoints return back an Error message, might have a message or might not, hence you must handle both cases (if the type of the error is undefined only, don't bother)
       setEmailError(error.message);
