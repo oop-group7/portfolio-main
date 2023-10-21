@@ -1,3 +1,5 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from 'react-bootstrap-icons'
@@ -85,10 +87,6 @@ function CreatePortfolioPage() {
 
     let stockAlreadyExists = false;
 
-    if (!desiredStocks) {
-      setDesiredStocks([]);
-    }
-
     desiredStocks.forEach((stock, index) => {
       if (stock.stock === desiredStock) {
         // Stock name already exists, update the quantity
@@ -110,7 +108,11 @@ function CreatePortfolioPage() {
     setPrice("");
     setQuantity("");
 
-    console.log(desiredStocks)
+  };
+
+  const handleRemoveStock = (indexToRemove) => {
+    const updatedStocks = desiredStocks.filter((stock, index) => index !== indexToRemove);
+    setDesiredStocks(updatedStocks);
   };
 
   function routeToHomePage() {
@@ -420,7 +422,12 @@ function CreatePortfolioPage() {
                 <ul>
                   {desiredStocks.map((stock, index) => (
                     <li key={index}>
-                      Stock: {stock.stock}, Price: {stock.price}, Quantity: {stock.quantity}
+                      Stock: {stock.stock}, 
+                      Price: {stock.price}, 
+                      Quantity: {stock.quantity}
+                      <FontAwesomeIcon className="mx-2" icon={faTrash} 
+                      onClick={() => handleRemoveStock(index)}
+                      style={{ cursor: "pointer" }}/>
                     </li>
                   ))}
                 </ul>

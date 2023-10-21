@@ -9,7 +9,8 @@
 }
 
 .scrollable-list {
-    border: 1px solid grey;;
-    max-height: 40px;
+    border: 1px solid grey;
+    min-height: 80px;
+    max-height: 80px;
     overflow-y: auto;
   }
