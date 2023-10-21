@@ -22,14 +22,6 @@ public class PortfolioCreateRequest {
 
     private List<DesiredStock> desiredStocks;
 
-    // public List<DesiredStock> getDesiredStocks() {
-    //     return desiredStocks;
-    // }
-    
-    // public void setDesiredStocks(List<DesiredStock> desiredStocks) {
-    //     this.desiredStocks = desiredStocks;
-    // }
-
     // @NotBlank
     // private String stockName;
 

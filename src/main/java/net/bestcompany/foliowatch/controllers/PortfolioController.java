@@ -85,11 +85,10 @@ public class PortfolioController {
             desiredStock.setPrice(requestStock.getPrice());
             desiredStock.setQuantity(requestStock.getQuantity());
             
-            // Add the desired stock to the list
             portfolioDesiredStocks.add(desiredStock);
         }
         
-        // portfolio.setDesiredStocks(portfolioDesiredStocks);
+        portfolio.setDesiredStocks(portfolioDesiredStocks);
 
         try {
             portfolioService.createPortfolio(portfolio);

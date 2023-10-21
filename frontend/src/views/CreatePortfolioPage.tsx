@@ -3,6 +3,7 @@ import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from 'react-bootstrap-icons'
+import { POST } from "../utils/apihelper";
 import StockInput from './components/StockInput';
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap/dist/js/bootstrap.bundle.js";
@@ -15,72 +16,53 @@ function CreatePortfolioPage() {
 
   const [portfolioName, setPortfolioName] = useState("");
   const [strategy, setStrategy] = useState("");
-  const [capital, setCapital] = useState("");
+  const [capital, setCapital] = useState(0);
   const [desiredStock, setDesiredStock] = useState("");
   const [price, setPrice] = useState("");
   const [quantity, setQuantity] = useState("");
-  const [desiredStocks, setDesiredStocks] = useState<{ stock: string; price: string; quantity: string }[]>([]);
+  const [desiredStocks, setDesiredStocks] = useState<{ stock: string; price: number; quantity: number }[]>([]);
 
   const [setPortfolioNameError, portfolioNameError] = useState("");
-  // const [userNameError, setUserNameError] = useState("");
-  // const [emailError, setEmailError] = useState("");
-  // const [passwordError, setPasswordError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  // const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  //   e.preventDefault();
 
-    // Frontend input validation, for generic UX purposes, not for security purposes
+  //   // Frontend input validation, for generic UX purposes, not for security purposes
+  //   if (portfolioName.trim() === "") {
+  //     alert("Portfolio name cannot be empty or consist only of whitespaces");
+  //     return;
+  //   }
+  //   // check if any of the fields of the stocks are empty or consist only of whitespaces
+  //   for (let i = 0; i < desiredStocks.length; i++) {
+  //     if (desiredStocks[i]?.stock?.trim() === "" || desiredStocks[i]?.price?.trim() === "" || desiredStocks[i]?.quantity?.trim() === "") {
+  //       alert("Stock name, price, and quantity cannot be empty or consist only of whitespaces");
+  //       return;
+  //     }
+  //   }
+  //   // const formattedStocks = desiredStocks.map((stock) => ({
+  //   //   Stock: stock.stock,
+  //   //   Price: stock.price,
+  //   //   Quantity: stock.quantity
+  //   // }));
 
-    if (portfolioName.trim() === "") {
-      alert("Portfolio name cannot be empty or consist only of whitespaces");
-      return;
+  // }
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    console.log(portfolioName, strategy, capital,desiredStocks)
+    console.log(typeof capital)
+    event.preventDefault();
+    const res = await POST("/api/portfolio/create", {
+      body: {
+        "name": portfolioName,
+        strategy,
+        "capitalAmount": capital,
+        desiredStocks: desiredStocks,
+      },
+    });
+    if (!res.response.ok) {
+      // setError("Login failed. Please check your credentials");
+    } else{
+      navigate("/homepage");
     }
-
-    // strategy is optional
-
-    // capital is already required, so no need to check?
-
-    // desiredStock can be empty? If that is the case then we need to allow the user the ability to add more stocks later on
-
-    // check if any of the fields of the stocks are empty or consist only of whitespaces
-    for (let i = 0; i < desiredStocks.length; i++) {
-      if (desiredStocks[i]?.stock?.trim() === "" || desiredStocks[i]?.price?.trim() === "" || desiredStocks[i]?.quantity?.trim() === "") {
-        alert("Stock name, price, and quantity cannot be empty or consist only of whitespaces");
-        return;
-      }
-    }
-
-    // const formattedStocks = desiredStocks.map((stock) => ({
-    //   Stock: stock.stock,
-    //   Price: stock.price,
-    //   Quantity: stock.quantity
-    // }));
-
-    // console.table({
-    //   portfolioName,
-    //   strategy,
-    //   capital,
-    //   // desiredStock,
-    //   // price,
-    //   // quantity
-    //   desiredStocks: formattedStocks
-    // });
-
-    // api call to backend in json format using axios
-
-    // axios.post('http://localhost:5000/createPortfolio', {
-    //   portfolioName,
-    //   strategy,
-    //   capital,
-    //   desiredStocks: formattedStocks
-    // })
-    // .then(function (response) {
-    //   console.log(response); // better way than console.log is to show a popup saying portfolio created successfully and then redirect to portfolio page?
-    // })
-    // .catch(function (error) {
-    //   console.log(error);
-    // });
-
   }
 
   const handleAddStock = () => {
@@ -91,15 +73,15 @@ function CreatePortfolioPage() {
       if (stock.stock === desiredStock) {
         // Stock name already exists, update the quantity
         stockAlreadyExists = true;
-        desiredStocks[index].quantity = String(parseInt(desiredStocks[index].quantity) + parseInt(quantity));
+        desiredStocks[index].quantity += parseInt(quantity);
       }
     });
     
     if (! stockAlreadyExists){
       const newStock = {
         stock: desiredStock,
-        price: price,
-        quantity: quantity,
+        price: parseFloat(price),
+        quantity: parseInt(quantity),
       };
       desiredStocks.push(newStock);
     }
@@ -110,14 +92,10 @@ function CreatePortfolioPage() {
 
   };
 
-  const handleRemoveStock = (indexToRemove) => {
+  const handleRemoveStock = (indexToRemove: number) => {
     const updatedStocks = desiredStocks.filter((stock, index) => index !== indexToRemove);
     setDesiredStocks(updatedStocks);
   };
-
-  function routeToHomePage() {
-    navigate("/homepage");
-  }
 
   return (
     <>
@@ -316,7 +294,7 @@ function CreatePortfolioPage() {
       <div className="portfolio shadow-lg p-3 bg-body rounded">
         <div className="mt-2 d-flex align-items-center">
             <ArrowLeft onClick={() => history.back()} className="me-2 fs-3" />
-            <h1 className="heading mx-auto">New Portfolio</h1>
+            <h1 className="heading mx-auto"> Portfolio</h1>
         </div>
 
 
@@ -440,7 +418,7 @@ function CreatePortfolioPage() {
               <button
                 type="submit"
                 className="btn btn-primary"
-                onClick={routeToHomePage}
+                onClick={handleSubmit}
               >
                 Create Portfolio
               </button>
