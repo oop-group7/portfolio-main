@@ -1,6 +1,7 @@
 package net.bestcompany.foliowatch.payload.request;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,15 +14,15 @@ public class PortfolioCreateRequest {
     @NotBlank
     private String strategy;
 
-    @NotBlank
+    @Positive
     private double capitalAmount;
 
     @NotBlank
     private String stockName;
 
-    @NotBlank
+    @Positive
     private double price;
 
-    @NotBlank
+    @Positive
     private int quantity;
 }
