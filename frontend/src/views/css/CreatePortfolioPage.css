@@ -1,0 +1,15 @@
+.portfolio{ 
+    position: absolute;
+    top: 20%;
+    transform: translateY(-20%) translateX(50%);
+    width: 50%;
+    height: 800px;
+    border: 1px solid grey;
+    padding: 10px;
+}
+
+.scrollable-list {
+    border: 1px solid grey;;
+    max-height: 40px;
+    overflow-y: auto;
+  }
