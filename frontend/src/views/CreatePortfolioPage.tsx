@@ -59,7 +59,8 @@ function CreatePortfolioPage() {
       },
     });
     if (!res.response.ok) {
-      // setError("Login failed. Please check your credentials");
+      console.log(res.response)
+      //setError("Invalid Input");
     } else{
       navigate("/homepage");
     }
@@ -334,7 +335,7 @@ function CreatePortfolioPage() {
               id="capital"
               placeholder="Amount of Capital"
               value={capital}
-              onChange={(e) => setCapital(e.target.value)}
+              onChange={(e) => setCapital(parseInt(e.target.value))}
             />
             {/* <p className="error">{userNameError}</p> */}
           </div>
