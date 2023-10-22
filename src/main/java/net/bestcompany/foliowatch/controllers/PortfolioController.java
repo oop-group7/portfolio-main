@@ -1,5 +1,6 @@
 package net.bestcompany.foliowatch.controllers;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -84,6 +85,7 @@ public class PortfolioController {
             desiredStock.setStockName(requestStock.getStockName());
             desiredStock.setPrice(requestStock.getPrice());
             desiredStock.setQuantity(requestStock.getQuantity());
+            desiredStock.setTimestamp(Instant.now());
             
             portfolioDesiredStocks.add(desiredStock);
         }
