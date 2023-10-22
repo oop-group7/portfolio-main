@@ -20,7 +20,7 @@ function CreatePortfolioPage() {
   const [desiredStock, setDesiredStock] = useState("");
   const [price, setPrice] = useState("");
   const [quantity, setQuantity] = useState("");
-  const [desiredStocks, setDesiredStocks] = useState<{ stock: string; price: number; quantity: number }[]>([]);
+  const [desiredStocks, setDesiredStocks] = useState<{ stockName: string; price: number; quantity: number }[]>([]);
 
   const [setPortfolioNameError, portfolioNameError] = useState("");
 
@@ -71,7 +71,7 @@ function CreatePortfolioPage() {
     let stockAlreadyExists = false;
 
     desiredStocks.forEach((stock, index) => {
-      if (stock.stock === desiredStock) {
+      if (stock.stockName === desiredStock) {
         // Stock name already exists, update the quantity
         stockAlreadyExists = true;
         desiredStocks[index].quantity += parseInt(quantity);
@@ -80,7 +80,7 @@ function CreatePortfolioPage() {
     
     if (! stockAlreadyExists){
       const newStock = {
-        stock: desiredStock,
+        stockName: desiredStock,
         price: parseFloat(price),
         quantity: parseInt(quantity),
       };
