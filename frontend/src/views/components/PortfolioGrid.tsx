@@ -17,7 +17,7 @@ const columns: GridColDef[] = [
   { field: 'profitLoss', renderHeader: () => (<div><Typography>Unrealized</Typography><Typography>Gain/Loss</Typography></div>), flex: 1/6, headerAlign: "left", renderCell: (params) => (<Typography fontWeight={700} color={params.value && params?.value < 0 ? "red" : "green"}>{params?.value ? params.value : 0}</Typography>)}
 ];
 
-export default function Portfolios() {
+export default function Stocks() {
   return (
     <React.Fragment>
       <Box sx={{ height: "90vh", width: "100%" }}>

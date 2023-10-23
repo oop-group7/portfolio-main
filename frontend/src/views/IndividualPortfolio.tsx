@@ -7,10 +7,6 @@ function IndividualPortfolio() {
   return (
     
     <Grid container flexDirection={"column"}>
-      
-      <Grid item color={"white"} mb={2}>
-        <Typography variant="h5">Graph Overview</Typography>
-      </Grid>
 
       <Grid item color={"white"} mb={2}>
         <Typography variant="h5">Portfolio Overview</Typography>
@@ -45,6 +41,11 @@ function IndividualPortfolio() {
           </Table>
         </TableContainer>
       </Grid>
+      
+      <Grid item color={"white"} mb={2}>
+        <Typography variant="h5">Graph Overview</Typography>
+      </Grid>
+
       <Grid item width={"100%"}>
         <Stocks/>
       </Grid>
