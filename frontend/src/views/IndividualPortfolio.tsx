@@ -1,11 +1,17 @@
 import { Grid, Table, TableContainer, TableHead, TableRow, Typography} from "@mui/material";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
-import Portfolios from "./components/HompageGrid";
+import Stocks from "./components/PortfolioGrid";
 
 function IndividualPortfolio() {
 
   return (
+    
     <Grid container flexDirection={"column"}>
+      
+      <Grid item color={"white"} mb={2}>
+        <Typography variant="h5">Graph Overview</Typography>
+      </Grid>
+
       <Grid item color={"white"} mb={2}>
         <Typography variant="h5">Portfolio Overview</Typography>
       </Grid>
@@ -40,7 +46,7 @@ function IndividualPortfolio() {
         </TableContainer>
       </Grid>
       <Grid item width={"100%"}>
-        <Portfolios/>
+        <Stocks/>
       </Grid>
     </Grid>
   );

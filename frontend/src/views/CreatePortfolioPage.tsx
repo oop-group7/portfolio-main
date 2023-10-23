@@ -401,7 +401,7 @@ function CreatePortfolioPage() {
                 <ul>
                   {desiredStocks.map((stock, index) => (
                     <li key={index}>
-                      Stock: {stock.stock}, 
+                      Stock: {stock.stockName}, 
                       Price: {stock.price}, 
                       Quantity: {stock.quantity}
                       <FontAwesomeIcon className="mx-2" icon={faTrash} 

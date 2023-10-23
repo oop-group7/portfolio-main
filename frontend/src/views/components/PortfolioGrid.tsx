@@ -3,13 +3,13 @@ import { DataGrid, GridRowsProp, GridColDef } from '@mui/x-data-grid';
 import React from 'react';
 
 const rows: GridRowsProp = [
-  { id: 1, portfolioName: 'Hello', quantity: 'World', totalCost: 100, currentPrice: 1000, marketValue: 999, profitLoss: 10 },
-  { id: 2, portfolioName: 'Hello', quantity: 'World', totalCost: 100, currentPrice: 1000, marketValue: 999, profitLoss: -20 },
-  { id: 3, portfolioName: 'Hello', quantity: 'World', totalCost: 100, currentPrice: 1000, marketValue: 999, profitLoss: 1000 },
+  { id: 1, stockName: 'Hello', quantity: 'World', totalCost: 100, currentPrice: 1000, marketValue: 999, profitLoss: 10 },
+  { id: 2, stockName: 'Hello', quantity: 'World', totalCost: 100, currentPrice: 1000, marketValue: 999, profitLoss: -20 },
+  { id: 3, stockName: 'Hello', quantity: 'World', totalCost: 100, currentPrice: 1000, marketValue: 999, profitLoss: 1000 },
 ];
 
 const columns: GridColDef[] = [
-  { field: 'portfolioName', headerName: 'Portfolio Name', flex: 1/6, headerAlign: "left", renderCell: (params) => (<Link href={`http://localhost:8080/portfolio?portfolioname/${params.value}`}>{params.value}</Link>) },
+  { field: 'stockName', headerName: 'Stock Name', flex: 1/6, headerAlign: "left"},
   { field: 'quantity', headerName: 'Quantity', flex: 1/6, headerAlign: "left" },
   { field: 'totalCost', headerName: 'Total Cost', flex: 1/6, headerAlign: "left" },
   { field: 'currentPrice', headerName: 'Current Price', flex: 1/6, headerAlign: "left" },
