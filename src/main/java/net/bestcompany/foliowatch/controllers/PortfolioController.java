@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -92,6 +93,31 @@ public class PortfolioController {
         try {
             portfolioService.createPortfolio(portfolio);
             return ResponseEntity.status(201).body(new MessageResponse("Successfully created portfolio"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
+        }
+    }
+
+    @GetMapping("/getAll")
+    @PreAuthorize("hasRole('USER') or hasRole('DEVELOPER')")
+    @Operation(summary = "Get all portfolio", description = "Retrieve all portfolios by user.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Successfully retrieve all portfolios.", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class)) }),
+            @ApiResponse(responseCode = "400", description = "No portfolio found.", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) })
+    })
+    public ResponseEntity<?> getAllPortfolios() {
+        User user = userService.findUserByEmail(
+                ((UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication()
+                        .getPrincipal()).getEmail())
+                .orElseThrow();
+        System.out.println(user);
+        //List<Portfolio> portfolios = portfolioService.getAllPortfoliosByUser(user);
+        //if (portfolios.isEmpty())
+    try {
+            List<Portfolio> portfolios = portfolioService.getAllPortfoliosByUser(user);
+            return ResponseEntity.status(201).body(portfolios);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
         }

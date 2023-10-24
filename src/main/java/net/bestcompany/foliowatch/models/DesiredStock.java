@@ -15,10 +15,10 @@ public class DesiredStock {
     @NotBlank
     private String stockName;
 
-    @Positive
+    @NotBlank
     private double price;
 
-    @Positive
+    @NotBlank
     private int quantity;
 
     private Instant timestamp;

@@ -38,9 +38,9 @@ public class AlphaVantageApiController {
 
     @GetMapping("/dailyTimeSeries")
     @PreAuthorize("hasRole('USER') or hasRole('DEVELOPER')")
-    @Operation(summary = "Create portfolio", description = "Create new portfolio.")
+    @Operation(summary = "Get Daily Time Series API", description = "Obtain Daily Time Series API from AlphaVantage.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully created portfolio.", content = {
+            @ApiResponse(responseCode = "200", description = "Successfully fetch api content.", content = {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = TimeSeriesResponse.class)) })
     })
     public ResponseEntity<?> getDailyTimeSeries() {
