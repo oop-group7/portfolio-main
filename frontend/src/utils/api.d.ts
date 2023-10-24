@@ -68,6 +68,13 @@ export interface paths {
      */
     get: operations["forgotPassword"];
   };
+  "/api/alphaVantageApi/dailyTimeSeries": {
+    /**
+     * Create portfolio
+     * @description Create new portfolio.
+     */
+    get: operations["getDailyTimeSeries"];
+  };
   "/api/user/deleteuser": {
     /**
      * Delete user
@@ -96,16 +103,21 @@ export interface components {
     ErrorResponse: {
       error: string;
     };
+    DesiredStock: {
+      stockName: string;
+      /** Format: double */
+      price?: number;
+      /** Format: int32 */
+      quantity?: number;
+      /** Format: date-time */
+      timestamp?: string;
+    };
     PortfolioCreateRequest: {
       name: string;
       strategy: string;
       /** Format: double */
-      capitalAmount: number;
-      stockName: string;
-      /** Format: double */
-      price: number;
-      /** Format: int32 */
-      quantity: number;
+      capitalAmount?: number;
+      desiredStocks?: components["schemas"]["DesiredStock"][];
     };
     SignupRequest: {
       firstName: string;
@@ -138,6 +150,38 @@ export interface components {
       accessToken: string;
       refreshToken: string;
       type: string;
+    };
+    MetaData: {
+      information?: string;
+      symbol?: string;
+      lastRefreshed?: string;
+      timeZone?: string;
+      interval?: string;
+      outputSize?: string;
+    };
+    StockUnit: {
+      /** Format: double */
+      open?: number;
+      /** Format: double */
+      high?: number;
+      /** Format: double */
+      low?: number;
+      /** Format: double */
+      close?: number;
+      /** Format: double */
+      adjustedClose?: number;
+      /** Format: int64 */
+      volume?: number;
+      /** Format: double */
+      dividendAmount?: number;
+      /** Format: double */
+      splitCoefficient?: number;
+      date?: string;
+    };
+    TimeSeriesResponse: {
+      metaData?: components["schemas"]["MetaData"];
+      stockUnits?: components["schemas"]["StockUnit"][];
+      errorMessage?: string;
     };
   };
   responses: never;
@@ -496,6 +540,36 @@ export interface operations {
       200: {
         content: {
           "application/json": components["schemas"]["MessageResponse"];
+        };
+      };
+      /** @description Request Timeout */
+      408: {
+        content: never;
+      };
+      /** @description Too Many Requests */
+      429: {
+        content: never;
+      };
+      /** @description Service Unavailable */
+      503: {
+        content: never;
+      };
+      /** @description Bandwidth Limit Exceeded */
+      509: {
+        content: never;
+      };
+    };
+  };
+  /**
+   * Create portfolio
+   * @description Create new portfolio.
+   */
+  getDailyTimeSeries: {
+    responses: {
+      /** @description Successfully created portfolio. */
+      200: {
+        content: {
+          "application/json": components["schemas"]["TimeSeriesResponse"];
         };
       };
       /** @description Request Timeout */

@@ -1,15 +1,19 @@
 import { Grid, Table, TableContainer, TableHead, TableRow, Typography} from "@mui/material";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import Stocks from "./components/PortfolioGrid";
+import { useLocation } from 'react-router-dom';
 
 function IndividualPortfolio() {
-
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const portfolioName = searchParams.get("portfolioname");
+  
   return (
     
     <Grid container flexDirection={"column"}>
 
       <Grid item color={"white"} mb={2}>
-        <Typography variant="h5">Portfolio Overview</Typography>
+        <Typography variant="h5">Portfolio Overview : {portfolioName}</Typography>
       </Grid>
       <Grid item sx={{ borderRadius: "5px", backgroundColor: "white", marginBottom: "2rem" }} >
         <TableContainer>

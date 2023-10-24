@@ -46,9 +46,6 @@ import net.bestcompany.foliowatch.services.IportfolioService;
 @CircuitBreaker(name = "portfolioApi")
 public class PortfolioController {
     @Autowired
-    private IAlphaVantageApi apiService;
-
-    @Autowired
     private IportfolioService portfolioService;
 
     @Autowired
