@@ -1,11 +1,9 @@
 package net.bestcompany.foliowatch.models;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Positive;
 
 import java.time.Instant;
-import java.util.Date;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
