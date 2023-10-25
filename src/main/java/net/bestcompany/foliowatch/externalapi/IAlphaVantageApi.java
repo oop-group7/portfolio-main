@@ -1,5 +1,7 @@
 package net.bestcompany.foliowatch.externalapi;
 
-public interface IAlphaVantageApi {
+import com.crazzyghost.alphavantage.timeseries.response.TimeSeriesResponse;
 
+public interface IAlphaVantageApi {
+    TimeSeriesResponse timeSeriesDaily();
 }
