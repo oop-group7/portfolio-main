@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,7 +26,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import net.bestcompany.foliowatch.externalapi.IAlphaVantageApi;
 import net.bestcompany.foliowatch.models.Portfolio;
 import net.bestcompany.foliowatch.models.User;
 import net.bestcompany.foliowatch.models.DesiredStock;
@@ -121,5 +121,22 @@ public class PortfolioController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
         }
+    }
+
+    @DeleteMapping("/deleteportfolio")
+    @PreAuthorize("hasRole('USER') or hasRole('DEVELOPER')")
+    @Operation(summary = "Delete portfolio", description = "Delete the portfolio")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully deleted.", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class)) })
+    })
+    public ResponseEntity<?> deletePortfolio() {
+            // User user = userService.findUserByEmail(
+            //                 ((UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication()
+            //                                 .getPrincipal()).getEmail())
+            //                 .orElseThrow();
+            //Portfolio portfolio = portfolioService.findPortfolio()
+            //userService.deletePortfolio(Portfolio);
+            return ResponseEntity.ok(new MessageResponse("Successfully deleted portfolio"));
     }
 }
