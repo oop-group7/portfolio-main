@@ -17,6 +17,8 @@ public class AlphaVantageApi implements IAlphaVantageApi {
     @Value("${foliowatch.app.alphaVantageApiKey}")
     private String apiKey;
 
+    private final String BASE_URL = "https://www.alphavantage.co/query";
+
     private final WebClient client = WebClient.builder()
             .clientConnector(
                     new ReactorClientHttpConnector(
@@ -29,7 +31,7 @@ public class AlphaVantageApi implements IAlphaVantageApi {
     public SearchTickerResponse searchSymbol(String keyword) {
         return client.get()
                 .uri(uriBuilder -> uriBuilder
-                        .queryParam("https://www.alphavantage.co/query", "function", "SYMBOL_SEARCH")
+                        .queryParam(BASE_URL, "function", "SYMBOL_SEARCH")
                         .queryParam("keywords", keyword)
                         .queryParam("apikey", apiKey).build())
                 .retrieve()
@@ -40,7 +42,7 @@ public class AlphaVantageApi implements IAlphaVantageApi {
     @Cacheable("timeSeries")
     public TimeSeriesResponse getTimeSeries(String ticker) {
         return client.get()
-                .uri("https://www.alphavantage.co/query",
+                .uri(BASE_URL,
                         uriBuilder -> uriBuilder.queryParam("function", "TIME_SERIES_DAILY")
                                 .queryParam("symbol", ticker).queryParam("apikey", apiKey).build())
                 .retrieve().bodyToMono(TimeSeriesResponse.class).block();
