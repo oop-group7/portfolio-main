@@ -6,9 +6,14 @@ import java.util.Optional;
 import net.bestcompany.foliowatch.models.Portfolio;
 import net.bestcompany.foliowatch.models.User;
 
-public interface IportfolioService {
-    void createPortfolio(Portfolio portfolio) throws Exception;
-    Optional<Portfolio> findPortfolio(Portfolio portfolio);
+public interface IPortfolioService {
+    void createPortfolio(Portfolio portfolio);
+
+    Optional<Portfolio> findPortfolio(String id);
+
     List<Portfolio> getAllPortfoliosByUser(User user);
-    void deletePortfolio(Portfolio portfolio);
+
+    void deletePortfolio(String name);
+
+    void updatePortfolio(Portfolio portfolio);
 }

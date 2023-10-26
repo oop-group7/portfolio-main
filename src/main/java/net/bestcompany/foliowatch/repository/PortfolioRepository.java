@@ -9,6 +9,9 @@ import net.bestcompany.foliowatch.models.Portfolio;
 import net.bestcompany.foliowatch.models.User;
 
 public interface PortfolioRepository extends MongoRepository<Portfolio, String> {
-    Optional<Portfolio> findByName(String name);
+    Optional<Portfolio> findById(String name);
+
     List<Portfolio> findByUser(User user);
+
+    int deleteByName(String name);
 }

@@ -4,7 +4,9 @@ import net.bestcompany.foliowatch.externalapi.responses.SearchTickerResponse;
 import net.bestcompany.foliowatch.externalapi.responses.TimeSeriesResponse;
 
 public interface IAlphaVantageApi {
-    SearchTickerResponse searchSymbol(String keyword);
+    SearchTickerResponse searchTicker(String keyword);
 
     TimeSeriesResponse getTimeSeries(String ticker);
+
+    boolean tickerExists(String ticker);
 }

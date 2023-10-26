@@ -13,30 +13,32 @@ import net.bestcompany.foliowatch.models.User;
 
 @Service
 @Transactional
-public class PortfolioService implements IportfolioService {
+public class PortfolioService implements IPortfolioService {
     @Autowired
     private PortfolioRepository portfolioRepository;
 
     @Override
-    public void createPortfolio(Portfolio portfolio) throws Exception {
-        if (portfolioRepository.findByName(portfolio.getName()).isPresent()) {
-            throw new Exception("Portfolio already exists, name must be unique.");
-        }
+    public void createPortfolio(Portfolio portfolio) {
         portfolioRepository.save(portfolio);
     }
 
     @Override
-    public Optional<Portfolio> findPortfolio(Portfolio portfolio) {
-        return portfolioRepository.findById(portfolio.getId());
+    public Optional<Portfolio> findPortfolio(String id) {
+        return portfolioRepository.findById(id);
     }
 
     @Override
-    public List<Portfolio> getAllPortfoliosByUser(User user){
+    public List<Portfolio> getAllPortfoliosByUser(User user) {
         return portfolioRepository.findByUser(user);
     }
 
     @Override
-    public void deletePortfolio(Portfolio portfolio){
-        portfolioRepository.delete(portfolio);
+    public void deletePortfolio(String id) {
+        portfolioRepository.deleteById(id);
+    }
+
+    @Override
+    public void updatePortfolio(Portfolio portfolio) {
+        createPortfolio(portfolio);
     }
 }
