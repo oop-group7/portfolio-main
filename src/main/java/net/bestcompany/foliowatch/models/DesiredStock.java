@@ -1,7 +1,7 @@
 package net.bestcompany.foliowatch.models;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.Instant;
 import lombok.Getter;
@@ -15,11 +15,12 @@ public class DesiredStock {
     @NotBlank
     private String stockName;
 
-    @NotBlank
+    @NotNull
     private double price;
 
-    @NotBlank
+    @NotNull
     private int quantity;
 
+    @NotNull
     private Instant timestamp;
 }

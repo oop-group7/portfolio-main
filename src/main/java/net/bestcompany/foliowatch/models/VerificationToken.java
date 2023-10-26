@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,13 +23,14 @@ public class VerificationToken {
 
     private @Id @Setter(AccessLevel.PROTECTED) String id;
 
+    @NotBlank
     private String token;
 
     @DBRef
-    @NotBlank
+    @NotNull
     private User user;
 
-    @NotBlank
+    @NotNull
     private Date expiryDate;
 
     public VerificationToken(String token, User user) {
