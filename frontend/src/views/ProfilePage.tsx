@@ -10,73 +10,82 @@ function ProfilePage() {
   const [password, setPassword] = useState("");
 
   return (
-    <>
-        <div className="container position-relative">
-            <div className="login shadow-lg p-3 bg-body rounded">
-                <h1 className="heading">Profile</h1>
+      <div className="container position-relative">
+        <div className="login shadow-lg p-3 bg-body rounded"> {/*Edit such that all buttons are encapsulated inside this container*/}
+          <h1 className="heading">Update Profile</h1>
 
-                <div className="m-3">
-
-                    <div className="mb-3">
-                      <h5 className="text-left d-flex align-items-center">First Name:
-                        <input
-                                type="text"
-                                className="form-control"
-                                id="firstName"
-                                placeholder= { firstName }
-                                value={firstName}
-                                onChange={(e) => setFirstName(e.target.value)}
-                                />
-                      </h5>
-                    </div>
-
-                    <div className="mb-3">
-                      <h5 className="text-left d-flex align-items-center">Last Name:
-                        <input
-                                type="text"
-                                className="form-control"
-                                id="username"
-                                placeholder= { lastName }
-                                value={lastName}
-                                onChange={(e) => setLastName(e.target.value)}
-                                />
-                      </h5>
-                    </div>
-
-                    <div className="mb-3">
-                      <h5 className="text-left d-flex align-items-center">Username:
-                        <input
-                                type="text"
-                                className="form-control"
-                                id="username"
-                                placeholder= { userName }
-                                value={userName}
-                                onChange={(e) => setUserName(e.target.value)}
-                                />
-                      </h5>
-                    </div>
-
-                    <div className="mb-3">
-                      <h5 className="text-left d-flex align-items-center">Email:
-                        <input
-                                type="text"
-                                className="form-control"
-                                id="email"
-                                placeholder= { email }
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                />
-                      </h5>
-                    </div>
-                    <div className="d-grid gap-2 mb-3">
-                        <button type="submit" className="btn btn-primary">
-                          Send
-                        </button>
-                    </div>
-                </div>
+          <div className="m-3">
+            <div className="mb-3">
+              <label htmlFor="firstName">First Name</label>
+              <input
+                type="text"
+                className="form-control"
+                id="firstName"
+                placeholder={firstName}
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+              />
             </div>
+
+            <div className="mb-3">
+              <label htmlFor="lastName">Last Name</label>
+              <input
+                type="text"
+                className="form-control"
+                id="lastName"
+                placeholder={lastName}
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+              />
+            </div>
+
+            <div className="mb-3">
+              <label htmlFor="userName">Username</label>
+              <input
+                type="text"
+                className="form-control"
+                id="userName"
+                placeholder={userName}
+                value={userName}
+                onChange={(e) => setUserName(e.target.value)}
+              />
+            </div>
+
+            <div className="mb-3">
+              <label htmlFor="email">Email</label>
+              <input
+                type="text"
+                className="form-control"
+                id="email"
+                placeholder={email}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+
+            <div className="mb-3">
+              <label htmlFor="password">Password</label>
+              <input
+                type="text"
+                className="form-control"
+                id="password"
+                placeholder={password}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+
+            <div className="d-grid gap-2 mb-3">
+              <button type="submit" className="btn btn-primary">
+                Save Changes {/*Should edit information in the backend*/}
+              </button>
+              <button type="submit" className="btn btn-outline-danger">
+                Discard Changes {/*Should remove all text in the input*/}
+              </button>
+            </div>
+          </div>
         </div>
-    </>
+      </div>
   );
 }
 
