@@ -14,13 +14,13 @@ import org.springframework.data.redis.serializer.RedisSerializationContext.Seria
 
 @Configuration
 public class RedisConfig {
-    @Value("${foliowatch.app.redis.host}")
+    @Value("${redis.host}")
     private String redisHost;
 
-    @Value("${foliowatch.app.redis.port}")
+    @Value("${redis.port}")
     private int redisPort;
 
-    @Value("${foliowatch.app.redis.password}")
+    @Value("${redis.password}")
     private String redisPassword;
 
     @Bean
