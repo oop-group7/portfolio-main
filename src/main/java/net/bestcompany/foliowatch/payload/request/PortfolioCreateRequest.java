@@ -18,8 +18,8 @@ public class PortfolioCreateRequest {
     @NotBlank
     private String strategy;
 
-    @Positive
     @NotNull
+    @Positive
     private Double capitalAmount;
 
     @NotNull
