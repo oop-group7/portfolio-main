@@ -16,7 +16,7 @@ public class TimeSeriesResponse {
     private Map<String, Series> timeSeries;
 
     @Getter
-    public class Metadata {
+    public static class Metadata {
         @NotNull
         @JsonAlias("1. Information")
         private String information;
@@ -38,7 +38,7 @@ public class TimeSeriesResponse {
         private String timezone;
     }
 
-    public class Series {
+    public static class Series {
         @NotNull
         @JsonAlias("1. open")
         private String open;

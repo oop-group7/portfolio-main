@@ -13,7 +13,7 @@ public class SearchTickerResponse {
     private List<Match> bestMatches;
 
     @Getter
-    public class Match {
+    public static class Match {
         @JsonAlias("1. symbol")
         @NotNull
         private String symbol;
