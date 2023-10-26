@@ -34,7 +34,9 @@ public class RedisConfig {
     public RedisCacheManager cacheManager() {
         RedisCacheConfiguration cacheConfig = myDefaultCacheConfig(Duration.ofMinutes(10))
                 .disableCachingNullValues();
-        return RedisCacheManager.builder(redisConnectionFactory()).cacheDefaults(cacheConfig).build();
+
+        return RedisCacheManager.builder(redisConnectionFactory()).cacheDefaults(cacheConfig)
+                .withCacheConfiguration("facts", myDefaultCacheConfig(Duration.ofDays(1))).build();
     }
 
     private RedisCacheConfiguration myDefaultCacheConfig(Duration duration) {
