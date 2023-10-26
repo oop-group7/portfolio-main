@@ -6,13 +6,16 @@ import com.fasterxml.jackson.annotation.JsonAlias;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class SearchTickerResponse {
     @NotNull
     private List<Match> bestMatches;
 
     @Getter
+    @Setter
     public static class Match {
         @JsonAlias("1. symbol")
         @NotNull

@@ -6,8 +6,10 @@ import com.fasterxml.jackson.annotation.JsonAlias;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class TimeSeriesResponse {
     @JsonAlias("Meta Data")
     private Metadata metadata;
@@ -16,6 +18,7 @@ public class TimeSeriesResponse {
     private Map<String, Series> timeSeries;
 
     @Getter
+    @Setter
     public static class Metadata {
         @NotNull
         @JsonAlias("1. Information")
@@ -38,6 +41,8 @@ public class TimeSeriesResponse {
         private String timezone;
     }
 
+    @Getter
+    @Setter
     public static class Series {
         @NotNull
         @JsonAlias("1. open")
