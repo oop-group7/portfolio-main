@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 import "bootstrap/dist/css/bootstrap.css";
-import { POST } from "../utils/apihelper";
+import { GET, POST } from "../utils/apihelper";
 
 function ProfilePage() {
 
@@ -11,11 +11,30 @@ function ProfilePage() {
   const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const [firstNameError, setFirstNameError] = useState("");
   const [userNameError, setUserNameError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+
+  useEffect(() => {
+    // Fetch the user's data here after successful login
+    const fetchUserData = async () => {
+      try {
+        const userData = await GET("/api/users"); // Replace with the actual API endpoint to fetch user data
+        setFirstName(userData.firstName);
+        setUserName(userData.userName);
+        setEmail(userData.email);
+        // insert password here
+      } catch (error) {
+        // Handle errors, such as the user not being authenticated or the API request failing
+        // You can redirect the user to the login page or display an error message
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   async function handleChanges(){
     // Reset previous errors
@@ -84,7 +103,7 @@ function ProfilePage() {
       return;
     }
 
-  const res = await POST("/api/auth/signup", {
+  const res = await POST("/updateprofile", { // Check if the path is correct, do I need to put api/ at the start?
     body: {
       firstName,
       userName,
@@ -167,7 +186,7 @@ function ProfilePage() {
                 </div>
               </div>
               <input
-                type="text"
+                type="password"
                 className="form-control"
                 id="password"
                 placeholder={password}
@@ -181,7 +200,7 @@ function ProfilePage() {
                 Save Changes {/*Should edit information in the backend*/}
               </button>
               <button type="submit" className="btn btn-outline-danger">
-                Discard Changes {/*Should remove all text in the input*/}
+                Delete My Account {/*Should remove all text in the input*/}
               </button>
             </div>
           </div>
