@@ -21,6 +21,7 @@ public class DesiredStock {
     private String stockName;
 
     @NotNull
+    @Positive
     private double price;
 
     @NotNull
