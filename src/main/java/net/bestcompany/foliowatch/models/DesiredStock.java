@@ -22,11 +22,10 @@ public class DesiredStock {
 
     @NotNull
     @Positive
-    private double price;
+    private Double price;
 
     @NotNull
-    @Positive
-    private int quantity;
+    private Integer quantity;
 
     @CreatedDate
     private Date timestamp;
