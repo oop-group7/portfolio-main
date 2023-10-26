@@ -115,9 +115,8 @@
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.github.crazzyghost</groupId>
-			<artifactId>alphavantage-java</artifactId>
-			<version>1.6.2</version>
+    		<groupId>org.springframework.boot</groupId>
+    		<artifactId>spring-boot-starter-webflux</artifactId>
 		</dependency>
 	</dependencies>
 	<dependencyManagement>

@@ -8,10 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.crazzyghost.alphavantage.timeseries.response.TimeSeriesResponse;
-
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
-import io.github.resilience4j.retry.annotation.Retry;   
+import io.github.resilience4j.retry.annotation.Retry;
 import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -22,6 +20,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import net.bestcompany.foliowatch.externalapi.AlphaVantageApi;
 import net.bestcompany.foliowatch.externalapi.IAlphaVantageApi;
+import net.bestcompany.foliowatch.externalapi.responses.TimeSeriesResponse;
 import net.bestcompany.foliowatch.payload.response.ErrorResponse;
 import net.bestcompany.foliowatch.payload.response.MessageResponse;
 
@@ -44,6 +43,6 @@ public class AlphaVantageApiController {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = TimeSeriesResponse.class)) })
     })
     public ResponseEntity<?> getDailyTimeSeries() {
-        return ResponseEntity.ok().body(apiService.timeSeriesDaily());
+        return ResponseEntity.ok().body(apiService.getTimeSeries("IBM"));
     }
 }

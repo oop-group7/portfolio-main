@@ -1,20 +1,44 @@
 package net.bestcompany.foliowatch.externalapi;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Service;
+import java.time.Duration;
 
-import com.crazzyghost.alphavantage.AlphaVantage;
-import com.crazzyghost.alphavantage.timeseries.response.TimeSeriesResponse;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
+import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+
+import net.bestcompany.foliowatch.externalapi.responses.SearchTickerResponse;
+import net.bestcompany.foliowatch.externalapi.responses.TimeSeriesResponse;
+import reactor.netty.http.client.HttpClient;
 
 @Service
 public class AlphaVantageApi implements IAlphaVantageApi {
-    @Autowired
-    private AlphaVantage apiService;
+    @Value("${foliowatch.app.alphaVantageApiKey}")
+    private String apiKey;
+
+    private final WebClient client = WebClient.builder()
+            .clientConnector(
+                    new ReactorClientHttpConnector(
+                            HttpClient.create().baseUrl("https://www.alphavantage.co")
+                                    .responseTimeout(Duration.ofSeconds(9))))
+            .build();
 
     @Override
-    @Cacheable("timeSeriesDaily")
-    public TimeSeriesResponse timeSeriesDaily() {
-        return apiService.timeSeries().daily().fetchSync();
+    @Cacheable("searchSymbol")
+    public SearchTickerResponse searchSymbol(String keyword) {
+        return client.get()
+                .uri(uriBuilder -> uriBuilder.queryParam("function", "SYMBOL_SEARCH").queryParam("keywords", keyword)
+                        .queryParam("apikey", apiKey).build())
+                .retrieve()
+                .bodyToMono(SearchTickerResponse.class).block();
+    }
+
+    @Override
+    @Cacheable("timeSeries")
+    public TimeSeriesResponse getTimeSeries(String ticker) {
+        return client.get().uri(uriBuilder -> uriBuilder.queryParam("function", "TIME_SERIES_DAILY")
+                .queryParam("symbol", ticker).queryParam("apikey", apiKey).build())
+                .retrieve().bodyToMono(TimeSeriesResponse.class).block();
     }
 }
