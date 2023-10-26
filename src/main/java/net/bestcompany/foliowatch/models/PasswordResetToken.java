@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,10 +27,10 @@ public class PasswordResetToken {
     private String token;
 
     @DBRef
-    @NotBlank
+    @NotNull
     private User user;
 
-    @NotBlank
+    @NotNull
     private Date expiryDate;
 
     public PasswordResetToken(final String token) {
