@@ -12,7 +12,7 @@ import net.bestcompany.foliowatch.models.DesiredStock;
 
 @Getter
 @Setter
-public class PortfolioCreateAndUpdateRequest {
+public class PortfolioCreateOrUpdateRequest {
     @NotBlank
     private String name;
 

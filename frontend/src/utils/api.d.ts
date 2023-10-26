@@ -12,6 +12,13 @@ export interface paths {
      */
     put: operations["updateUser"];
   };
+  "/api/portfolio/updateportfolio/{id}": {
+    /**
+     * Update portfolio
+     * @description Update the portfolio.
+     */
+    put: operations["updatePortfolio"];
+  };
   "/api/user/updatepassword": {
     /**
      * Update user password
@@ -54,6 +61,20 @@ export interface paths {
      */
     post: operations["refreshToken"];
   };
+  "/api/portfolio/getAll": {
+    /**
+     * Get all portfolio
+     * @description Retrieve all portfolios by user.
+     */
+    get: operations["getAllPortfolios"];
+  };
+  "/api/portfolio/get/{id}": {
+    /**
+     * Get all portfolio
+     * @description Retrieve all portfolios by user.
+     */
+    get: operations["getPortfolio"];
+  };
   "/api/auth/resendregistrationtoken": {
     /**
      * Resend registration token
@@ -68,10 +89,17 @@ export interface paths {
      */
     get: operations["forgotPassword"];
   };
-  "/api/alphaVantageApi/dailyTimeSeries": {
+  "/api/alphaVantageApi/searchticker/{keyword}": {
     /**
-     * Create portfolio
-     * @description Create new portfolio.
+     * Search ticker with provided keyword.
+     * @description Returns a list of tickers that match the given keyword.
+     */
+    get: operations["searchTickers"];
+  };
+  "/api/alphaVantageApi/dailytimeseries/{ticker}": {
+    /**
+     * Get daily time series API
+     * @description Obtain Ddily time series data from AlphaVantage.
      */
     get: operations["getDailyTimeSeries"];
   };
@@ -81,6 +109,13 @@ export interface paths {
      * @description Delete the user
      */
     delete: operations["deleteUser"];
+  };
+  "/api/portfolio/deleteportfolio/{id}": {
+    /**
+     * Delete portfolio
+     * @description Delete the portfolio.
+     */
+    delete: operations["deletePortfolio"];
   };
 }
 
@@ -96,28 +131,28 @@ export interface components {
     MessageResponse: {
       message: string;
     };
+    DesiredStock: {
+      stockName: string;
+      /** Format: double */
+      price: number;
+      /** Format: int32 */
+      quantity: number;
+      /** Format: date-time */
+      timestamp?: string;
+    };
+    PortfolioCreateOrUpdateRequest: {
+      name: string;
+      strategy: string;
+      /** Format: double */
+      capitalAmount: number;
+      desiredStocks: components["schemas"]["DesiredStock"][];
+    };
     UpdatePasswordRequest: {
       oldPassword: string;
       newPassword: string;
     };
     ErrorResponse: {
       error: string;
-    };
-    DesiredStock: {
-      stockName: string;
-      /** Format: double */
-      price?: number;
-      /** Format: int32 */
-      quantity?: number;
-      /** Format: date-time */
-      timestamp?: string;
-    };
-    PortfolioCreateRequest: {
-      name: string;
-      strategy: string;
-      /** Format: double */
-      capitalAmount?: number;
-      desiredStocks?: components["schemas"]["DesiredStock"][];
     };
     SignupRequest: {
       firstName: string;
@@ -151,37 +186,68 @@ export interface components {
       refreshToken: string;
       type: string;
     };
-    MetaData: {
-      information?: string;
-      symbol?: string;
-      lastRefreshed?: string;
-      timeZone?: string;
-      interval?: string;
-      outputSize?: string;
+    AllPortfoliosResponse: {
+      portfolios: components["schemas"]["Portfolio"][];
     };
-    StockUnit: {
+    Portfolio: {
+      id?: string;
+      user: components["schemas"]["User"];
+      name: string;
+      strategy: string;
       /** Format: double */
-      open?: number;
-      /** Format: double */
-      high?: number;
-      /** Format: double */
-      low?: number;
-      /** Format: double */
-      close?: number;
-      /** Format: double */
-      adjustedClose?: number;
-      /** Format: int64 */
-      volume?: number;
-      /** Format: double */
-      dividendAmount?: number;
-      /** Format: double */
-      splitCoefficient?: number;
-      date?: string;
+      capitalAmount: number;
+      desiredStocks: components["schemas"]["DesiredStock"][];
+      /** Format: date-time */
+      createdAt?: string;
+    };
+    Role: {
+      id?: string;
+      /** @enum {string} */
+      name: "ROLE_USER";
+    };
+    User: {
+      id?: string;
+      enabled: boolean;
+      firstName: string;
+      userName: string;
+      email: string;
+      password: string;
+      roles?: components["schemas"]["Role"][];
+    };
+    Match: {
+      symbol: string;
+      name: string;
+      type: string;
+      region: string;
+      marketOpen: string;
+      marketClose: string;
+      timezone: string;
+      currency: string;
+      /** Format: float */
+      matchScore: number;
+    };
+    SearchTickerResponse: {
+      bestMatches: components["schemas"]["Match"][];
+    };
+    Metadata: {
+      information: string;
+      symbol: string;
+      lastRefreshed: string;
+      outputSize: string;
+      timezone: string;
+    };
+    Series: {
+      open: string;
+      high: string;
+      low: string;
+      close: string;
+      volume: string;
     };
     TimeSeriesResponse: {
-      metaData?: components["schemas"]["MetaData"];
-      stockUnits?: components["schemas"]["StockUnit"][];
-      errorMessage?: string;
+      metadata?: components["schemas"]["Metadata"];
+      timeSeries?: {
+        [key: string]: components["schemas"]["Series"];
+      };
     };
   };
   responses: never;
@@ -210,6 +276,52 @@ export interface operations {
     responses: {
       /** @description Successfully updated profile. */
       200: {
+        content: {
+          "application/json": components["schemas"]["MessageResponse"];
+        };
+      };
+      /** @description Request Timeout */
+      408: {
+        content: never;
+      };
+      /** @description Too Many Requests */
+      429: {
+        content: never;
+      };
+      /** @description Service Unavailable */
+      503: {
+        content: never;
+      };
+      /** @description Bandwidth Limit Exceeded */
+      509: {
+        content: never;
+      };
+    };
+  };
+  /**
+   * Update portfolio
+   * @description Update the portfolio.
+   */
+  updatePortfolio: {
+    parameters: {
+      path: {
+        id: string;
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["PortfolioCreateOrUpdateRequest"];
+      };
+    };
+    responses: {
+      /** @description Successfully updated portfolio. */
+      200: {
+        content: {
+          "application/json": components["schemas"]["MessageResponse"];
+        };
+      };
+      /** @description Unable to find portfolio. */
+      404: {
         content: {
           "application/json": components["schemas"]["MessageResponse"];
         };
@@ -280,7 +392,7 @@ export interface operations {
   createPortfolio: {
     requestBody: {
       content: {
-        "application/json": components["schemas"]["PortfolioCreateRequest"];
+        "application/json": components["schemas"]["PortfolioCreateOrUpdateRequest"];
       };
     };
     responses: {
@@ -290,7 +402,7 @@ export interface operations {
           "application/json": components["schemas"]["MessageResponse"];
         };
       };
-      /** @description Portfolio already exists, name must be unique. */
+      /** @description One of the stock name provided is invalid. */
       400: {
         content: {
           "application/json": components["schemas"]["ErrorResponse"];
@@ -485,6 +597,77 @@ export interface operations {
     };
   };
   /**
+   * Get all portfolio
+   * @description Retrieve all portfolios by user.
+   */
+  getAllPortfolios: {
+    responses: {
+      /** @description Successfully retrieve all portfolios. */
+      200: {
+        content: {
+          "application/json": components["schemas"]["AllPortfoliosResponse"];
+        };
+      };
+      /** @description Request Timeout */
+      408: {
+        content: never;
+      };
+      /** @description Too Many Requests */
+      429: {
+        content: never;
+      };
+      /** @description Service Unavailable */
+      503: {
+        content: never;
+      };
+      /** @description Bandwidth Limit Exceeded */
+      509: {
+        content: never;
+      };
+    };
+  };
+  /**
+   * Get all portfolio
+   * @description Retrieve all portfolios by user.
+   */
+  getPortfolio: {
+    parameters: {
+      path: {
+        id: string;
+      };
+    };
+    responses: {
+      /** @description Successfully retrieve all portfolios. */
+      200: {
+        content: {
+          "application/json": components["schemas"]["Portfolio"];
+        };
+      };
+      /** @description Unable to find portfolio. */
+      404: {
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+      /** @description Request Timeout */
+      408: {
+        content: never;
+      };
+      /** @description Too Many Requests */
+      429: {
+        content: never;
+      };
+      /** @description Service Unavailable */
+      503: {
+        content: never;
+      };
+      /** @description Bandwidth Limit Exceeded */
+      509: {
+        content: never;
+      };
+    };
+  };
+  /**
    * Resend registration token
    * @description Resends a user's registration token. This is useful if the user did not receive the initial registration token.
    */
@@ -561,12 +744,52 @@ export interface operations {
     };
   };
   /**
-   * Create portfolio
-   * @description Create new portfolio.
+   * Search ticker with provided keyword.
+   * @description Returns a list of tickers that match the given keyword.
+   */
+  searchTickers: {
+    parameters: {
+      path: {
+        keyword: string;
+      };
+    };
+    responses: {
+      /** @description Successfully fetched tickers. */
+      200: {
+        content: {
+          "application/json": components["schemas"]["SearchTickerResponse"];
+        };
+      };
+      /** @description Request Timeout */
+      408: {
+        content: never;
+      };
+      /** @description Too Many Requests */
+      429: {
+        content: never;
+      };
+      /** @description Service Unavailable */
+      503: {
+        content: never;
+      };
+      /** @description Bandwidth Limit Exceeded */
+      509: {
+        content: never;
+      };
+    };
+  };
+  /**
+   * Get daily time series API
+   * @description Obtain Ddily time series data from AlphaVantage.
    */
   getDailyTimeSeries: {
+    parameters: {
+      path: {
+        ticker: string;
+      };
+    };
     responses: {
-      /** @description Successfully created portfolio. */
+      /** @description Successfully fetched API content. */
       200: {
         content: {
           "application/json": components["schemas"]["TimeSeriesResponse"];
@@ -597,6 +820,41 @@ export interface operations {
   deleteUser: {
     responses: {
       /** @description Successfully deleted. */
+      200: {
+        content: {
+          "application/json": components["schemas"]["MessageResponse"];
+        };
+      };
+      /** @description Request Timeout */
+      408: {
+        content: never;
+      };
+      /** @description Too Many Requests */
+      429: {
+        content: never;
+      };
+      /** @description Service Unavailable */
+      503: {
+        content: never;
+      };
+      /** @description Bandwidth Limit Exceeded */
+      509: {
+        content: never;
+      };
+    };
+  };
+  /**
+   * Delete portfolio
+   * @description Delete the portfolio.
+   */
+  deletePortfolio: {
+    parameters: {
+      path: {
+        id: string;
+      };
+    };
+    responses: {
+      /** @description Successfully deleted portfolio. */
       200: {
         content: {
           "application/json": components["schemas"]["MessageResponse"];

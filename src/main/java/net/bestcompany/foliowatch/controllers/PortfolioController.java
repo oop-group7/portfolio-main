@@ -29,7 +29,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import net.bestcompany.foliowatch.models.Portfolio;
 import net.bestcompany.foliowatch.models.User;
-import net.bestcompany.foliowatch.payload.request.PortfolioCreateAndUpdateRequest;
+import net.bestcompany.foliowatch.payload.request.PortfolioCreateOrUpdateRequest;
 import net.bestcompany.foliowatch.payload.response.AllPortfoliosResponse;
 import net.bestcompany.foliowatch.payload.response.ErrorResponse;
 import net.bestcompany.foliowatch.payload.response.MessageResponse;
@@ -60,7 +60,7 @@ public class PortfolioController {
                         @ApiResponse(responseCode = "400", description = "One of the stock name provided is invalid.", content = {
                                         @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) })
         })
-        public ResponseEntity<?> createPortfolio(@Valid @RequestBody PortfolioCreateAndUpdateRequest request) {
+        public ResponseEntity<?> createPortfolio(@Valid @RequestBody PortfolioCreateOrUpdateRequest request) {
                 User user = userService.findUserByEmail(
                                 ((UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication()
                                                 .getPrincipal()).getEmail())
@@ -132,7 +132,7 @@ public class PortfolioController {
                                         @Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class)) })
         })
         public ResponseEntity<?> updatePortfolio(@PathVariable String id,
-                        @Valid @RequestBody PortfolioCreateAndUpdateRequest request) {
+                        @Valid @RequestBody PortfolioCreateOrUpdateRequest request) {
                 Optional<Portfolio> rawPortfolio = portfolioService.findPortfolio(id);
                 if (rawPortfolio.isPresent()) {
                         Portfolio prevPortfolio = rawPortfolio.get();
