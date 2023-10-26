@@ -36,8 +36,6 @@ import net.bestcompany.foliowatch.security.services.IUserService;
 import net.bestcompany.foliowatch.security.services.UserDetailsImpl;
 import net.bestcompany.foliowatch.services.IportfolioService;
 
-
-
 @RestController
 @RequestMapping("/api/portfolio")
 @Tag(name = "Portfolio", description = "Portfolio APIs")
@@ -66,7 +64,7 @@ public class PortfolioController {
                 ((UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication()
                         .getPrincipal()).getEmail())
                 .orElseThrow();
-        
+
         Portfolio portfolio = new Portfolio();
         portfolio.setCapitalAmount(request.getCapitalAmount());
         portfolio.setName(request.getName());
@@ -77,17 +75,16 @@ public class PortfolioController {
         // portfolio.setStockName(request.getStockName());
 
         List<DesiredStock> portfolioDesiredStocks = new ArrayList<>();
-        
+
         for (DesiredStock requestStock : request.getDesiredStocks()) {
             DesiredStock desiredStock = new DesiredStock();
             desiredStock.setStockName(requestStock.getStockName());
             desiredStock.setPrice(requestStock.getPrice());
             desiredStock.setQuantity(requestStock.getQuantity());
-            desiredStock.setTimestamp(Instant.now());
-            
+
             portfolioDesiredStocks.add(desiredStock);
         }
-        
+
         portfolio.setDesiredStocks(portfolioDesiredStocks);
 
         try {
@@ -113,9 +110,9 @@ public class PortfolioController {
                         .getPrincipal()).getEmail())
                 .orElseThrow();
         System.out.println(user);
-        //List<Portfolio> portfolios = portfolioService.getAllPortfoliosByUser(user);
-        //if (portfolios.isEmpty())
-    try {
+        // List<Portfolio> portfolios = portfolioService.getAllPortfoliosByUser(user);
+        // if (portfolios.isEmpty())
+        try {
             List<Portfolio> portfolios = portfolioService.getAllPortfoliosByUser(user);
             return ResponseEntity.status(201).body(portfolios);
         } catch (Exception e) {
@@ -131,12 +128,12 @@ public class PortfolioController {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class)) })
     })
     public ResponseEntity<?> deletePortfolio() {
-            // User user = userService.findUserByEmail(
-            //                 ((UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication()
-            //                                 .getPrincipal()).getEmail())
-            //                 .orElseThrow();
-            //Portfolio portfolio = portfolioService.findPortfolio()
-            //userService.deletePortfolio(Portfolio);
-            return ResponseEntity.ok(new MessageResponse("Successfully deleted portfolio"));
+        // User user = userService.findUserByEmail(
+        // ((UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication()
+        // .getPrincipal()).getEmail())
+        // .orElseThrow();
+        // Portfolio portfolio = portfolioService.findPortfolio()
+        // userService.deletePortfolio(Portfolio);
+        return ResponseEntity.ok(new MessageResponse("Successfully deleted portfolio"));
     }
 }

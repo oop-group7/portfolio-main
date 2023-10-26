@@ -14,13 +14,13 @@ import org.springframework.data.redis.serializer.RedisSerializationContext.Seria
 
 @Configuration
 public class RedisConfig {
-    @Value("${foliowatch.app.redis.host}")
+    @Value("${redis.host}")
     private String redisHost;
 
-    @Value("${foliowatch.app.redis.port}")
+    @Value("${redis.port}")
     private int redisPort;
 
-    @Value("${foliowatch.app.redis.password}")
+    @Value("${redis.password}")
     private String redisPassword;
 
     @Bean
@@ -34,9 +34,7 @@ public class RedisConfig {
     public RedisCacheManager cacheManager() {
         RedisCacheConfiguration cacheConfig = myDefaultCacheConfig(Duration.ofMinutes(10))
                 .disableCachingNullValues();
-
-        return RedisCacheManager.builder(redisConnectionFactory()).cacheDefaults(cacheConfig)
-                .withCacheConfiguration("facts", myDefaultCacheConfig(Duration.ofDays(1))).build();
+        return RedisCacheManager.builder(redisConnectionFactory()).cacheDefaults(cacheConfig).build();
     }
 
     private RedisCacheConfiguration myDefaultCacheConfig(Duration duration) {
