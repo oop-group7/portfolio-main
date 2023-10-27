@@ -41,4 +41,9 @@ public class PortfolioService implements IPortfolioService {
     public void updatePortfolio(Portfolio portfolio) {
         createPortfolio(portfolio);
     }
+
+    @Override
+    public void getAllCapitalStocks(User user) {
+        getAllPortfoliosByUser(user);
+    }
 }

@@ -26,6 +26,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.mail.Message;
 import jakarta.validation.Valid;
 import net.bestcompany.foliowatch.models.Portfolio;
 import net.bestcompany.foliowatch.models.User;
@@ -71,8 +72,30 @@ public class PortfolioController {
                 portfolio.setStrategy(request.getStrategy());
                 portfolio.setUser(user);
                 portfolio.setDesiredStocks(request.getDesiredStocks());
+                portfolio.setCreatedAt(null);
                 portfolioService.createPortfolio(portfolio);
                 return ResponseEntity.status(201).body(new MessageResponse("Successfully created portfolio"));
+        }
+
+        @GetMapping("/getAllCapitalStocks")
+        @PreAuthorize("hasRole('USER') or hasRole('DEVELOPER')")
+        @Operation(summary = "Get total amount of capital stocks", description = "Retrieve total amount of capital stocks.")
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "200", description = "Successfully retrieve total amount of capital stocks.", content = {
+                                        @Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class)) })
+        })
+        public ResponseEntity<?> getAllCapitalStocks() {
+                User user = userService.findUserByEmail(
+                                ((UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication()
+                                                .getPrincipal()).getEmail())
+                                .orElseThrow();
+                double totalCapitalStocks = 0.0;
+                List<Portfolio> portfolios = portfolioService.getAllPortfoliosByUser(user);
+                for (Portfolio portfolio : portfolios) {
+                        totalCapitalStocks += portfolio.getCapitalAmount();
+                }
+                
+                return ResponseEntity.ok().body(new MessageResponse(String.valueOf(totalCapitalStocks)));
         }
 
         @GetMapping("/getAll")
@@ -93,9 +116,9 @@ public class PortfolioController {
 
         @GetMapping("/get/{id}")
         @PreAuthorize("hasRole('USER') or hasRole('DEVELOPER')")
-        @Operation(summary = "Get all portfolio", description = "Retrieve all portfolios by user.")
+        @Operation(summary = "Get a portfolio", description = "Retrieve a portfolio .")
         @ApiResponses(value = {
-                        @ApiResponse(responseCode = "200", description = "Successfully retrieve all portfolios.", content = {
+                        @ApiResponse(responseCode = "200", description = "Successfully retrieve portfolio.", content = {
                                         @Content(mediaType = "application/json", schema = @Schema(implementation = Portfolio.class)) }),
                         @ApiResponse(responseCode = "404", description = "Unable to find portfolio.", content = {
                                         @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) })
@@ -104,7 +127,6 @@ public class PortfolioController {
                 Optional<Portfolio> rawPortfolio = portfolioService.findPortfolio(id);
                 if (rawPortfolio.isPresent()) {
                         Portfolio portfolio = rawPortfolio.get();
-                        System.out.println(portfolio);
                         return ResponseEntity.ok().body(portfolio);
                 } else {
                         return ResponseEntity.status(404).body(new ErrorResponse("Unable to find portfolio"));

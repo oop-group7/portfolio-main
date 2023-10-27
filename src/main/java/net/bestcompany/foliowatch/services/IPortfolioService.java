@@ -16,4 +16,6 @@ public interface IPortfolioService {
     void deletePortfolio(String name);
 
     void updatePortfolio(Portfolio portfolio);
+
+    void getAllCapitalStocks(User user);
 }
