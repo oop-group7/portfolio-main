@@ -163,9 +163,9 @@ function ResponsiveAppBar(props: React.PropsWithChildren) {
         <Grid container width={"100%"} justifyContent={"space-between"}>
           <Grid item>
             <img style={{ width: "7rem" }} src={logo} />
-            <Button style={{ backgroundColor: 'transparent', color: "black" }} disableRipple onClick={() => toggleDrawer(!drawer)}>
+            {/* <Button style={{ backgroundColor: 'transparent', color: "black" }} disableRipple onClick={() => toggleDrawer(!drawer)}>
               <MenuIcon fontSize="large" sx={{ marginX: "1.5rem" }} />
-            </Button>
+            </Button> */}
           </Grid>
           <Tooltip title="Open settings">
             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
