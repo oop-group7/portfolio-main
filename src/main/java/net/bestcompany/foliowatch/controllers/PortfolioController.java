@@ -104,6 +104,7 @@ public class PortfolioController {
                 Optional<Portfolio> rawPortfolio = portfolioService.findPortfolio(id);
                 if (rawPortfolio.isPresent()) {
                         Portfolio portfolio = rawPortfolio.get();
+                        System.out.println(portfolio);
                         return ResponseEntity.ok().body(portfolio);
                 } else {
                         return ResponseEntity.status(404).body(new ErrorResponse("Unable to find portfolio"));
