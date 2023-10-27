@@ -14,44 +14,45 @@ import reactor.netty.http.client.HttpClient;
 
 @Service
 public class AlphaVantageApi implements IAlphaVantageApi {
-    @Value("${foliowatch.app.alphaVantageApiKey}")
-    private String apiKey;
+        @Value("${foliowatch.app.alphaVantageApiKey}")
+        private String apiKey;
 
-    private final String BASE_URL = "https://www.alphavantage.co/query";
+        private final String BASE_URL = "https://www.alphavantage.co/query";
 
-    private final WebClient client = WebClient.builder()
-            .clientConnector(
-                    new ReactorClientHttpConnector(
-                            HttpClient.create()
-                                    .responseTimeout(Duration.ofSeconds(9))))
-            .build();
+        private final WebClient client = WebClient.builder()
+                        .clientConnector(
+                                        new ReactorClientHttpConnector(
+                                                        HttpClient.create()
+                                                                        .responseTimeout(Duration.ofSeconds(9))))
+                        .build();
 
-    @Override
-    @Cacheable("searchSymbol")
-    public SearchTickerResponse searchTicker(String keyword) {
-        return client.get()
-                .uri(uriBuilder -> uriBuilder
-                        .queryParam(BASE_URL, "function", "SYMBOL_SEARCH")
-                        .queryParam("keywords", keyword)
-                        .queryParam("apikey", apiKey).build())
-                .retrieve()
-                .bodyToMono(SearchTickerResponse.class).block();
-    }
+        @Override
+        @Cacheable("searchSymbol")
+        public SearchTickerResponse searchTicker(String keyword) {
+                return client.get()
+                                .uri(uriBuilder -> uriBuilder
+                                                .queryParam(BASE_URL, "function", "SYMBOL_SEARCH")
+                                                .queryParam("keywords", keyword)
+                                                .queryParam("apikey", apiKey).build())
+                                .retrieve()
+                                .bodyToMono(SearchTickerResponse.class).block();
+        }
 
-    @Override
-    @Cacheable("timeSeries")
-    public TimeSeriesResponse getTimeSeries(String ticker) {
-        return client.get()
-                .uri(BASE_URL,
-                        uriBuilder -> uriBuilder.queryParam("function", "TIME_SERIES_DAILY")
-                                .queryParam("symbol", ticker).queryParam("apikey", apiKey).build())
-                .retrieve().bodyToMono(TimeSeriesResponse.class).block();
-    }
+        @Override
+        @Cacheable("timeSeries")
+        public TimeSeriesResponse getTimeSeries(String ticker) {
+                return client.get()
+                                .uri(BASE_URL,
+                                                uriBuilder -> uriBuilder.queryParam("function", "TIME_SERIES_DAILY")
+                                                                .queryParam("symbol", ticker)
+                                                                .queryParam("apikey", apiKey).build())
+                                .retrieve().bodyToMono(TimeSeriesResponse.class).block();
+        }
 
-    @Override
-    @Cacheable("tickerExists")
-    public boolean tickerExists(String ticker) {
-        SearchTickerResponse response = searchTicker(ticker);
-        return response.getBestMatches().stream().anyMatch(t -> t.getName() == ticker);
-    }
+        @Override
+        @Cacheable("tickerExists")
+        public boolean tickerExists(String ticker) {
+                SearchTickerResponse response = searchTicker(ticker);
+                return response.getBestMatches().stream().anyMatch(t -> t.getName().equals(ticker));
+        }
 }
