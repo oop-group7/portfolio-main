@@ -32,6 +32,7 @@ import net.bestcompany.foliowatch.models.Portfolio;
 import net.bestcompany.foliowatch.models.User;
 import net.bestcompany.foliowatch.payload.request.PortfolioCreateOrUpdateRequest;
 import net.bestcompany.foliowatch.payload.response.AllPortfoliosResponse;
+import net.bestcompany.foliowatch.payload.response.DoubleResponse;
 import net.bestcompany.foliowatch.payload.response.ErrorResponse;
 import net.bestcompany.foliowatch.payload.response.MessageResponse;
 import net.bestcompany.foliowatch.security.services.IUserService;
@@ -77,14 +78,14 @@ public class PortfolioController {
                 return ResponseEntity.status(201).body(new MessageResponse("Successfully created portfolio"));
         }
 
-        @GetMapping("/getAllCapitalStocks")
+        @GetMapping("/getTotalCapitalAmount")
         @PreAuthorize("hasRole('USER') or hasRole('DEVELOPER')")
-        @Operation(summary = "Get total amount of capital stocks", description = "Retrieve total amount of capital stocks.")
+        @Operation(summary = "Get total amount of capital", description = "Retrieve total amount of capital.")
         @ApiResponses(value = {
-                        @ApiResponse(responseCode = "200", description = "Successfully retrieve total amount of capital stocks.", content = {
-                                        @Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class)) })
+                        @ApiResponse(responseCode = "200", description = "Successfully retrieve total amount of capital.", content = {
+                                        @Content(mediaType = "application/json", schema = @Schema(implementation = DoubleResponse.class)) })
         })
-        public ResponseEntity<?> getAllCapitalStocks() {
+        public ResponseEntity<?> getTotalCapitalAmount() {
                 User user = userService.findUserByEmail(
                                 ((UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication()
                                                 .getPrincipal()).getEmail())
@@ -95,7 +96,7 @@ public class PortfolioController {
                         totalCapitalStocks += portfolio.getCapitalAmount();
                 }
                 
-                return ResponseEntity.ok().body(new MessageResponse(String.valueOf(totalCapitalStocks)));
+                return ResponseEntity.ok().body(new DoubleResponse(totalCapitalStocks));
         }
 
         @GetMapping("/getAll")
