@@ -10,7 +10,7 @@ type HeaderProps = {
 function HeaderCard(props: HeaderProps) {
     const Icon = Icons[props.icon]
     return (
-        <Card sx={{ width: "100%", borderBottom: 5, borderBottomColor: "#D9A514" }}>
+        <Card sx={{ width: "100%" }}>
             <CardContent>
 
                 <Typography sx={{ fontSize: 15 }} gutterBottom>

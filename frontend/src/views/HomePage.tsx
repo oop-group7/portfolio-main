@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Box, Grid, Typography } from "@mui/material";
 import Portfolios from "./components/HompageGrid";
 import HomePageHeader from "./components/HomePageHeader";
@@ -31,7 +32,7 @@ function HomePage() {
       <Grid item sm={12} md={7}>
         <Portfolios />
       </Grid>
-      <Grid item container xs justifyContent={"center"} sx={{ minHeight: "30rem", backgroundColor: "white", borderRadius: "3px" }}>
+      <Grid item container xs justifyContent={"center"} sx={{ minHeight: "30rem", backgroundColor: "white", borderRadius: "3px", boxShadow: 1 }}>
         <Grid item container justifyContent={"center"} flexDirection={"column"}>
           <Typography textAlign={"center"} pt={1}>Portfolio Summary</Typography>
           <Box sx={{ flex: 1 }}>

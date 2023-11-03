@@ -20,6 +20,8 @@ export default function Portfolios() {
     <React.Fragment>
       <Box sx={{ height: "90vh", width: "100%" }}>
         <DataGrid sx={{
+          border: "none",
+          boxShadow: 1,
           backgroundColor:
             "white",
           ".MuiTablePagination-displayedRows": {
