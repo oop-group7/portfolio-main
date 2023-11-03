@@ -1,4 +1,4 @@
-import { Box, Grid } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 import Portfolios from "./components/HompageGrid";
 import HomePageHeader from "./components/HomePageHeader";
 import { LineChart, PieChart } from "@mui/x-charts";
@@ -17,6 +17,8 @@ const time = [
   new Date(2015, 7, 0),
 ];
 
+const palette = ["#e86427", "#0d4ea6", "#279c9c", "#279c9c", "#279c9c"]
+
 function HomePage() {
   const [graphMin, setGraphMin] = useState(1);
   const [graphMax, setGraphMax] = useState(10);
@@ -31,14 +33,14 @@ function HomePage() {
       </Grid>
       <Grid item container xs justifyContent={"center"} sx={{ minHeight: "30rem", backgroundColor: "white", borderRadius: "3px" }}>
         <Grid item container justifyContent={"center"} flexDirection={"column"}>
+          <Typography textAlign={"center"} pt={1}>Portfolio Summary</Typography>
           <Box sx={{ flex: 1 }}>
             <LineChart
-              sx={{ width: "100%", flex: 1 }}
+              sx={{ width: "100%", flex: 1, cursor: "none" }}
               xAxis={[{
                 data: time,
                 scaleType: "time",
                 tickInterval: "auto",
-                label: "2023",
                 min: time?.[0]?.getTime(),
                 max: time?.[time.length - 1]?.getTime(),
               }]}
@@ -53,21 +55,21 @@ function HomePage() {
               ]}
             />
           </Box>
-          <Box sx={{ flex: 1 }}>
-            <LineChart
-              sx={{ width: "100%", flex: 1 }}
-              xAxis={[{
-                label: "2023",
-                min: graphMin,
-                max: graphMax,
-                data: [1, 2, 3, 5, 8, 10]
-              }]}
+          <Typography textAlign={"center"} pt={1}>Portfolio Sectors</Typography>
+          <Box sx={{ flex: 1, margin: 2 }}>
+            <PieChart
+              colors={palette}
+              sx={{ width: "100%", flex: 1, cursor: "none" }}
               series={[
                 {
-                  area: true,
-                  color: "#0D4EA6",
-                  curve: "linear",
-                  data: [2, 5.5, 2, 8.5, 1.5, 5],
+                  innerRadius: 50,
+                  paddingAngle: 2,
+                  cornerRadius: 5,
+                  data: [
+                    { id: 0, value: 10, label: 'series A' },
+                    { id: 1, value: 15, label: 'series B' },
+                    { id: 2, value: 20, label: 'series C' },
+                  ],
                 },
               ]}
             />

@@ -9,7 +9,7 @@ const rows: GridRowsProp = [
 ];
 
 const columns: GridColDef[] = [
-  { field: 'portfolioName', headerName: 'Portfolio Name', flex: 1/6, headerAlign: "left", renderCell: (params) => (<Link href={`http://localhost:8080/portfolio?portfolioname=${params.value}`}>{params.value}</Link>) },
+  { field: 'portfolioName', headerName: 'Portfolio Name', flex: 1/6, headerAlign: "left", renderCell: (params) => (<Link href={`http://localhost:3010/portfolio?portfolioname=${params.value}`}>{params.value}</Link>) },
   { field: 'utilizedCapital', headerName: 'Utilized Capital', flex: 1/6, headerAlign: "left" },
   { field: 'dateCreated', headerName: 'Date Created', flex: 1/6, headerAlign: "left" },
   { field: 'profitLoss', renderHeader: () => (<div><Typography>Unrealized</Typography><Typography>Gain/Loss</Typography></div>), flex: 1/6, headerAlign: "left", renderCell: (params) => (<Typography fontWeight={700} color={params.value && params?.value < 0 ? "red" : "green"}>{params?.value ? params.value : 0}</Typography>)}
