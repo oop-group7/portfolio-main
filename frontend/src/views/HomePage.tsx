@@ -57,7 +57,7 @@ function HomePage() {
             />
           </Box>
           <Typography textAlign={"center"} pt={1}>Portfolio Sectors</Typography>
-          <Box sx={{ flex: 1, margin: 2 }}>
+          <Box sx={{ flex: 1, my: 1 }}>
             <PieChart
               colors={palette}
               sx={{ width: "100%", flex: 1, cursor: "none" }}
