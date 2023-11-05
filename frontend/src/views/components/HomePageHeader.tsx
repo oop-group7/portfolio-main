@@ -12,7 +12,6 @@ function HeaderCard(props: HeaderProps) {
     return (
         <Card sx={{ width: "100%" }}>
             <CardContent>
-
                 <Typography sx={{ fontSize: 15 }} gutterBottom>
                     <Icon style={{ width: "1rem", marginBottom: 3, marginRight: 4}} />{props.title}
                 </Typography>
