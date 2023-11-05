@@ -61,6 +61,20 @@ export interface paths {
      */
     post: operations["refreshToken"];
   };
+  "/api/portfolio/getTotalCapitalAmount": {
+    /**
+     * Get total amount of capital
+     * @description Retrieve total amount of capital.
+     */
+    get: operations["getTotalCapitalAmount"];
+  };
+  "/api/portfolio/getPercentageOfCapitalAllocated/{id}": {
+    /**
+     * Get percentage of capital allocated for a portfolio
+     * @description Retrieve the percentage of capital allocated for the portfolio.
+     */
+    get: operations["getPercentageOfCapitalAllocated"];
+  };
   "/api/portfolio/getAll": {
     /**
      * Get all portfolio
@@ -70,8 +84,8 @@ export interface paths {
   };
   "/api/portfolio/get/{id}": {
     /**
-     * Get all portfolio
-     * @description Retrieve all portfolios by user.
+     * Get a portfolio
+     * @description Retrieve a portfolio .
      */
     get: operations["getPortfolio"];
   };
@@ -186,12 +200,20 @@ export interface components {
       refreshToken: string;
       type: string;
     };
+    DoubleResponse: {
+      /** Format: double */
+      amount: number;
+    };
+    StockNameResponse: {
+      groupByStockName: {
+        [key: string]: number;
+      };
+    };
     AllPortfoliosResponse: {
       portfolios: components["schemas"]["Portfolio"][];
     };
     Portfolio: {
       id?: string;
-      user: components["schemas"]["User"];
       name: string;
       strategy: string;
       /** Format: double */
@@ -199,20 +221,6 @@ export interface components {
       desiredStocks: components["schemas"]["DesiredStock"][];
       /** Format: date-time */
       createdAt?: string;
-    };
-    Role: {
-      id?: string;
-      /** @enum {string} */
-      name: "ROLE_USER";
-    };
-    User: {
-      id?: string;
-      enabled: boolean;
-      firstName: string;
-      userName: string;
-      email: string;
-      password: string;
-      roles?: components["schemas"]["Role"][];
     };
     Match: {
       symbol: string;
@@ -597,6 +605,77 @@ export interface operations {
     };
   };
   /**
+   * Get total amount of capital
+   * @description Retrieve total amount of capital.
+   */
+  getTotalCapitalAmount: {
+    responses: {
+      /** @description Successfully retrieve total amount of capital. */
+      200: {
+        content: {
+          "application/json": components["schemas"]["DoubleResponse"];
+        };
+      };
+      /** @description Request Timeout */
+      408: {
+        content: never;
+      };
+      /** @description Too Many Requests */
+      429: {
+        content: never;
+      };
+      /** @description Service Unavailable */
+      503: {
+        content: never;
+      };
+      /** @description Bandwidth Limit Exceeded */
+      509: {
+        content: never;
+      };
+    };
+  };
+  /**
+   * Get percentage of capital allocated for a portfolio
+   * @description Retrieve the percentage of capital allocated for the portfolio.
+   */
+  getPercentageOfCapitalAllocated: {
+    parameters: {
+      path: {
+        id: string;
+      };
+    };
+    responses: {
+      /** @description Successfully calulated the percentage of capital allocated for a portfolio. */
+      200: {
+        content: {
+          "application/json": components["schemas"]["StockNameResponse"];
+        };
+      };
+      /** @description Unable to find portfolio. */
+      404: {
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+      /** @description Request Timeout */
+      408: {
+        content: never;
+      };
+      /** @description Too Many Requests */
+      429: {
+        content: never;
+      };
+      /** @description Service Unavailable */
+      503: {
+        content: never;
+      };
+      /** @description Bandwidth Limit Exceeded */
+      509: {
+        content: never;
+      };
+    };
+  };
+  /**
    * Get all portfolio
    * @description Retrieve all portfolios by user.
    */
@@ -627,8 +706,8 @@ export interface operations {
     };
   };
   /**
-   * Get all portfolio
-   * @description Retrieve all portfolios by user.
+   * Get a portfolio
+   * @description Retrieve a portfolio .
    */
   getPortfolio: {
     parameters: {
@@ -637,7 +716,7 @@ export interface operations {
       };
     };
     responses: {
-      /** @description Successfully retrieve all portfolios. */
+      /** @description Successfully retrieve portfolio. */
       200: {
         content: {
           "application/json": components["schemas"]["Portfolio"];

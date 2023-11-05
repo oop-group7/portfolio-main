@@ -38,6 +38,7 @@ import net.bestcompany.foliowatch.payload.response.AllPortfoliosResponse;
 import net.bestcompany.foliowatch.payload.response.DoubleResponse;
 import net.bestcompany.foliowatch.payload.response.ErrorResponse;
 import net.bestcompany.foliowatch.payload.response.MessageResponse;
+import net.bestcompany.foliowatch.payload.response.StockNameResponse;
 import net.bestcompany.foliowatch.security.services.IUserService;
 import net.bestcompany.foliowatch.security.services.UserDetailsImpl;
 import net.bestcompany.foliowatch.services.IPortfolioService;
@@ -103,12 +104,12 @@ public class PortfolioController {
                 return ResponseEntity.ok().body(new DoubleResponse(totalCapitalStocks));
         }
 
-        @GetMapping("/getPercentageOfCapitalAllocated/{id}")
+        @GetMapping(value = "/getPercentageOfCapitalAllocated/{id}")
         @PreAuthorize("hasRole('USER') or hasRole('DEVELOPER')")
         @Operation(summary = "Get percentage of capital allocated for a portfolio", description = "Retrieve the percentage of capital allocated for the portfolio.")
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "Successfully calulated the percentage of capital allocated for a portfolio.", content = {
-                                        @Content(mediaType = "application/json", schema = @Schema(implementation = Map.class)) }),
+                                        @Content(mediaType = "application/json", schema = @Schema(implementation = StockNameResponse.class)) }),
                         @ApiResponse(responseCode = "404", description = "Unable to find portfolio.", content = {
                                         @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) })
         })
@@ -143,8 +144,7 @@ public class PortfolioController {
                                 double left = 100.0 - used;
                                 groupByStockName.put("Left", left);
                         }
-
-                        return ResponseEntity.ok().body(groupByStockName);
+                        return ResponseEntity.ok().body(new StockNameResponse(groupByStockName));
 
                 } else {
                         return ResponseEntity.status(404).body(new ErrorResponse("Unable to find portfolio"));

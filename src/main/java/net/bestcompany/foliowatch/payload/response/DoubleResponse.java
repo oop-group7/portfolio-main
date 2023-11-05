@@ -9,5 +9,5 @@ import lombok.Setter;
 @RequiredArgsConstructor
 public class DoubleResponse {
     @NotBlank
-    private final Double Amount;
+    private final Double amount;
 }
