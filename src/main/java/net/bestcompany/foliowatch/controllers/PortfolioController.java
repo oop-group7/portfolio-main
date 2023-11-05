@@ -1,5 +1,8 @@
 package net.bestcompany.foliowatch.controllers;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,16 +29,20 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.mail.Message;
 import jakarta.validation.Valid;
 import net.bestcompany.foliowatch.models.Portfolio;
 import net.bestcompany.foliowatch.models.User;
 import net.bestcompany.foliowatch.payload.request.PortfolioCreateOrUpdateRequest;
 import net.bestcompany.foliowatch.payload.response.AllPortfoliosResponse;
+import net.bestcompany.foliowatch.payload.response.DoubleResponse;
 import net.bestcompany.foliowatch.payload.response.ErrorResponse;
 import net.bestcompany.foliowatch.payload.response.MessageResponse;
+import net.bestcompany.foliowatch.payload.response.StockNameResponse;
 import net.bestcompany.foliowatch.security.services.IUserService;
 import net.bestcompany.foliowatch.security.services.UserDetailsImpl;
 import net.bestcompany.foliowatch.services.IPortfolioService;
+import net.bestcompany.foliowatch.models.DesiredStock;
 
 @RestController
 @RequestMapping("/api/portfolio")
@@ -71,8 +78,77 @@ public class PortfolioController {
                 portfolio.setStrategy(request.getStrategy());
                 portfolio.setUser(user);
                 portfolio.setDesiredStocks(request.getDesiredStocks());
+                portfolio.setCreatedAt(null);
                 portfolioService.createPortfolio(portfolio);
                 return ResponseEntity.status(201).body(new MessageResponse("Successfully created portfolio"));
+        }
+
+        @GetMapping("/getTotalCapitalAmount")
+        @PreAuthorize("hasRole('USER') or hasRole('DEVELOPER')")
+        @Operation(summary = "Get total amount of capital", description = "Retrieve total amount of capital.")
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "200", description = "Successfully retrieve total amount of capital.", content = {
+                                        @Content(mediaType = "application/json", schema = @Schema(implementation = DoubleResponse.class)) })
+        })
+        public ResponseEntity<?> getTotalCapitalAmount() {
+                User user = userService.findUserByEmail(
+                                ((UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication()
+                                                .getPrincipal()).getEmail())
+                                .orElseThrow();
+                double totalCapitalStocks = 0.0;
+                List<Portfolio> portfolios = portfolioService.getAllPortfoliosByUser(user);
+                for (Portfolio portfolio : portfolios) {
+                        totalCapitalStocks += portfolio.getCapitalAmount();
+                }
+                
+                return ResponseEntity.ok().body(new DoubleResponse(totalCapitalStocks));
+        }
+
+        @GetMapping(value = "/getPercentageOfCapitalAllocated/{id}")
+        @PreAuthorize("hasRole('USER') or hasRole('DEVELOPER')")
+        @Operation(summary = "Get percentage of capital allocated for a portfolio", description = "Retrieve the percentage of capital allocated for the portfolio.")
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "200", description = "Successfully calulated the percentage of capital allocated for a portfolio.", content = {
+                                        @Content(mediaType = "application/json", schema = @Schema(implementation = StockNameResponse.class)) }),
+                        @ApiResponse(responseCode = "404", description = "Unable to find portfolio.", content = {
+                                        @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) })
+        })
+        public ResponseEntity<?> getPercentageOfCapitalAllocated(@PathVariable String id) {
+                Optional<Portfolio> rawPortfolio = portfolioService.findPortfolio(id);
+                if (rawPortfolio.isPresent()) {
+                        Portfolio portfolio = rawPortfolio.get();
+                        double totalCapitalStocks = portfolio.getCapitalAmount();
+                        List<DesiredStock> desiredStockList = portfolio.getDesiredStocks();
+                        
+                        Map<String, Double> groupByStockName = new HashMap<>();
+
+                        for (DesiredStock stock: desiredStockList){
+                                String stockName = stock.getStockName();
+                                double totalPrice = stock.getPrice() * stock.getQuantity();
+                                if (groupByStockName.containsKey(stockName)) {
+                                        double updatedCapital = groupByStockName.get(stockName) + totalPrice;
+                                        groupByStockName.put(stockName, updatedCapital);
+                                }else {
+                                        groupByStockName.put(stockName, totalPrice);
+                                }
+                        }
+                        
+                        double used = 0.0;
+                        for (String stockName : groupByStockName.keySet()) {
+                                double calculatePercentage = groupByStockName.get(stockName) / totalCapitalStocks * 100;
+                                used += calculatePercentage;
+                                groupByStockName.put(stockName, calculatePercentage);
+                        }
+
+                        if (used != 100.0){
+                                double left = 100.0 - used;
+                                groupByStockName.put("Left", left);
+                        }
+                        return ResponseEntity.ok().body(new StockNameResponse(groupByStockName));
+
+                } else {
+                        return ResponseEntity.status(404).body(new ErrorResponse("Unable to find portfolio"));
+                }
         }
 
         @GetMapping("/getAll")
@@ -93,9 +169,9 @@ public class PortfolioController {
 
         @GetMapping("/get/{id}")
         @PreAuthorize("hasRole('USER') or hasRole('DEVELOPER')")
-        @Operation(summary = "Get all portfolio", description = "Retrieve all portfolios by user.")
+        @Operation(summary = "Get a portfolio", description = "Retrieve a portfolio .")
         @ApiResponses(value = {
-                        @ApiResponse(responseCode = "200", description = "Successfully retrieve all portfolios.", content = {
+                        @ApiResponse(responseCode = "200", description = "Successfully retrieve portfolio.", content = {
                                         @Content(mediaType = "application/json", schema = @Schema(implementation = Portfolio.class)) }),
                         @ApiResponse(responseCode = "404", description = "Unable to find portfolio.", content = {
                                         @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) })
@@ -104,7 +180,6 @@ public class PortfolioController {
                 Optional<Portfolio> rawPortfolio = portfolioService.findPortfolio(id);
                 if (rawPortfolio.isPresent()) {
                         Portfolio portfolio = rawPortfolio.get();
-                        System.out.println(portfolio);
                         return ResponseEntity.ok().body(portfolio);
                 } else {
                         return ResponseEntity.status(404).body(new ErrorResponse("Unable to find portfolio"));
