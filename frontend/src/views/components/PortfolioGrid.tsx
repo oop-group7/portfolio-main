@@ -27,15 +27,15 @@ export default function Stocks() {
           backgroundColor:
             "white",
           ".MuiTablePagination-displayedRows": {
-            "margin-top": "1em",
-            "margin-bottom": "1em",
+            "marginTop": "1em",
+            "marginBottom": "1em",
           },
           ".MuiDataGrid-columnHeader": {
-            "padding-left": "1rem",
+            "paddingLeft": "1rem",
             "paddingY": "1rem",
           },
           ".MuiDataGrid-cell": {
-            "padding-left": "1rem",
+            "paddingLeft": "1rem",
           },
           width: "100%"
         }} rows={rows} rowHeight={75} columns={columns} autoPageSize columnHeaderHeight={70} />
