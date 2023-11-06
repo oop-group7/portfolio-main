@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 import "bootstrap/dist/css/bootstrap.css";
-import { GET, POST } from "../utils/apihelper";
+import { GET, PUT, DELETE } from "../utils/apihelper"; // api helper does not have put and delete, not sure if i shld add to apihelper or use a different method
+import { getUserData } from '../utils/apihelper';
+import { useNavigate } from "react-router-dom";
+
 
 function ProfilePage() {
 
   const [firstName, setFirstName] = useState("");
-  // const [lastName, setLastName] = useState("");
   const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -18,25 +20,43 @@ function ProfilePage() {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     // Fetch the user's data here after successful login
     const fetchUserData = async () => {
       try {
-        const userData = await GET("/api/users"); // Replace with the actual API endpoint to fetch user data
+        const userData = await getUserData(); // Do I need an isLogin function? I'm trying to retrieve the logged in user's data
         setFirstName(userData.firstName);
         setUserName(userData.userName);
         setEmail(userData.email);
-        // insert password here
+        setPassword(userData.password)
       } catch (error) {
-        // Handle errors, such as the user not being authenticated or the API request failing
-        // You can redirect the user to the login page or display an error message
+        // I'm not sure what error to display as an error here
       }
     };
-
     fetchUserData();
   }, []);
 
-  async function handleChanges(){
+  async function deleteAccount(event: React.FormEvent<HTMLFormElement>){
+    event.preventDefault();
+    const res = await DELETE("/api/user/deleteuser", {
+      body: { // need to double check what data i need to send to delete a user, probably only email and password?
+        firstName,
+        userName,
+        email,
+        password,
+      },
+    });
+    if (!res.response.ok) {
+      setError("Account deletion failed. Please check your credentials");
+    } else{
+      navigate("/register"); // should create a successful account deletion pop-up then allow the user to navigate back to registration page
+    }
+  }
+
+  async function handleChanges(event: React.FormEvent<HTMLFormElement>){
+    event.preventDefault();
     // Reset previous errors
     setFirstNameError("");
     setUserNameError("");
@@ -103,7 +123,7 @@ function ProfilePage() {
       return;
     }
 
-  const res = await POST("/updateprofile", { // Check if the path is correct, do I need to put api/ at the start?
+  const res = await PUT("/api/user/updateprofile", {
     body: {
       firstName,
       userName,
@@ -111,14 +131,14 @@ function ProfilePage() {
       password,
     },
   });
+  
   if (!res.response.ok) {
-    const error = res.error; // Not all API endpoints return back an Error message, might have a message or might not, hence you must handle both cases (if the type of the error is undefined only, don't bother)
-    setEmailError(error.message);
+    const error = res.error;
+    setError(error.message);
 
   } else {
-    // If the registration function does not throw an error, it's successful
-    setEmailError("");
-    window.location.href = "http://localhost:8080/validation";
+    setError("");
+    window.location.href = "http://localhost:8080/validation"; // Not sure if this should be here
   }
 }
 
@@ -139,18 +159,6 @@ function ProfilePage() {
                 onChange={(e) => setFirstName(e.target.value)}
               />
             </div>
-
-            {/* <div className="mb-3">
-              <label htmlFor="lastName">Last Name</label>
-              <input
-                type="text"
-                className="form-control"
-                id="lastName"
-                placeholder={lastName}
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-              />
-            </div> */}
 
             <div className="mb-3">
               <label htmlFor="userName">Username</label>
@@ -199,7 +207,7 @@ function ProfilePage() {
               <button type="submit" className="btn btn-primary" onClick={handleChanges}>
                 Save Changes {/*Should edit information in the backend*/}
               </button>
-              <button type="submit" className="btn btn-outline-danger">
+              <button type="submit" className="btn btn-outline-danger" onClick={deleteAccount}>
                 Delete My Account {/*Should remove all text in the input*/}
               </button>
             </div>
