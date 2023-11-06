@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
-import io.github.resilience4j.retry.annotation.Retry;
 import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -35,8 +33,6 @@ import net.bestcompany.foliowatch.security.services.UserDetailsImpl;
 @Tag(name = "User", description = "User APIs")
 @SecurityRequirement(name = "bearerAuth")
 @TimeLimiter(name = "db")
-@Retry(name = "db")
-@CircuitBreaker(name = "db")
 public class UserController {
         @Autowired
         private IUserService userService;

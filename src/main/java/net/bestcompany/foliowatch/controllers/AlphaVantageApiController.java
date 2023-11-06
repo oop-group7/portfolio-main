@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import net.bestcompany.foliowatch.exceptions.RetryException;
 import net.bestcompany.foliowatch.externalapi.IAlphaVantageApi;
 import net.bestcompany.foliowatch.externalapi.responses.SearchTickerResponse;
 import net.bestcompany.foliowatch.externalapi.responses.TimeSeriesResponse;
@@ -27,7 +28,7 @@ import net.bestcompany.foliowatch.externalapi.responses.TimeSeriesResponse;
 @Tag(name = "AlphaVantage", description = "AlphaVantage APIs")
 @SecurityRequirement(name = "bearerAuth")
 @TimeLimiter(name = "api")
-@Retry(name = "api")
+@Retry(name = "api", fallbackMethod = "handleCallNotPermittedException")
 @CircuitBreaker(name = "api")
 public class AlphaVantageApiController {
     @Autowired
@@ -53,5 +54,9 @@ public class AlphaVantageApiController {
     })
     public ResponseEntity<?> searchTickers(@PathVariable String keyword) {
         return ResponseEntity.ok().body(apiService.searchTicker(keyword));
+    }
+
+    public static void handleCallNotPermittedException() {
+        throw new RetryException();
     }
 }

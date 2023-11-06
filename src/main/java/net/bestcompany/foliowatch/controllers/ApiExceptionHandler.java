@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import io.github.resilience4j.bulkhead.BulkheadFullException;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.ratelimiter.RequestNotPermitted;
+import net.bestcompany.foliowatch.exceptions.RetryException;
 
 @ControllerAdvice
 public class ApiExceptionHandler {
@@ -31,5 +32,10 @@ public class ApiExceptionHandler {
     @ExceptionHandler({ RequestNotPermitted.class })
     @ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
     public void handleRequestNotPermitted() {
+    }
+
+    @ExceptionHandler({RetryException.class})
+    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+    public void handleRetryException() {
     }
 }

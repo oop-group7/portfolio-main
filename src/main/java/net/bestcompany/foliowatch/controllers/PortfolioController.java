@@ -1,6 +1,5 @@
 package net.bestcompany.foliowatch.controllers;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
@@ -19,8 +18,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
-import io.github.resilience4j.retry.annotation.Retry;
 import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -29,7 +26,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.mail.Message;
 import jakarta.validation.Valid;
 import net.bestcompany.foliowatch.models.Portfolio;
 import net.bestcompany.foliowatch.models.User;
@@ -49,8 +45,6 @@ import net.bestcompany.foliowatch.models.DesiredStock;
 @Tag(name = "Portfolio", description = "Portfolio APIs")
 @SecurityRequirement(name = "bearerAuth")
 @TimeLimiter(name = "portfolioApi")
-@Retry(name = "portfolioApi")
-@CircuitBreaker(name = "portfolioApi")
 public class PortfolioController {
         @Autowired
         private IPortfolioService portfolioService;
