@@ -99,6 +99,28 @@ public class PortfolioController {
                 return ResponseEntity.ok().body(new DoubleResponse(totalCapitalStocks));
         }
 
+        // @GetMapping("/getUtilizedCapital")
+        // @PreAuthorize("hasRole('USER') or hasRole('DEVELOPER')")
+        // @Operation(summary = "Get utilized amount of capital", description = "Retrieve utilized amount of capital.")
+        // @ApiResponses(value = {
+        //                 @ApiResponse(responseCode = "200", description = "Successfully retrieve utilized amount of capital.", content = {
+        //                                 @Content(mediaType = "application/json", schema = @Schema(implementation = DoubleResponse.class)) })
+        // })
+        // public ResponseEntity<?> getUtilizedCapital() {
+        //         User user = userService.findUserByEmail(
+        //                         ((UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication()
+        //                                         .getPrincipal()).getEmail())
+        //                         .orElseThrow();
+        //         double utilizedCapitalStocks = 0.0;
+        //         List<Portfolio> portfolios = portfolioService.getAllPortfoliosByUser(user);
+        //         
+        //         for (Portfolio portfolio : portfolios) {
+        //                 totalCapitalStocks += portfolio.getCapitalAmount();
+        //         }
+                
+        //         return ResponseEntity.ok().body(new DoubleResponse(totalCapitalStocks));
+        // }
+
         @GetMapping(value = "/getPercentageOfCapitalAllocated/{id}")
         @PreAuthorize("hasRole('USER') or hasRole('DEVELOPER')")
         @Operation(summary = "Get percentage of capital allocated for a portfolio", description = "Retrieve the percentage of capital allocated for the portfolio.")
