@@ -5,7 +5,7 @@ type AuthResponse = components["schemas"]["JwtResponse"];
 
 const LOCAL_STORAGE_USER_KEY = "user";
 
-export const { GET, POST } = createClient<paths>({
+export const { GET, POST, DELETE, PUT } = createClient<paths>({
   baseUrl: window.location.origin,
   credentials: "same-origin",
   fetch: async (input, init) => {
@@ -97,3 +97,5 @@ export function logout() {
   localStorage.removeItem(LOCAL_STORAGE_USER_KEY);
   window.location.href = "/";
 }
+
+
