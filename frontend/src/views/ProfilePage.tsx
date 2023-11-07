@@ -2,10 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 import "bootstrap/dist/css/bootstrap.css";
-import { GET, PUT, DELETE } from "../utils/apihelper"; // api helper does not have put and delete, not sure if i shld add to apihelper or use a different method
+import { PUT, DELETE } from "../utils/apihelper";
 import { getUserData } from '../utils/apihelper';
 import { useNavigate } from "react-router-dom";
-
 
 function ProfilePage() {
 
@@ -26,11 +25,11 @@ function ProfilePage() {
     // Fetch the user's data here after successful login
     const fetchUserData = async () => {
       try {
-        const userData = await getUserData(); // Do I need an isLogin function? I'm trying to retrieve the logged in user's data
+        const userData = await getUserData();
         setFirstName(userData.firstName);
         setUserName(userData.userName);
         setEmail(userData.email);
-        setPassword(userData.password)
+        setPassword(userData.password); // user data does not contain password i think
       } catch (error) {
         // I'm not sure what error to display as an error here
       }
@@ -41,17 +40,11 @@ function ProfilePage() {
   async function deleteAccount(event: React.FormEvent<HTMLFormElement>){
     event.preventDefault();
     const res = await DELETE("/api/user/deleteuser", {
-      body: { // need to double check what data i need to send to delete a user, probably only email and password?
-        firstName,
-        userName,
-        email,
-        password,
-      },
     });
     if (!res.response.ok) {
       setError("Account deletion failed. Please check your credentials");
     } else{
-      navigate("/register"); // should create a successful account deletion pop-up then allow the user to navigate back to registration page
+      navigate("/register");
     }
   }
 
@@ -128,7 +121,7 @@ function ProfilePage() {
       firstName,
       userName,
       email,
-      password,
+      password
     },
   });
   
