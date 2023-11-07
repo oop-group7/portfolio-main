@@ -117,9 +117,51 @@ import { Inbox, Mail } from "@mui/icons-material";
 
 // export default Navbar;
 
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
-
 function ResponsiveAppBar(props: React.PropsWithChildren) {
+
+  function useIsLoggedIn() {
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    useEffect(() => {
+      const userData = getUserData();
+      console.log("User data:", userData);
+      setIsLoggedIn(getUserData() !== null);
+    }, []);
+
+    console.log(isLoggedIn);
+    return isLoggedIn;
+  }
+
+  const userData = getUserData();
+
+  // useEffect(() => {
+  //   if (userData == null) {
+  //     if (
+  //       window.location.pathname !== "/" &&
+  //       window.location.pathname !== "/register" &&
+  //       window.location.pathname !== "/validation" &&
+  //       window.location.pathname !== "/password" &&
+  //       window.location.pathname !== "/passwordvalidation"
+  //     ) {
+  //       window.location.href = "/";
+  //     }
+  //   }
+  //   else {
+  //     if (
+  //       window.location.pathname === "/" ||
+  //       window.location.pathname === "/register" ||
+  //       window.location.pathname === "/validation" ||
+  //       window.location.pathname === "/password" ||
+  //       window.location.pathname === "/passwordvalidation"
+  //     ) {
+  //       window.location.href = "/homepage";
+  //     }
+  //   }
+  // }, [window.location.pathname]);
+
+  async function handleLogout() {
+    logout();
+  }
   const [drawer, toggleDrawer] = useState<boolean>(false)
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
@@ -167,12 +209,11 @@ function ResponsiveAppBar(props: React.PropsWithChildren) {
               <MenuIcon fontSize="large" sx={{ marginX: "1.5rem" }} />
             </Button> */}
           </Grid>
-          <Tooltip title="Open settings">
+          {window.location.pathname != "/" && <><Tooltip title="Open settings">
             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
               <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
             </IconButton>
-          </Tooltip>
-          <Menu
+          </Tooltip><Menu
             sx={{ mt: '45px' }}
             id="menu-appbar"
             anchorEl={anchorElUser}
@@ -188,12 +229,13 @@ function ResponsiveAppBar(props: React.PropsWithChildren) {
             open={Boolean(anchorElUser)}
             onClose={handleCloseUserMenu}
           >
-            {settings.map((setting) => (
-              <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                <Typography textAlign="center">{setting}</Typography>
+              <MenuItem onClick={handleCloseUserMenu}>
+                <Typography textAlign="center">Account</Typography>
               </MenuItem>
-            ))}
-          </Menu>
+              <MenuItem onClick={handleLogout}>
+                <Typography textAlign="center">Log Out</Typography>
+              </MenuItem>
+            </Menu></>}
         </Grid>
       </AppBar>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>

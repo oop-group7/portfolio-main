@@ -11,9 +11,9 @@ const rows: GridRowsProp = [
 const columns: GridColDef[] = [
   { field: 'stockName', headerName: 'Stock Name', flex: 1 / 6, headerAlign: "left" },
   { field: 'quantity', headerName: 'Quantity', flex: 1 / 6, headerAlign: "left" },
-  { field: 'totalCost', headerName: 'Total Cost', flex: 1 / 6, headerAlign: "left" },
-  { field: 'currentPrice', headerName: 'Current Price', flex: 1 / 6, headerAlign: "left" },
-  { field: 'marketValue', headerName: 'Market Value', flex: 1 / 6, headerAlign: "left" },
+  { field: 'quantity', headerName: '% Allocation', flex: 1 / 6, headerAlign: "left" },
+  { field: 'totalCost', headerName: 'Average Cost', flex: 1 / 6, headerAlign: "left" },
+  { field: 'currentPrice', headerName: 'Total Cost', flex: 1 / 6, headerAlign: "left" },
   { field: 'profitLoss', renderHeader: () => (<div><Typography>Unrealized</Typography><Typography>Gain/Loss</Typography></div>), flex: 1 / 6, headerAlign: "left", renderCell: (params) => (<Typography fontWeight={700} color={params.value && params?.value < 0 ? "red" : "green"}>{params?.value ? params.value : 0}</Typography>) }
 ];
 

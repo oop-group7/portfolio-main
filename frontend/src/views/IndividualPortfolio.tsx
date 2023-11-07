@@ -5,7 +5,7 @@ import { useLocation } from 'react-router-dom';
 import StockInput from "./components/StockInput";
 import EditIcon from '@mui/icons-material/Edit';
 import SaveAltOutlinedIcon from '@mui/icons-material/SaveAltOutlined';
-import { ChangeEvent, useState } from 'react';
+import { useState } from 'react';
 
 function IndividualPortfolio() {
   const location = useLocation();
@@ -74,10 +74,6 @@ function IndividualPortfolio() {
                 <TableCell sx={{ borderRight: "solid 1px lightgray" }}>
                   <Typography fontWeight={"bold"}>Costs</Typography>
                   <Typography variant="h6" fontWeight={"bold"}>$100,000,000</Typography>
-                </TableCell>
-                <TableCell sx={{ borderRight: "solid 1px lightgray" }}>
-                  <Typography fontWeight={"bold"}>Market Value</Typography>
-                  <Typography variant="h6" fontWeight={"bold"}>$0</Typography>
                 </TableCell>
                 <TableCell>
                   <Typography fontWeight={"bold"}>Unrealized Gains/Loss</Typography>
