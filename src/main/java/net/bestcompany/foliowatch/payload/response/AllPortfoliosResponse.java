@@ -14,4 +14,10 @@ import net.bestcompany.foliowatch.models.Portfolio;
 public class AllPortfoliosResponse {
     @NotBlank
     private final List<Portfolio> portfolios;
+
+    @NotBlank
+    private final double totalCapital;
+
+    @NotBlank
+    private final int totalQuantity;
 }

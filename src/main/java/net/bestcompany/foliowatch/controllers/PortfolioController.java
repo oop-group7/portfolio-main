@@ -29,7 +29,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import net.bestcompany.foliowatch.models.Portfolio;
 import net.bestcompany.foliowatch.models.User;
-import net.bestcompany.foliowatch.payload.request.PortfolioCreateOrUpdateRequest;
+import net.bestcompany.foliowatch.payload.request.PortfolioCreateRequest;
+import net.bestcompany.foliowatch.payload.request.PortfolioUpdateRequest;
 import net.bestcompany.foliowatch.payload.response.AllPortfoliosResponse;
 import net.bestcompany.foliowatch.payload.response.DoubleResponse;
 import net.bestcompany.foliowatch.payload.response.ErrorResponse;
@@ -61,7 +62,7 @@ public class PortfolioController {
                         @ApiResponse(responseCode = "400", description = "One of the stock name provided is invalid.", content = {
                                         @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) })
         })
-        public ResponseEntity<?> createPortfolio(@Valid @RequestBody PortfolioCreateOrUpdateRequest request) {
+        public ResponseEntity<?> createPortfolio(@Valid @RequestBody PortfolioCreateRequest request) {
                 User user = userService.findUserByEmail(
                                 ((UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication()
                                                 .getPrincipal()).getEmail())
@@ -158,7 +159,9 @@ public class PortfolioController {
                                                 .getPrincipal()).getEmail())
                                 .orElseThrow();
                 List<Portfolio> portfolios = portfolioService.getAllPortfoliosByUser(user);
-                return ResponseEntity.ok().body(new AllPortfoliosResponse(portfolios));
+                double totalCapital = portfolios.stream().mapToDouble(Portfolio::getCapitalAmount).sum();
+                int totalQuantity = portfolios.stream().mapToInt(p -> p.getDesiredStocks().size()).sum();
+                return ResponseEntity.ok().body(new AllPortfoliosResponse(portfolios, totalCapital, totalQuantity));
         }
 
         @GetMapping("/get/{id}")
@@ -202,14 +205,22 @@ public class PortfolioController {
                                         @Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class)) })
         })
         public ResponseEntity<?> updatePortfolio(@PathVariable String id,
-                        @Valid @RequestBody PortfolioCreateOrUpdateRequest request) {
+                        @Valid @RequestBody PortfolioUpdateRequest request) {
                 Optional<Portfolio> rawPortfolio = portfolioService.findPortfolio(id);
                 if (rawPortfolio.isPresent()) {
                         Portfolio prevPortfolio = rawPortfolio.get();
-                        prevPortfolio.setCapitalAmount(request.getCapitalAmount());
-                        prevPortfolio.setDesiredStocks(request.getDesiredStocks());
-                        prevPortfolio.setName(request.getName());
-                        prevPortfolio.setStrategy(request.getStrategy());
+                        if (request.getCapitalAmount() != null) {
+                                prevPortfolio.setCapitalAmount(request.getCapitalAmount());
+                        }
+                        if (request.getDesiredStocks() != null) {
+                                prevPortfolio.setDesiredStocks(request.getDesiredStocks());
+                        }
+                        if (request.getName() != null) {
+                                prevPortfolio.setName(request.getName());
+                        }
+                        if (request.getStrategy() != null) {
+                                prevPortfolio.setStrategy(request.getStrategy());
+                        }
                         portfolioService.updatePortfolio(prevPortfolio);
                         return ResponseEntity.ok(new MessageResponse("Successfully updated portfolio"));
                 } else {
