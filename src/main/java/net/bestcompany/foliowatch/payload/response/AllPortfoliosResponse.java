@@ -15,5 +15,8 @@ public class AllPortfoliosResponse {
     private final List<PortfolioResponse> portfolios;
 
     @NotBlank
-    private final double utilisedCapitalAmount;
+    private final double totalUtilisedCapitalAmount;
+
+    @NotBlank
+    private final double totalCapitalAmount;
 }

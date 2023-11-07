@@ -38,12 +38,13 @@ public class PortfolioService implements IPortfolioService {
     public AllPortfoliosResponse getAllPortfoliosByUser(User user) {
         List<Portfolio> portfolios =  portfolioRepository.findByUser(user);
         List<PortfolioResponse> portfolioResponse = portfolios.stream().map(PortfolioService::mapPortfolioToPortfolioResponse).toList();
-        double totalCapitalAmount = portfolioResponse.parallelStream().mapToDouble(p -> p.getUtilisedCapitalAmount()).sum();
-        return new AllPortfoliosResponse(portfolioResponse, totalCapitalAmount);
+        double totalUtilisedCapitalAmount = portfolioResponse.stream().mapToDouble(p -> p.getUtilisedCapitalAmount()).sum();
+        double totalCapitalAmount = portfolioResponse.stream().mapToDouble(p -> p.getCapitalAmount()).sum();
+        return new AllPortfoliosResponse(portfolioResponse, totalUtilisedCapitalAmount, totalCapitalAmount);
     }
 
     private static PortfolioResponse mapPortfolioToPortfolioResponse(Portfolio portfolio) {
-        double utilisedCapitalAmount = portfolio.getDesiredStocks().parallelStream().mapToDouble(ds -> ds.getQuantity() * ds.getPrice()).sum();
+        double utilisedCapitalAmount = portfolio.getDesiredStocks().stream().mapToDouble(ds -> ds.getQuantity() * ds.getPrice()).sum();
         return new PortfolioResponse(portfolio.getId(), portfolio.getName(), portfolio.getStrategy(), portfolio.getCapitalAmount(), portfolio.getDesiredStocks(), utilisedCapitalAmount, portfolio.getCreatedAt());
     }
 

@@ -208,7 +208,9 @@ export interface components {
     AllPortfoliosResponse: {
       portfolios: components["schemas"]["PortfolioResponse"][];
       /** Format: double */
-      utilisedCapitalAmount: number;
+      totalUtilisedCapitalAmount: number;
+      /** Format: double */
+      totalCapitalAmount: number;
     };
     PortfolioResponse: {
       id: string;
