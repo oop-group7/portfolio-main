@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 import net.bestcompany.foliowatch.models.Portfolio;
 import net.bestcompany.foliowatch.repository.PortfolioRepository;
 import net.bestcompany.foliowatch.models.User;
+import net.bestcompany.foliowatch.payload.response.AllPortfoliosResponse;
+import net.bestcompany.foliowatch.payload.response.PortfolioResponse;
 
 @Service
 @Transactional
@@ -23,13 +25,26 @@ public class PortfolioService implements IPortfolioService {
     }
 
     @Override
-    public Optional<Portfolio> findPortfolio(String id) {
+    public Optional<PortfolioResponse> findPortfolio(String id) {
+        return portfolioRepository.findById(id).map(PortfolioService::mapPortfolioToPortfolioResponse);
+    }
+
+    @Override
+    public Optional<Portfolio> findPortfolioRaw(String id) {
         return portfolioRepository.findById(id);
     }
 
     @Override
-    public List<Portfolio> getAllPortfoliosByUser(User user) {
-        return portfolioRepository.findByUser(user);
+    public AllPortfoliosResponse getAllPortfoliosByUser(User user) {
+        List<Portfolio> portfolios =  portfolioRepository.findByUser(user);
+        List<PortfolioResponse> portfolioResponse = portfolios.stream().map(PortfolioService::mapPortfolioToPortfolioResponse).toList();
+        double totalCapitalAmount = portfolioResponse.parallelStream().mapToDouble(p -> p.getUtilisedCapitalAmount()).sum();
+        return new AllPortfoliosResponse(portfolioResponse, totalCapitalAmount);
+    }
+
+    private static PortfolioResponse mapPortfolioToPortfolioResponse(Portfolio portfolio) {
+        double utilisedCapitalAmount = portfolio.getDesiredStocks().parallelStream().mapToDouble(ds -> ds.getQuantity() * ds.getPrice()).sum();
+        return new PortfolioResponse(portfolio.getId(), portfolio.getName(), portfolio.getStrategy(), portfolio.getCapitalAmount(), portfolio.getDesiredStocks(), utilisedCapitalAmount, portfolio.getCreatedAt());
     }
 
     @Override

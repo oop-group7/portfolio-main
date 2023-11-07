@@ -6,18 +6,14 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import net.bestcompany.foliowatch.models.Portfolio;
 
 @Getter
 @Setter
 @RequiredArgsConstructor
 public class AllPortfoliosResponse {
     @NotBlank
-    private final List<Portfolio> portfolios;
+    private final List<PortfolioResponse> portfolios;
 
     @NotBlank
-    private final double totalCapital;
-
-    @NotBlank
-    private final int totalQuantity;
+    private final double utilisedCapitalAmount;
 }

@@ -61,13 +61,6 @@ export interface paths {
      */
     post: operations["refreshToken"];
   };
-  "/api/portfolio/getTotalCapitalAmount": {
-    /**
-     * Get total amount of capital
-     * @description Retrieve total amount of capital.
-     */
-    get: operations["getTotalCapitalAmount"];
-  };
   "/api/portfolio/getPercentageOfCapitalAllocated/{id}": {
     /**
      * Get percentage of capital allocated for a portfolio
@@ -207,31 +200,27 @@ export interface components {
       refreshToken: string;
       type: string;
     };
-    DoubleResponse: {
-      /** Format: double */
-      amount: number;
-    };
     StockNameResponse: {
       groupByStockName: {
         [key: string]: number;
       };
     };
     AllPortfoliosResponse: {
-      portfolios: components["schemas"]["Portfolio"][];
+      portfolios: components["schemas"]["PortfolioResponse"][];
       /** Format: double */
-      totalCapital: number;
-      /** Format: int32 */
-      totalQuantity: number;
+      utilisedCapitalAmount: number;
     };
-    Portfolio: {
-      id?: string;
+    PortfolioResponse: {
+      id: string;
       name: string;
       strategy: string;
       /** Format: double */
       capitalAmount: number;
       desiredStocks: components["schemas"]["DesiredStock"][];
+      /** Format: double */
+      utilisedCapitalAmount: number;
       /** Format: date-time */
-      createdAt?: string;
+      createdAt: string;
     };
     Match: {
       symbol: string;
@@ -616,36 +605,6 @@ export interface operations {
     };
   };
   /**
-   * Get total amount of capital
-   * @description Retrieve total amount of capital.
-   */
-  getTotalCapitalAmount: {
-    responses: {
-      /** @description Successfully retrieve total amount of capital. */
-      200: {
-        content: {
-          "application/json": components["schemas"]["DoubleResponse"];
-        };
-      };
-      /** @description Request Timeout */
-      408: {
-        content: never;
-      };
-      /** @description Too Many Requests */
-      429: {
-        content: never;
-      };
-      /** @description Service Unavailable */
-      503: {
-        content: never;
-      };
-      /** @description Bandwidth Limit Exceeded */
-      509: {
-        content: never;
-      };
-    };
-  };
-  /**
    * Get percentage of capital allocated for a portfolio
    * @description Retrieve the percentage of capital allocated for the portfolio.
    */
@@ -730,7 +689,7 @@ export interface operations {
       /** @description Successfully retrieve portfolio. */
       200: {
         content: {
-          "application/json": components["schemas"]["Portfolio"];
+          "application/json": components["schemas"]["PortfolioResponse"];
         };
       };
       /** @description Unable to find portfolio. */

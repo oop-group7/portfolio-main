@@ -21,13 +21,17 @@ public class PortfolioResponse {
     private final String name;
 
     @NotBlank
-    private String strategy;
+    private final String strategy;
 
     @NotNull
-    private double capitalAmount;
+    private final double capitalAmount;
 
     @NotNull
-    private List<DesiredStock> desiredStocks;
- 
-    private Date createdAt;
+    private final List<DesiredStock> desiredStocks;
+
+    @NotNull
+    private final double utilisedCapitalAmount;
+
+    @NotNull
+    private final Date createdAt;
 }

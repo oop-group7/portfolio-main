@@ -32,9 +32,9 @@ import net.bestcompany.foliowatch.models.User;
 import net.bestcompany.foliowatch.payload.request.PortfolioCreateRequest;
 import net.bestcompany.foliowatch.payload.request.PortfolioUpdateRequest;
 import net.bestcompany.foliowatch.payload.response.AllPortfoliosResponse;
-import net.bestcompany.foliowatch.payload.response.DoubleResponse;
 import net.bestcompany.foliowatch.payload.response.ErrorResponse;
 import net.bestcompany.foliowatch.payload.response.MessageResponse;
+import net.bestcompany.foliowatch.payload.response.PortfolioResponse;
 import net.bestcompany.foliowatch.payload.response.StockNameResponse;
 import net.bestcompany.foliowatch.security.services.IUserService;
 import net.bestcompany.foliowatch.security.services.UserDetailsImpl;
@@ -78,49 +78,6 @@ public class PortfolioController {
                 return ResponseEntity.status(201).body(new MessageResponse("Successfully created portfolio"));
         }
 
-        @GetMapping("/getTotalCapitalAmount")
-        @PreAuthorize("hasRole('USER') or hasRole('DEVELOPER')")
-        @Operation(summary = "Get total amount of capital", description = "Retrieve total amount of capital.")
-        @ApiResponses(value = {
-                        @ApiResponse(responseCode = "200", description = "Successfully retrieve total amount of capital.", content = {
-                                        @Content(mediaType = "application/json", schema = @Schema(implementation = DoubleResponse.class)) })
-        })
-        public ResponseEntity<?> getTotalCapitalAmount() {
-                User user = userService.findUserByEmail(
-                                ((UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication()
-                                                .getPrincipal()).getEmail())
-                                .orElseThrow();
-                double totalCapitalStocks = 0.0;
-                List<Portfolio> portfolios = portfolioService.getAllPortfoliosByUser(user);
-                for (Portfolio portfolio : portfolios) {
-                        totalCapitalStocks += portfolio.getCapitalAmount();
-                }
-                
-                return ResponseEntity.ok().body(new DoubleResponse(totalCapitalStocks));
-        }
-
-        // @GetMapping("/getUtilizedCapital")
-        // @PreAuthorize("hasRole('USER') or hasRole('DEVELOPER')")
-        // @Operation(summary = "Get utilized amount of capital", description = "Retrieve utilized amount of capital.")
-        // @ApiResponses(value = {
-        //                 @ApiResponse(responseCode = "200", description = "Successfully retrieve utilized amount of capital.", content = {
-        //                                 @Content(mediaType = "application/json", schema = @Schema(implementation = DoubleResponse.class)) })
-        // })
-        // public ResponseEntity<?> getUtilizedCapital() {
-        //         User user = userService.findUserByEmail(
-        //                         ((UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication()
-        //                                         .getPrincipal()).getEmail())
-        //                         .orElseThrow();
-        //         double utilizedCapitalStocks = 0.0;
-        //         List<Portfolio> portfolios = portfolioService.getAllPortfoliosByUser(user);
-        //         
-        //         for (Portfolio portfolio : portfolios) {
-        //                 totalCapitalStocks += portfolio.getCapitalAmount();
-        //         }
-                
-        //         return ResponseEntity.ok().body(new DoubleResponse(totalCapitalStocks));
-        // }
-
         @GetMapping(value = "/getPercentageOfCapitalAllocated/{id}")
         @PreAuthorize("hasRole('USER') or hasRole('DEVELOPER')")
         @Operation(summary = "Get percentage of capital allocated for a portfolio", description = "Retrieve the percentage of capital allocated for the portfolio.")
@@ -131,9 +88,9 @@ public class PortfolioController {
                                         @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) })
         })
         public ResponseEntity<?> getPercentageOfCapitalAllocated(@PathVariable String id) {
-                Optional<Portfolio> rawPortfolio = portfolioService.findPortfolio(id);
+                Optional<PortfolioResponse> rawPortfolio = portfolioService.findPortfolio(id);
                 if (rawPortfolio.isPresent()) {
-                        Portfolio portfolio = rawPortfolio.get();
+                        PortfolioResponse portfolio = rawPortfolio.get();
                         double totalCapitalStocks = portfolio.getCapitalAmount();
                         List<DesiredStock> desiredStockList = portfolio.getDesiredStocks();
                         
@@ -180,10 +137,8 @@ public class PortfolioController {
                                 ((UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication()
                                                 .getPrincipal()).getEmail())
                                 .orElseThrow();
-                List<Portfolio> portfolios = portfolioService.getAllPortfoliosByUser(user);
-                double totalCapital = portfolios.stream().mapToDouble(Portfolio::getCapitalAmount).sum();
-                int totalQuantity = portfolios.stream().mapToInt(p -> p.getDesiredStocks().size()).sum();
-                return ResponseEntity.ok().body(new AllPortfoliosResponse(portfolios, totalCapital, totalQuantity));
+                AllPortfoliosResponse portfolios = portfolioService.getAllPortfoliosByUser(user);
+                return ResponseEntity.ok().body(portfolios);
         }
 
         @GetMapping("/get/{id}")
@@ -191,14 +146,14 @@ public class PortfolioController {
         @Operation(summary = "Get a portfolio", description = "Retrieve a portfolio .")
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "Successfully retrieve portfolio.", content = {
-                                        @Content(mediaType = "application/json", schema = @Schema(implementation = Portfolio.class)) }),
+                                        @Content(mediaType = "application/json", schema = @Schema(implementation = PortfolioResponse.class)) }),
                         @ApiResponse(responseCode = "404", description = "Unable to find portfolio.", content = {
                                         @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) })
         })
         public ResponseEntity<?> getPortfolio(@PathVariable String id) {
-                Optional<Portfolio> rawPortfolio = portfolioService.findPortfolio(id);
+                Optional<PortfolioResponse> rawPortfolio = portfolioService.findPortfolio(id);
                 if (rawPortfolio.isPresent()) {
-                        Portfolio portfolio = rawPortfolio.get();
+                        PortfolioResponse portfolio = rawPortfolio.get();
                         return ResponseEntity.ok().body(portfolio);
                 } else {
                         return ResponseEntity.status(404).body(new ErrorResponse("Unable to find portfolio"));
@@ -228,7 +183,7 @@ public class PortfolioController {
         })
         public ResponseEntity<?> updatePortfolio(@PathVariable String id,
                         @Valid @RequestBody PortfolioUpdateRequest request) {
-                Optional<Portfolio> rawPortfolio = portfolioService.findPortfolio(id);
+                Optional<Portfolio> rawPortfolio = portfolioService.findPortfolioRaw(id);
                 if (rawPortfolio.isPresent()) {
                         Portfolio prevPortfolio = rawPortfolio.get();
                         if (request.getCapitalAmount() != null) {
