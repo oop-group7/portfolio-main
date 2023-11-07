@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 import "bootstrap/dist/css/bootstrap.css";
-import { PUT, DELETE } from "../utils/apihelper";
+import { PUT, DELETE, POST } from "../utils/apihelper";
 import { getUserData } from '../utils/apihelper';
 import { useNavigate } from "react-router-dom";
 
@@ -11,13 +11,14 @@ function ProfilePage() {
   const [firstName, setFirstName] = useState("");
   const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
 
+  const [error, setError] = useState("");
   const [firstNameError, setFirstNameError] = useState("");
   const [userNameError, setUserNameError] = useState("");
   const [emailError, setEmailError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
+  const [newPasswordError, setNewPasswordError] = useState("");
 
   const navigate = useNavigate();
 
@@ -29,7 +30,6 @@ function ProfilePage() {
         setFirstName(userData.firstName);
         setUserName(userData.userName);
         setEmail(userData.email);
-        setPassword(userData.password); // user data does not contain password i think
       } catch (error) {
         // I'm not sure what error to display as an error here
       }
@@ -48,15 +48,16 @@ function ProfilePage() {
     }
   }
 
-  async function handleChanges(event: React.FormEvent<HTMLFormElement>){
+  async function handleChanges(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     // Reset previous errors
     setFirstNameError("");
     setUserNameError("");
     setEmailError("");
+    setNewPasswordError("");
 
-    let passwordErrorMessage ="";
     let hasErrors = false;
+    let newPasswordErrorMessage = "";
 
     if (firstName.trim()==="") {
       setFirstNameError("First Name is required");
@@ -83,55 +84,78 @@ function ProfilePage() {
       hasErrors=true;
     }
 
-    if (password.trim()==="") {
-      setPasswordError("Password is required");
+    if (newPassword.trim()==="") {
+      setNewPasswordError("Password is required");
       hasErrors=true;
       return;
     }
 
-   if(password.length < 8 || password.length> 25){
-      passwordErrorMessage += "Password must be between 8 to 25 characters\n";
+   if(newPassword.length < 8 || newPassword.length> 25){
+      newPasswordErrorMessage += "Password must be between 8 to 25 characters\n";
       hasErrors=true;}
 
-   if(!(/[!@#$%^&*()_+{}\[\]:;<>,.?~\\-]/).test(password)){
-      passwordErrorMessage += "Password must contain at least one symbol\n";
+   if(!(/[!@#$%^&*()_+{}\[\]:;<>,.?~\\-]/).test(newPassword)){
+      newPasswordErrorMessage += "Password must contain at least one symbol\n";
       hasErrors=true;}
 
-   if(!(/\d/).test(password)){
-      passwordErrorMessage += "Password must contain at least one numeric character\n";
+   if(!(/\d/).test(newPassword)){
+      newPasswordErrorMessage += "Password must contain at least one numeric character\n";
       hasErrors=true;}
 
-   if(!(/[A-Z]/).test(password)){
-      passwordErrorMessage += "Password must contain at least one uppercase letter\n";
+   if(!(/[A-Z]/).test(newPassword)){
+      newPasswordErrorMessage += "Password must contain at least one uppercase letter\n";
       hasErrors=true;}
 
-   if(!(/[a-z]/).test(password)){
-      passwordErrorMessage += "Password must contain at least one lowercase letter\n";
+   if(!(/[a-z]/).test(newPassword)){
+      newPasswordErrorMessage += "Password must contain at least one lowercase letter\n";
       hasErrors=true;}
 
-  setPasswordError(passwordErrorMessage);
+  setNewPasswordError(newPasswordErrorMessage);
 
    // If there are errors, return early
     if (hasErrors) {
       return;
     }
 
-  const res = await PUT("/api/user/updateprofile", {
+      // Update Profile Information
+  const updateProfileRes = await PUT("/api/user/updateprofile", {
     body: {
       firstName,
       userName,
       email,
-      password
     },
   });
-  
-  if (!res.response.ok) {
-    const error = res.error;
-    setError(error.message);
 
-  } else {
+  if (!updateProfileRes.response.ok) {
+    const updateProfileError = updateProfileRes.error;
+    setError(updateProfileError.message);
+  }
+
+  // Change Password
+  const updatePasswordRes = await POST("/api/user/updatepassword", {
+    body: {
+      oldPassword,
+      newPassword,
+    },
+    });
+
+  if (!updatePasswordRes.response.ok) {
+    const updatePasswordError = updatePasswordRes.error;
+    setError(updatePasswordError.message);
+  }
+
+  if (updateProfileRes.response.ok && updatePasswordRes.response.ok) {
     setError("");
-    window.location.href = "http://localhost:8080/validation"; // Not sure if this should be here
+    // Update the state variables with the new data received from the server
+    setFirstName(firstName);
+    setUserName(userName);
+    setEmail(email);
+
+    // Clear the password fields for security
+    setOldPassword("");
+    setNewPassword("");
+
+    window.location.href = "http://localhost:8080/validation";
   }
 }
 
@@ -178,7 +202,19 @@ function ProfilePage() {
             </div>
 
             <div className="mb-3">
-              <label htmlFor="password">Password</label>
+              <label htmlFor="oldpassword">Old Password</label>
+              <input
+                type="password"
+                className="form-control"
+                id="oldpassword"
+                placeholder={oldPassword}
+                value={oldPassword}
+                onChange={(e) => setOldPassword(e.target.value)}
+              />
+            </div>
+
+            <div className="mb-3">
+              <label htmlFor="newpassword">New Password</label>
               <div className="icon-container">
                 <FontAwesomeIcon className="mx-2" icon={faCircleInfo} />
                 <div className="message">
@@ -189,10 +225,10 @@ function ProfilePage() {
               <input
                 type="password"
                 className="form-control"
-                id="password"
-                placeholder={password}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                id="newpassword"
+                placeholder={newPassword}
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
               />
             </div>
 
