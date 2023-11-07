@@ -3,7 +3,8 @@ import { Box, Grid, Typography } from "@mui/material";
 import Portfolios from "./components/HompageGrid";
 import HomePageHeader from "./components/HomePageHeader";
 import { LineChart, PieChart } from "@mui/x-charts";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { GET } from "../utils/apihelper";
 
 const time = [
   new Date(2015, 1, 0),
@@ -23,6 +24,13 @@ const palette = ["#e86427", "#0d4ea6", "#279c9c", "#279c9c", "#279c9c"]
 function HomePage() {
   const [graphMin, setGraphMin] = useState(1);
   const [graphMax, setGraphMax] = useState(10);
+  const [portfolios, setPortfolios] = useState();
+
+  useEffect(() => {
+    GET("/api/portfolio/getAll", {}).then((response) => {
+      console.log(response)
+    })
+  },[])
 
   return (
     <Grid container gap={3}>
