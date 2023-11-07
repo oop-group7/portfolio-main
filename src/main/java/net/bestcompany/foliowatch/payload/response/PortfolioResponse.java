@@ -28,6 +28,6 @@ public class PortfolioResponse {
 
     @NotNull
     private List<DesiredStock> desiredStocks;
-
+ 
     private Date createdAt;
 }
