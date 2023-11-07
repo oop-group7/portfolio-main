@@ -154,12 +154,12 @@ export interface components {
       /** Format: date-time */
       timestamp?: string;
     };
-    PortfolioCreateOrUpdateRequest: {
-      name: string;
-      strategy: string;
+    PortfolioUpdateRequest: {
+      name?: string;
+      strategy?: string;
       /** Format: double */
-      capitalAmount: number;
-      desiredStocks: components["schemas"]["DesiredStock"][];
+      capitalAmount?: number;
+      desiredStocks?: components["schemas"]["DesiredStock"][];
     };
     UpdatePasswordRequest: {
       oldPassword: string;
@@ -167,6 +167,13 @@ export interface components {
     };
     ErrorResponse: {
       error: string;
+    };
+    PortfolioCreateRequest: {
+      name: string;
+      strategy: string;
+      /** Format: double */
+      capitalAmount: number;
+      desiredStocks: components["schemas"]["DesiredStock"][];
     };
     SignupRequest: {
       firstName: string;
@@ -211,6 +218,10 @@ export interface components {
     };
     AllPortfoliosResponse: {
       portfolios: components["schemas"]["Portfolio"][];
+      /** Format: double */
+      totalCapital: number;
+      /** Format: int32 */
+      totalQuantity: number;
     };
     Portfolio: {
       id?: string;
@@ -318,7 +329,7 @@ export interface operations {
     };
     requestBody: {
       content: {
-        "application/json": components["schemas"]["PortfolioCreateOrUpdateRequest"];
+        "application/json": components["schemas"]["PortfolioUpdateRequest"];
       };
     };
     responses: {
@@ -400,7 +411,7 @@ export interface operations {
   createPortfolio: {
     requestBody: {
       content: {
-        "application/json": components["schemas"]["PortfolioCreateOrUpdateRequest"];
+        "application/json": components["schemas"]["PortfolioCreateRequest"];
       };
     };
     responses: {

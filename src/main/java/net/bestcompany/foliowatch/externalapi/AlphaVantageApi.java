@@ -8,6 +8,7 @@ import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import net.bestcompany.foliowatch.exceptions.APIRateLimitException;
 import net.bestcompany.foliowatch.externalapi.responses.SearchTickerResponse;
 import net.bestcompany.foliowatch.externalapi.responses.TimeSeriesResponse;
 import reactor.netty.http.client.HttpClient;
@@ -29,24 +30,32 @@ public class AlphaVantageApi implements IAlphaVantageApi {
         @Override
         @Cacheable("searchSymbol")
         public SearchTickerResponse searchTicker(String keyword) {
-                return client.get()
+                var result = client.get()
                                 .uri(uriBuilder -> uriBuilder
                                                 .queryParam(BASE_URL, "function", "SYMBOL_SEARCH")
                                                 .queryParam("keywords", keyword)
                                                 .queryParam("apikey", apiKey).build())
                                 .retrieve()
                                 .bodyToMono(SearchTickerResponse.class).block();
+                if (result.getBestMatches() == null) {
+                        throw new APIRateLimitException();
+                }
+                return result;
         }
 
         @Override
         @Cacheable("timeSeries")
         public TimeSeriesResponse getTimeSeries(String ticker) {
-                return client.get()
+                var result = client.get()
                                 .uri(BASE_URL,
                                                 uriBuilder -> uriBuilder.queryParam("function", "TIME_SERIES_DAILY")
                                                                 .queryParam("symbol", ticker)
                                                                 .queryParam("apikey", apiKey).build())
                                 .retrieve().bodyToMono(TimeSeriesResponse.class).block();
+                if (result.getMetadata() == null) {
+                        throw new APIRateLimitException();
+                }
+                return result;
         }
 
         @Override
