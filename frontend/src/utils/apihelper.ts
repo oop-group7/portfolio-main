@@ -97,5 +97,3 @@ export function logout() {
   localStorage.removeItem(LOCAL_STORAGE_USER_KEY);
   window.location.href = "/";
 }
-
-
