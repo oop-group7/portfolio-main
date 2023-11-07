@@ -2,12 +2,6 @@ import { Box, Link, Typography } from '@mui/material';
 import { DataGrid, GridRowsProp, GridColDef } from '@mui/x-data-grid';
 import React from 'react';
 
-const rows: GridRowsProp = [
-  { id: 1, stockName: 'Hello', quantity: 'World', totalCost: 100, currentPrice: 1000, marketValue: 999, profitLoss: 10 },
-  { id: 2, stockName: 'Hello', quantity: 'World', totalCost: 100, currentPrice: 1000, marketValue: 999, profitLoss: -20 },
-  { id: 3, stockName: 'Hello', quantity: 'World', totalCost: 100, currentPrice: 1000, marketValue: 999, profitLoss: 1000 },
-];
-
 const columns: GridColDef[] = [
   { field: 'stockName', headerName: 'Stock Name', flex: 1 / 6, headerAlign: "left" },
   { field: 'quantity', headerName: 'Quantity', flex: 1 / 6, headerAlign: "left" },
@@ -18,6 +12,11 @@ const columns: GridColDef[] = [
 ];
 
 export default function Stocks() {
+  // const rows: GridRowsProp = [
+  //   { id: 1, stockName: 'Hello', quantity: 'World', totalCost: 100, currentPrice: 1000, marketValue: 999, profitLoss: 10 },
+  //   { id: 2, stockName: 'Hello', quantity: 'World', totalCost: 100, currentPrice: 1000, marketValue: 999, profitLoss: -20 },
+  //   { id: 3, stockName: 'Hello', quantity: 'World', totalCost: 100, currentPrice: 1000, marketValue: 999, profitLoss: 1000 },
+  // ];
   return (
     <React.Fragment>
       <Box sx={{ height: "90vh", width: "100%" }}>

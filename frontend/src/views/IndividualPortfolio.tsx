@@ -5,19 +5,32 @@ import { useLocation } from 'react-router-dom';
 import StockInput from "./components/StockInput";
 import EditIcon from '@mui/icons-material/Edit';
 import SaveAltOutlinedIcon from '@mui/icons-material/SaveAltOutlined';
-import { useState } from 'react';
+import { useEffect, useState } from "react";
+import { GET } from "../utils/apihelper";
 
 function IndividualPortfolio() {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
-  const portfolioName = searchParams.get("portfolioname");
+  const portfolioId = searchParams.get("portfolioId");
   const [nameEditing, setNameEditing] = useState<boolean>(false);
-  const [name, setName] = useState<string | null>(portfolioName)
+  const [id, setId] = useState<string | null>(portfolioId);
+  const [name, setName] = useState();
+
+  useEffect(() => {
+    GET(`/api/portfolio/get/${id}`, {})
+      .then((response) => {
+        console.log("API Response:", response.data);
+      })
+      .catch((error) => {
+        console.error("API Error:", error);
+      });
+  }, []);
+
 
   function handleEnter(e: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) {
     if (e.key === 'Enter') {
       e.preventDefault()
-      setName(e.currentTarget.value)
+      setId(e.currentTarget.value)
       setNameEditing(false)
     }
   }

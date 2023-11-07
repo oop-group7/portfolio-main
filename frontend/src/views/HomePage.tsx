@@ -5,6 +5,7 @@ import HomePageHeader from "./components/HomePageHeader";
 import { LineChart, PieChart } from "@mui/x-charts";
 import { useEffect, useState } from "react";
 import { GET } from "../utils/apihelper";
+import {components} from "../utils/api";
 
 const time = [
   new Date(2015, 1, 0),
@@ -21,24 +22,40 @@ const time = [
 
 const palette = ["#e86427", "#0d4ea6", "#279c9c", "#279c9c", "#279c9c"]
 
+type Portfolio = components["schemas"]["PortfolioResponse"];
+
 function HomePage() {
   const [graphMin, setGraphMin] = useState(1);
   const [graphMax, setGraphMax] = useState(10);
-  const [portfolios, setPortfolios] = useState();
+  const [portfolios, setPortfolios] = useState<Portfolio[]>([])
+  const [allocatedCapital, setAllocatedCapital] = useState(0.0);
+  const [utilizedCapital, setUtilizedCapital] = useState(0.0);
+  const [totalGainLoss, setTotalGainLoss] = useState(0.0);
 
   useEffect(() => {
-    GET("/api/portfolio/getAll", {}).then((response) => {
-      console.log(response)
-    })
-  },[])
+    GET("/api/portfolio/getAll", {})
+      .then((response) => {
+        console.log("API Response:", response.data);
+        setPortfolios(response.data?.portfolios ?? []);
+        setAllocatedCapital(response.data?.totalCapitalAmount ?? 0.0);
+        setUtilizedCapital(response.data?.totalUtilisedCapitalAmount ?? 0.0);
+      })
+      .catch((error) => {
+        console.error("API Error:", error);
+      });
+  }, []);
 
   return (
     <Grid container gap={3}>
       <Grid item xs={12}>
-        <HomePageHeader />
+        <HomePageHeader 
+        allocatedCapital={allocatedCapital}
+        utilizedCapital={utilizedCapital}
+        // totalGainLoss={totalGainLoss}
+        />
       </Grid>
       <Grid item sm={12} md={7}>
-        <Portfolios />
+        <Portfolios data={portfolios}/>
       </Grid>
       <Grid item container xs justifyContent={"center"} sx={{ minHeight: "30rem", backgroundColor: "white", borderRadius: "3px", boxShadow: 1 }}>
         <Grid item container justifyContent={"center"} flexDirection={"column"}>
