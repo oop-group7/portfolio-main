@@ -5,49 +5,52 @@ type AuthResponse = components["schemas"]["JwtResponse"];
 
 const LOCAL_STORAGE_USER_KEY = "user";
 
+const customFetch = async (input: RequestInfo | URL, init: RequestInit | undefined) => {
+  if (init) {
+    const userData = getUserData();
+    const extraAuthorizationHeaders: { Authorization: string } | {} = userData
+      ? {
+          Authorization: `Bearer ${userData.accessToken}`,
+        }
+      : {};
+    const extraContentHeaders: { "Content-Type": string } | {} =
+      init.method !== "GET"
+        ? {
+            "Content-Type": "application/json",
+          }
+        : {};
+    init.headers = {
+      ...extraAuthorizationHeaders,
+      ...extraContentHeaders,
+    };
+  }
+  let res = await fetch(input, init);
+  console.log(res.status)
+  const isLogin = input.toString().includes("/api/auth/signin");
+  const isUpdateProfile = input.toString().includes("/updateprofile");
+  const midRes = await middleware(res, isLogin);
+  console.log("First")
+  if (midRes === "repeat") {
+    console.log("Second")
+    res = await fetch(input, init);
+  }
+  const userData = getUserData();
+  if (isUpdateProfile && res.ok && userData) {
+    const clonedRes = res.clone();
+    const authRes: components["schemas"]["UpdateUserRequest"] =
+      await clonedRes.json();
+    setUserData({
+      ...userData,
+      ...authRes,
+    });
+  }
+  return res;
+}
+
 export const { GET, POST, DELETE, PUT } = createClient<paths>({
   baseUrl: window.location.origin,
   credentials: "same-origin",
-  fetch: async (input, init) => {
-    if (init) {
-      const userData = getUserData();
-      const extraAuthorizationHeaders: { Authorization: string } | {} = userData
-        ? {
-            Authorization: `Bearer ${userData.accessToken}`,
-          }
-        : {};
-      const extraContentHeaders: { "Content-Type": string } | {} =
-        init.method !== "GET"
-          ? {
-              "Content-Type": "application/json",
-            }
-          : {};
-      init.headers = {
-        ...extraAuthorizationHeaders,
-        ...extraContentHeaders,
-      };
-    }
-    let res = await fetch(input, init);
-    const isLogin = input.toString().includes("/api/auth/signin");
-    const isUpdateProfile = input.toString().includes("/updateprofile");
-    const midRes = await middleware(res, isLogin);
-    console.log("First")
-    if (midRes === "repeat") {
-      console.log("Second")
-      res = await fetch(input, init);
-    }
-    const userData = getUserData();
-    if (isUpdateProfile && res.ok && userData) {
-      const clonedRes = res.clone();
-      const authRes: components["schemas"]["UpdateUserRequest"] =
-        await clonedRes.json();
-      setUserData({
-        ...userData,
-        ...authRes,
-      });
-    }
-    return res;
-  },
+  fetch: customFetch,
 });
 
 async function middleware(
