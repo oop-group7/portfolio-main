@@ -6,15 +6,22 @@ import "bootstrap/dist/css/bootstrap.css";
 import { POST } from "../utils/apihelper";
 import { useNavigate } from "react-router-dom";
 
-function ProfilePage() {
+function UpdatePasswordPage() {
 
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const [error, setError] = useState("");
   const [newPasswordError, setNewPasswordError] = useState("");
+  const [oldPasswordError, setOldPasswordError] = useState("");
 
   const navigate = useNavigate();
+
+  const handleModalClose = () => {
+    setShowSuccessModal(false);
+    window.location.href = "http://localhost:8080/profile";
+  };
 
   async function handleChanges(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     event.preventDefault();
@@ -23,6 +30,12 @@ function ProfilePage() {
 
     let hasErrors = false;
     let newPasswordErrorMessage = "";
+
+    if (oldPassword.trim()==="") {
+      setOldPasswordError("Password is required");
+      hasErrors=true;
+      return;
+    }
 
     if (newPassword.trim()==="") {
       setNewPasswordError("Password is required");
@@ -65,14 +78,17 @@ function ProfilePage() {
     },
     });
 
-  if (updatePasswordRes.response.ok) {
+  if (!updatePasswordRes.response.ok) {
+    console.log(updatePasswordRes)
+    if (updatePasswordRes.response.status == 400 && updatePasswordRes.error) {
+      setOldPasswordError(updatePasswordRes.error?.error)
+    }
+  }else{
     setError("");
-
     // Clear the password fields for security
     setOldPassword("");
     setNewPassword("");
-
-    //window.location.href = "http://localhost:8080/validation";
+    setShowSuccessModal(true);
   }
 }
 
@@ -97,6 +113,7 @@ function ProfilePage() {
                 value={oldPassword}
                 onChange={(e) => setOldPassword(e.target.value)}
               />
+              <p className="error">{oldPasswordError}</p>
             </div>
 
             <div className="mb-3">
@@ -116,6 +133,7 @@ function ProfilePage() {
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
               />
+              <p className="error">{newPasswordError}</p>
             </div>
 
             <div className="d-grid gap-2 mb-3">
@@ -124,9 +142,32 @@ function ProfilePage() {
               </button>
             </div>
           </div>
+
+          {/* Success Modal */}
+          <div className="modal" tabIndex={1} style={{ display: showSuccessModal ? "block" : "none" }}>
+            <div className="modal-dialog">
+              <div className="modal-content">
+                <div className="modal-header bg-primary text-white">
+                  <h5 className="modal-title">Success</h5>
+                  <button type="button" 
+                  className="btn-close" 
+                  aria-label="Close" 
+                  onClick={() => {
+                    handleModalClose(); // Your modal close logic
+                  }}></button>
+                </div>
+                <div className="modal-body">
+                  Password updated successfully.
+                </div>
+                <div className="modal-footer">
+                  <button type="button" className="btn btn-primary" onClick={handleModalClose}>Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
   );
 }
 
-export default ProfilePage;
+export default UpdatePasswordPage;

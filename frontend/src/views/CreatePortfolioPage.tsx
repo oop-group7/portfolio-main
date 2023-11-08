@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from 'react-bootstrap-icons'
 import { POST } from "../utils/apihelper";
@@ -8,17 +8,7 @@ import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap/dist/js/bootstrap.bundle.js";
 import "./css/CreatePortfolioPage.css";
 import {components} from "../utils/api";
-
-const PORTFOLIO_LIST: {name: string, symbol: string}[] = [{
-  name: "Stock 1",
-  symbol: "stock1"
-}, {
-  name: "Stock 2",
-  symbol: "stock2"
-}, {
-  name: "Stock 3",
-  symbol: "stock3"
-}]
+import {PORTFOLIO_LIST, fetchPortfolioInformation} from "../utils/ticker"
 
 type desiredStocks = components["schemas"]["DesiredStock"]
 function CreatePortfolioPage() {
@@ -32,35 +22,55 @@ function CreatePortfolioPage() {
   const [price, setPrice] = useState("");
   const [quantity, setQuantity] = useState("");
   const [desiredStocks, setDesiredStocks] = useState<desiredStocks[]>([]);
+  const [stockInfo, setStockInfo] = useState<Awaited<ReturnType<typeof fetchPortfolioInformation>>>()
 
-  // const [setPortfolioNameError, portfolioNameError] = useState("");
+  const [portfolioNameError, setPortfolioNameError] = useState("");
+  const [capitalStockError, setcapitalStockError] = useState("");
 
-  // const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-  //   e.preventDefault();
+  useEffect(() => {
+    fetchPortfolioInformation(PORTFOLIO_LIST).then((res) => {
+      setStockInfo(res)
+    })
+  }, [])
 
-  //   // Frontend input validation, for generic UX purposes, not for security purposes
-  //   if (portfolioName.trim() === "") {
-  //     alert("Portfolio name cannot be empty or consist only of whitespaces");
-  //     return;
-  //   }
-  //   // check if any of the fields of the stocks are empty or consist only of whitespaces
-  //   for (let i = 0; i < desiredStocks.length; i++) {
-  //     if (desiredStocks[i]?.stock?.trim() === "" || desiredStocks[i]?.price?.trim() === "" || desiredStocks[i]?.quantity?.trim() === "") {
-  //       alert("Stock name, price, and quantity cannot be empty or consist only of whitespaces");
-  //       return;
-  //     }
-  //   }
-  //   // const formattedStocks = desiredStocks.map((stock) => ({
-  //   //   Stock: stock.stock,
-  //   //   Price: stock.price,
-  //   //   Quantity: stock.quantity
-  //   // }));
+  useEffect(() => {
+    if (desiredStock !== "") {
+      const selectedTicker = desiredStock.split(":")[0]!.trim();
+      if (stockInfo) {
+        const info = stockInfo.find((stock) => stock.metadata?.symbol === selectedTicker)
+        if (info?.timeSeries) {
+          const data = Object.values(info.timeSeries)[0];
+          if (data) {
+            setPrice(data.open)
+          }
+        }
+      }
+    }
+  }, [desiredStock])
+  
 
-  // }
   async function handleSubmit(e:React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+
+    let hasErrors = false;
+
+    if (portfolioName.trim()==="") {
+      setPortfolioNameError("Portfolio Name is required");
+      hasErrors=true;
+    }
+
+    if (capital <= 0) {
+      setcapitalStockError("Capital Amount cannot be 0");
+      hasErrors=true;
+    }
+
+    if (hasErrors) {
+      return;
+    }
+
     console.log(portfolioName, strategy, capital,desiredStocks)
-    console.log(typeof capital)
+
+
     const res = await POST("/api/portfolio/create", {
       body: {
         "name": portfolioName,
@@ -70,10 +80,9 @@ function CreatePortfolioPage() {
       },
     });
     if (!res.response.ok) {
-      console.log(res.response)
-      //setError("Invalid Input");
+      console.log(res)
+      //setPortfolioNameError("Invalid Input");
     } else {
-      // console.log('in')
       navigate("/homepage");
     }
   }
@@ -91,9 +100,14 @@ function CreatePortfolioPage() {
     });
     
     if (! stockAlreadyExists){
+      const stock = desiredStock;
+      
+      const parts = stock.split(":");
+      const symbol = parts[0]!.trim(); // Trim and get the first part
+      const name = parts[1]!.trim(); // Trim and get the second part
       const newStock = {
-        stockSymbol: "trial",
-        stockName: desiredStock,
+        stockSymbol: symbol,
+        stockName: name,
         price: parseFloat(price),
         quantity: parseInt(quantity),
       };
@@ -133,7 +147,7 @@ function CreatePortfolioPage() {
                 value={portfolioName}
                 onChange={(e) => setPortfolioName(e.target.value)}
                 />
-              {/* <p className="error">{portfolioNameError}</p> */}
+              <p className="error">{portfolioNameError}</p>
             </div>
 
             <div className="mb-2">
@@ -160,7 +174,6 @@ function CreatePortfolioPage() {
                 value={capital}
                 onChange={(e) => setCapital(parseInt(e.target.value))}
               />
-              {/* <p className="error">{userNameError}</p> */}
             </div>
 
             <hr></hr>
@@ -175,7 +188,7 @@ function CreatePortfolioPage() {
               >
                 <option value="" disabled selected>Select a Stock</option>
                 {PORTFOLIO_LIST.map((portfolioInfo) => (
-                  <option value={portfolioInfo.symbol}>{portfolioInfo.name}</option>
+                  <option value={`${portfolioInfo.symbol} : ${portfolioInfo.name}`}>{`${portfolioInfo.symbol} : ${portfolioInfo.name}`}</option>
                 ))}
               </select>
             </div>
@@ -189,7 +202,7 @@ function CreatePortfolioPage() {
                 id="price"
                 placeholder="Price"
                 value={price}
-                onChange={(e) => setPrice(e.target.value)}
+                disabled
               />
               {/* <p className="error">{userNameError}</p> */}
             </div>
@@ -222,6 +235,7 @@ function CreatePortfolioPage() {
                   <ul>
                     {desiredStocks.map((stock, index) => (
                       <li key={index}>
+                        Symbol: {stock.stockSymbol},
                         Stock: {stock.stockName}, 
                         Price: {stock.price}, 
                         Quantity: {stock.quantity}

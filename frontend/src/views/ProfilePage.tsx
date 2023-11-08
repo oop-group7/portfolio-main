@@ -124,6 +124,7 @@ function ProfilePage() {
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
               />
+              <p className="error">{firstNameError}</p>
             </div>
 
             <div className="mb-3">
@@ -136,6 +137,7 @@ function ProfilePage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
+              <p className="error">{emailError}</p>
             </div>
 
             <div className="d-grid gap-2 mb-3">
