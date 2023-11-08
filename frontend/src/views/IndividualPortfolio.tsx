@@ -5,20 +5,21 @@ import { useLocation } from 'react-router-dom';
 import StockInput from "./components/StockInput";
 import EditIcon from '@mui/icons-material/Edit';
 import SaveAltOutlinedIcon from '@mui/icons-material/SaveAltOutlined';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { GET, PUT } from "../utils/apihelper";
 import { PORTFOLIO_LIST, fetchPortfolioInformation } from "../utils/ticker";
+import { components } from "../utils/api";
 
 function IndividualPortfolio() {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const portfolioId = searchParams.get("portfolioId");
-  const [nameEditing, setNameEditing] = useState<boolean>(false);
+  const [nameEditing, setNameEditing] = useState(false);
   const [name, setName] = useState<string>()
   const [refetch, setRefetch] = useState(false)
   const [GL, setGL] = useState(0)
 
-  const [portfolioDetails, setPortfolioDetails] = useState<any>({})
+  const [portfolioDetails, setPortfolioDetails] = useState<components["schemas"]["PortfolioResponse"]>()
   const [displayStocks, setDisplayStocks] = useState<any>([]);
   const [stockInfo, setStockInfo] = useState<Awaited<ReturnType<typeof fetchPortfolioInformation>>>()
 
@@ -61,7 +62,7 @@ function IndividualPortfolio() {
           totalPrice: resultDisplay[key].totalPrice
         })
       })
-      resultAppend.forEach((Stock) => {
+      resultAppend.forEach((Stock: any) => {
         if (stockInfo) {
           const info = stockInfo.find((stock) => stock.metadata?.symbol === Stock.stockSymbol)
           if (info?.timeSeries) {
@@ -102,13 +103,15 @@ function IndividualPortfolio() {
     if (e.key === 'Enter') {
       e.preventDefault()
       setName(e.currentTarget.value)
-      setPortfolioDetails({ ...portfolioDetails, name: e.currentTarget.value })
+      if (portfolioDetails) {
+        setPortfolioDetails({ ...portfolioDetails, name: e.currentTarget.value })
+      }
       handleInputUpdate({ ...portfolioDetails, name: e.currentTarget.value })
       setNameEditing(false)
     }
   }
 
-  function handleInputUpdate(data) {
+  function handleInputUpdate(data: components["schemas"]["PortfolioUpdateRequest"]) {
     PUT("/api/portfolio/updateportfolio/{id}", {
       params: {
         path: {
@@ -155,7 +158,9 @@ function IndividualPortfolio() {
                 }}
               />
               <IconButton type="button" onClick={() => {
-                setPortfolioDetails({ ...portfolioDetails, name: name })
+                if (portfolioDetails && name) {
+                  setPortfolioDetails({ ...portfolioDetails, name })
+                }
                 handleInputUpdate({ ...portfolioDetails, name: name })
                 setNameEditing(false)
               }} sx={{ p: '10px' }}>

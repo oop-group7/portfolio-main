@@ -128,7 +128,7 @@ export default function HomePage() {
                     innerRadius: 50,
                     paddingAngle: 2,
                     cornerRadius: 5,
-                    data: groupDictionary.map((key,i) => ({id : i, value : groupDictionary[i]?.["value"], label : groupDictionary[i]?.["key"]}))
+                    data: groupDictionary.map((key,i) => ({id : i, value : groupDictionary[i]!["value"], label : groupDictionary[i]?.["key"]}))
                       // { id: 0, value: 10, label: 'series A' },
                       // { id: 1, value: 15, label: 'series B' },
                       // { id: 2, value: 20, label: 'series C' },
