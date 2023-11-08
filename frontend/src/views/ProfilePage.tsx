@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 function ProfilePage() {
 
   const [firstName, setFirstName] = useState("");
-  const [userName, setUserName] = useState("");
+  const [username, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -27,11 +27,13 @@ function ProfilePage() {
     const fetchUserData = async () => {
       try {
         const userData = await getUserData();
+        console.log(userData);
         setFirstName(userData.firstName);
-        setUserName(userData.userName);
+        setUserName(userData.username);
         setEmail(userData.email);
       } catch (error) {
         // I'm not sure what error to display as an error here
+        console.error("API Error:", error);
       }
     };
     fetchUserData();
@@ -64,7 +66,7 @@ function ProfilePage() {
       hasErrors=true;
     }
 
-    if (userName.trim()==="") {
+    if (username.trim()==="") {
       setUserNameError("Username is required");
       hasErrors=true;
       }
@@ -117,16 +119,17 @@ function ProfilePage() {
       return;
     }
 
-      // Update Profile Information
+  // Update Profile Information
   const updateProfileRes = await PUT("/api/user/updateprofile", {
     body: {
       firstName,
-      userName,
+      username,
       email,
     },
   });
 
   if (!updateProfileRes.response.ok) {
+    console.log(updateProfileRes.error)
     const updateProfileError = updateProfileRes.error;
     setError(updateProfileError.message);
   }
@@ -148,7 +151,7 @@ function ProfilePage() {
     setError("");
     // Update the state variables with the new data received from the server
     setFirstName(firstName);
-    setUserName(userName);
+    setUserName(username);
     setEmail(email);
 
     // Clear the password fields for security
@@ -162,7 +165,7 @@ function ProfilePage() {
   return (
       <div className="container position-relative">
         <div className="register shadow-lg p-3 bg-body rounded">
-          <h1 className="heading">Update Profile</h1>
+          <h1 className="heading">Profile</h1>
 
           <div className="m-3">
             <div className="mb-3">
@@ -183,8 +186,8 @@ function ProfilePage() {
                 type="text"
                 className="form-control"
                 id="userName"
-                placeholder={userName}
-                value={userName}
+                placeholder={username}
+                value={username}
                 onChange={(e) => setUserName(e.target.value)}
               />
             </div>
