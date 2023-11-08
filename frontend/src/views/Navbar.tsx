@@ -4,6 +4,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import logo from "../assets/logo.svg";
 import "./css/Navbar.css";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { getUserData, logout } from "../utils/apihelper";
 import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
@@ -118,6 +119,7 @@ import { Inbox, Mail } from "@mui/icons-material";
 // export default Navbar;
 
 function ResponsiveAppBar(props: React.PropsWithChildren) {
+  const navigate = useNavigate();
 
   function useIsLoggedIn() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -161,6 +163,10 @@ function ResponsiveAppBar(props: React.PropsWithChildren) {
 
   async function handleLogout() {
     logout();
+  }
+
+  async function routeToAccount(){
+    navigate("/profile");
   }
   const [drawer, toggleDrawer] = useState<boolean>(false)
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
@@ -229,7 +235,7 @@ function ResponsiveAppBar(props: React.PropsWithChildren) {
             open={Boolean(anchorElUser)}
             onClose={handleCloseUserMenu}
           >
-              <MenuItem onClick={handleCloseUserMenu}>
+              <MenuItem onClick={routeToAccount}>
                 <Typography textAlign="center">Account</Typography>
               </MenuItem>
               <MenuItem onClick={handleLogout}>
