@@ -22,10 +22,9 @@ function CreatePortfolioPage() {
   const [price, setPrice] = useState("");
   const [quantity, setQuantity] = useState("");
   const [desiredStocks, setDesiredStocks] = useState<desiredStocks[]>([]);
-  const [stockInfo, setStockInfo] = useState<Awaited<ReturnType<typeof fetchPortfolioInformation>>>()
+  const [stockInfo, setStockInfo] = useState<Awaited<ReturnType<typeof fetchPortfolioInformation>>>();
 
-  const [portfolioNameError, setPortfolioNameError] = useState("");
-  const [capitalStockError, setcapitalStockError] = useState("");
+  const[capitalAmountError, setCapitalAmountError] = useState("");
 
   useEffect(() => {
     fetchPortfolioInformation(PORTFOLIO_LIST).then((res) => {
@@ -52,24 +51,7 @@ function CreatePortfolioPage() {
   async function handleSubmit(e:React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    let hasErrors = false;
-
-    if (portfolioName.trim()==="") {
-      setPortfolioNameError("Portfolio Name is required");
-      hasErrors=true;
-    }
-
-    if (capital <= 0) {
-      setcapitalStockError("Capital Amount cannot be 0");
-      hasErrors=true;
-    }
-
-    if (hasErrors) {
-      return;
-    }
-
     console.log(portfolioName, strategy, capital,desiredStocks)
-
 
     const res = await POST("/api/portfolio/create", {
       body: {
@@ -79,9 +61,9 @@ function CreatePortfolioPage() {
         desiredStocks: desiredStocks,
       },
     });
-    if (!res.response.ok) {
-      console.log(res)
-      //setPortfolioNameError("Invalid Input");
+    if (!res.response.ok && res.error) {
+        setCapitalAmountError(res.error?.error);
+      
     } else {
       navigate("/homepage");
     }
@@ -111,7 +93,9 @@ function CreatePortfolioPage() {
         price: parseFloat(price),
         quantity: parseInt(quantity),
       };
-      desiredStocks.push(newStock);
+      if (newStock.quantity > 0) {
+        desiredStocks.push(newStock);
+      }
     }
    
     setDesiredStock("");
@@ -145,9 +129,9 @@ function CreatePortfolioPage() {
                 id="portfolioName"
                 placeholder="Portfolio Name"
                 value={portfolioName}
+                required
                 onChange={(e) => setPortfolioName(e.target.value)}
                 />
-              <p className="error">{portfolioNameError}</p>
             </div>
 
             <div className="mb-2">
@@ -160,7 +144,6 @@ function CreatePortfolioPage() {
                 value={strategy}
                 onChange={(e) => setStrategy(e.target.value)}
               />
-              {/* <p className="error">{userNameError}</p> */}
             </div>
 
             <div className="mb-2">
@@ -172,8 +155,11 @@ function CreatePortfolioPage() {
                 id="capital"
                 placeholder="Amount of Capital"
                 value={capital}
+                min={1}
+                required
                 onChange={(e) => setCapital(parseInt(e.target.value))}
               />
+              <p className="error">{capitalAmountError}</p>
             </div>
 
             <hr></hr>
@@ -204,7 +190,6 @@ function CreatePortfolioPage() {
                 value={price}
                 disabled
               />
-              {/* <p className="error">{userNameError}</p> */}
             </div>
 
             <div className="mb-2">
@@ -217,7 +202,6 @@ function CreatePortfolioPage() {
                 value={quantity}
                 onChange={(e) => setQuantity(e.target.value)}
               />
-              {/* <p className="error">{userNameError}</p> */}
             </div>
 
 

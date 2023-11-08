@@ -21,12 +21,8 @@ public class PortfolioService implements IPortfolioService {
 
     @Override
     public void createPortfolio(Portfolio portfolio) throws Exception {
-        User user = portfolio.getUser();
-        AllPortfoliosResponse allPreviousPortfolios = getAllPortfoliosByUser(user);
-        PortfolioResponse moreCurrentPortfolioInfo = mapPortfolioToPortfolioResponse(portfolio);
-        double utilisedCapitalAmount = allPreviousPortfolios.getTotalUtilisedCapitalAmount() + moreCurrentPortfolioInfo.getUtilisedCapitalAmount();
-        double totalCapitalAmount = allPreviousPortfolios.getTotalCapitalAmount() + moreCurrentPortfolioInfo.getCapitalAmount();
-        if (utilisedCapitalAmount > totalCapitalAmount) {
+        PortfolioResponse portfolioInfo = mapPortfolioToPortfolioResponse(portfolio);
+        if (portfolioInfo.getUtilisedCapitalAmount() > portfolioInfo.getCapitalAmount()) {
             throw new Exception("Total utilised capital amount cannot be more than the total capital amount.");
         }
         portfolioRepository.save(portfolio);
@@ -44,7 +40,6 @@ public class PortfolioService implements IPortfolioService {
 
     @Override
     public AllPortfoliosResponse getAllPortfoliosByUser(User user) {
-        // utilised > capital then fail
         List<Portfolio> portfolios =  portfolioRepository.findByUser(user);
         List<PortfolioResponse> portfolioResponse = portfolios.stream().map(PortfolioService::mapPortfolioToPortfolioResponse).toList();
         double totalUtilisedCapitalAmount = portfolioResponse.stream().mapToDouble(p -> p.getUtilisedCapitalAmount()).sum();
@@ -64,7 +59,6 @@ public class PortfolioService implements IPortfolioService {
 
     @Override
     public void updatePortfolio(Portfolio portfolio) throws Exception {
-        deletePortfolio(portfolio.getId());
         createPortfolio(portfolio);
     }
 

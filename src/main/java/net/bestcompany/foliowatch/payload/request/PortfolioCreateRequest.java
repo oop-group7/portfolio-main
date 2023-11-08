@@ -16,7 +16,7 @@ public class PortfolioCreateRequest {
     @NotBlank
     private String name;
 
-    @NotBlank
+    @NotNull
     private String strategy;
 
     @NotNull
