@@ -47,13 +47,13 @@ docker compose up -d
 5. To generate API fetching code for the frontend after adding new endpoints, run `npm run generate` in the `frontend` folder while the backend server is still running.
 
 ## Use Case Diagram
-<img src="images/UseCaseDiagram.png" alt="Architecture">
+<img src="ReadME_Images/UseCaseDiagram.png" alt="Use Case">
 
 ## Architecture Diagram
-<img src="images/Architecture.png" alt="Architecture">
+<img src="ReadME_Images/Architecture.png" alt="Architecture">
 
 ## Context Diagram
-<img src="images/ContextDiagram.png" alt="Architecture">
+<img src="ReadME_Images/ContextDiagram.png" alt="Context">
 
 ## Container Diagram
-<img src="images/ContainerDiagram.png" alt="Architecture">
+<img src="ReadME_Images/ContainerDiagram.png" alt="Container">
