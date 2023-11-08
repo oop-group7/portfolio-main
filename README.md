@@ -46,6 +46,11 @@ docker compose up -d
 4. To get the Swagger OpenAPI documentation, navigate to `/api/docs/ui`.
 5. To generate API fetching code for the frontend after adding new endpoints, run `npm run generate` in the `frontend` folder while the backend server is still running.
 
+## Swagger
+Documentation of an interactive, machine and human-readable API documentation.
+`/api/docs/ui`
+<img src="ReadME_Images/Swagger.png" alt="Swagger">
+
 ## Use Case Diagram
 <img src="ReadME_Images/UseCaseDiagram.png" alt="Use Case">
 
