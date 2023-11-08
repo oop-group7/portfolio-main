@@ -1,5 +1,13 @@
 # Foliowatch
 
+## Contributors
+* Bella Leo
+* Darrell Ng
+* Darien Tan
+* Eugene Toh
+* Ivan Lim
+* Jules Robins
+
 ## Project Overview
 The Goldman Sachs Group, Inc. is a prominent global financial institution, offering a wide array of financial services to a diverse clientele, including corporations, financial institutions, governments, and individuals.
 
@@ -62,3 +70,6 @@ Documentation of an interactive, machine and human-readable API documentation.
 
 ## Container Diagram
 <img src="ReadME_Images/ContainerDiagram.png" alt="Container">
+
+## ER Diagram
+<img src="ReadME_Images/ER Diagram.png" alt="Container">
