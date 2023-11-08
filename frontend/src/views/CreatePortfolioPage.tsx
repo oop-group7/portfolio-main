@@ -46,7 +46,7 @@ function CreatePortfolioPage() {
   //   // }));
 
   // }
-  async function handleSubmit(e:React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+  async function handleSubmit(e:React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     console.log(portfolioName, strategy, capital,desiredStocks)
     console.log(typeof capital)
@@ -67,7 +67,7 @@ function CreatePortfolioPage() {
     }
   }
 
-  const handleAddStock = (e:React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const handleAddStock = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
     let stockAlreadyExists = false;
 

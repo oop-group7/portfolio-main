@@ -20,6 +20,7 @@ import net.bestcompany.foliowatch.models.User;
 import net.bestcompany.foliowatch.models.VerificationToken;
 import net.bestcompany.foliowatch.payload.request.SignupRequest;
 import net.bestcompany.foliowatch.repository.PasswordTokenRepository;
+import net.bestcompany.foliowatch.repository.PortfolioRepository;
 import net.bestcompany.foliowatch.repository.RoleRepository;
 import net.bestcompany.foliowatch.repository.UserRepository;
 import net.bestcompany.foliowatch.repository.VerificationTokenRepository;
@@ -28,10 +29,10 @@ import net.bestcompany.foliowatch.repository.VerificationTokenRepository;
 @Transactional
 public class UserService implements IUserService {
     @Autowired
-    private VerificationTokenRepository tokenRepository;
+    private VerificationTokenRepository vTokenRepository;
 
     @Autowired
-    private PasswordTokenRepository passwordTokenRepository;
+    private PasswordTokenRepository passTokenRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -40,7 +41,7 @@ public class UserService implements IUserService {
     private UserRepository userRepository;
 
     @Autowired
-    private IRefreshTokenService tokenService;
+    private IRefreshTokenService refreshTokenService;
 
     @Autowired
     private PasswordEncoder encoder;
@@ -48,9 +49,12 @@ public class UserService implements IUserService {
     @Autowired
     private RoleRepository roleRepository;
 
+    @Autowired
+    private PortfolioRepository portfolioRepository;
+
     @Override
     public TokenState validateVerificationToken(String token) {
-        Optional<VerificationToken> rawVerificationToken = tokenRepository.findByToken(token);
+        Optional<VerificationToken> rawVerificationToken = vTokenRepository.findByToken(token);
         if (rawVerificationToken.isEmpty()) {
             return TokenState.TokenInvalid;
         }
@@ -58,27 +62,27 @@ public class UserService implements IUserService {
         User user = verificationToken.getUser();
         Calendar cal = Calendar.getInstance();
         if ((verificationToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
-            tokenRepository.delete(verificationToken);
+            vTokenRepository.delete(verificationToken);
             return TokenState.TokenExpired;
         }
         user.setEnabled(true);
         userRepository.save(user);
-        tokenRepository.delete(verificationToken);
+        vTokenRepository.delete(verificationToken);
         return TokenState.TokenValid;
     }
 
     @Override
     public VerificationToken generateNewVerificationToken(String existingVerificationToken)
             throws NoSuchElementException {
-        VerificationToken vToken = tokenRepository.findByToken(existingVerificationToken).orElseThrow();
+        VerificationToken vToken = vTokenRepository.findByToken(existingVerificationToken).orElseThrow();
         vToken.updateToken(UUID.randomUUID().toString());
-        vToken = tokenRepository.save(vToken);
+        vToken = vTokenRepository.save(vToken);
         return vToken;
     }
 
     @Override
     public Optional<User> getUserByVerificationToken(String verificationToken) {
-        return tokenRepository.findByToken(verificationToken).map(token -> token.getUser());
+        return vTokenRepository.findByToken(verificationToken).map(token -> token.getUser());
     }
 
     @Override
@@ -89,12 +93,12 @@ public class UserService implements IUserService {
     @Override
     public void createPasswordResetTokenForUser(User user, String token) {
         PasswordResetToken myToken = new PasswordResetToken(token, user);
-        passwordTokenRepository.save(myToken);
+        passTokenRepository.save(myToken);
     }
 
     @Override
     public Optional<User> getUserByPasswordResetToken(String token) {
-        return passwordTokenRepository.findByToken(token).map(t -> t.getUser());
+        return passTokenRepository.findByToken(token).map(t -> t.getUser());
     }
 
     @Override
@@ -110,10 +114,11 @@ public class UserService implements IUserService {
 
     @Override
     public void deleteUser(User user) {
+        refreshTokenService.deleteTokenByUser(user);
+        vTokenRepository.deleteByUser(user);
+        passTokenRepository.deleteByUser(user);
+        portfolioRepository.deleteByUser(user);
         userRepository.delete(user);
-        tokenService.deleteTokenByUser(user);
-        tokenRepository.deleteByUser(user);
-        passwordTokenRepository.deleteByUser(user);
     }
 
     @Override

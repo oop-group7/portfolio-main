@@ -14,4 +14,6 @@ public interface PortfolioRepository extends MongoRepository<Portfolio, String> 
     List<Portfolio> findByUser(User user);
 
     int deleteByName(String name);
+
+    int deleteByUser(User user);
 }
