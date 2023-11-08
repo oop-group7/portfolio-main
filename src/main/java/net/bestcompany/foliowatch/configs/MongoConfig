@@ -1,0 +1,8 @@
+package net.bestcompany.foliowatch.configs;
+
+import org.springframework.data.mongodb.config.EnableMongoAuditing;
+
+@EnableMongoAuditing
+public class MongoConfig {
+    
+}
