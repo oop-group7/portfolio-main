@@ -24,6 +24,7 @@ const customFetch = async (input: RequestInfo | URL, init: RequestInit | undefin
       ...extraContentHeaders,
     };
   }
+  console.log(input)
   let res = await fetch(input, init);
   console.log(res.status)
   const isLogin = input.toString().includes("/api/auth/signin");
