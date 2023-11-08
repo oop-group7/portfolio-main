@@ -29,28 +29,6 @@ export default function Portfolios({ data }: PortfoliosProps) {
     dateCreated: formatDate(item.createdAt),
   }));
 
-  
-  const groupDictionary: { key: string; value: number }[] = [];
-  for (const port of data) {
-    const ds = port?.desiredStocks
-    for (const st of ds){
-      for (const portfolio of PORTFOLIO_LIST){
-        if (portfolio.name == st.stockName){
-          const existingEntry = groupDictionary.find((entry) => entry.key === portfolio.type);
-          if (existingEntry) {
-            // If an entry with the same key already exists, update its value
-            existingEntry.value += st.quantity;
-          } else {
-            // If no entry with the same key exists, add a new entry
-            groupDictionary.push({ key: portfolio.type, value: st.quantity });
-          }
-        }
-      }
-    }
-  }
-  console.log(groupDictionary)
-  
-
   function formatDate(dateString: string) {
     const date = new Date(dateString);
     return date.toLocaleString();
