@@ -14,24 +14,6 @@ function IndividualPortfolio() {
   const portfolioId = searchParams.get("portfolioId");
   const [portfolioDetails, setPortfolioDetails] = useState<any>()
   const [nameEditing, setNameEditing] = useState<boolean>(false);
-
-  useEffect(() => {
-    if (id) {
-      GET("/api/portfolio/get/{id}", {
-        params: {
-          path: {
-            id
-          }
-        }
-      })
-        .then((response) => {
-          console.log("API Response:", response.data);
-        })
-        .catch((error) => {
-          console.error("API Error:", error);
-        });
-    }
-  }, []);
   
   const [displayStocks, setDisplayStocks] = useState<any>([]);
 
