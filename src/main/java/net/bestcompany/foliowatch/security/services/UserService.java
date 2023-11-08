@@ -126,7 +126,7 @@ public class UserService implements IUserService {
         if (emailExists(request.getEmail())) {
             throw new Exception("Email is already in use!");
         }
-        User user = new User(request.getFirstName(), request.getUsername(),
+        User user = new User(request.getFirstName(), request.getEmail(),
                 request.getEmail(),
                 encoder.encode(request.getPassword()));
         Role userRole = roleRepository.findByName(ERole.ROLE_USER)
