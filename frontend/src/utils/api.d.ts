@@ -154,12 +154,12 @@ export interface components {
       capitalAmount?: number;
       desiredStocks?: components["schemas"]["DesiredStock"][];
     };
+    ErrorResponse: {
+      error: string;
+    };
     UpdatePasswordRequest: {
       oldPassword: string;
       newPassword: string;
-    };
-    ErrorResponse: {
-      error: string;
     };
     PortfolioCreateRequest: {
       name: string;
@@ -328,10 +328,10 @@ export interface operations {
           "application/json": components["schemas"]["MessageResponse"];
         };
       };
-      /** @description Unable to find portfolio. */
-      404: {
+      /** @description Total utilised capital amount cannot be more than the total capital amount. */
+      400: {
         content: {
-          "application/json": components["schemas"]["MessageResponse"];
+          "application/json": components["schemas"]["ErrorResponse"];
         };
       };
       /** @description Request Timeout */
@@ -410,7 +410,7 @@ export interface operations {
           "application/json": components["schemas"]["MessageResponse"];
         };
       };
-      /** @description One of the stock name provided is invalid. */
+      /** @description Total utilised capital amount cannot be more than the total capital amount. */
       400: {
         content: {
           "application/json": components["schemas"]["ErrorResponse"];

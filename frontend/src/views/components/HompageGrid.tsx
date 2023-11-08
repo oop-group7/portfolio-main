@@ -20,7 +20,7 @@ const columns: GridColDef[] = [
 
 export default function Portfolios({ data }: PortfoliosProps) {
   // console.log(data)
-  const rows: GridRowsProp = data.map((item, index) => ({
+  const rows: GridRowsProp = data.map((item) => ({
     id: item.id,
     portfolioName: item.name,
     utilizedCapital: item.utilisedCapitalAmount,

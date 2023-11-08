@@ -11,7 +11,7 @@ function LoginPage() {
   const navigate = useNavigate();
   
 
-  async function handleLogin(event: React.FormEvent<HTMLFormElement>) {
+  async function handleLogin(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     event.preventDefault();
     const res = await POST("/api/auth/signin", {
       body: {

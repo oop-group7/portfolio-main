@@ -89,10 +89,12 @@ function RegisterPage() {
     });
     if (!res.response.ok) {
       const error = res.error; // Not all API endpoints return back an Error message, might have a message or might not, hence you must handle both cases (if the type of the error is undefined only, don't bother)
+      console.log(error)
       setEmailError(error.message);
 
     } else {
       // If the registration function does not throw an error, it's successful
+      console.log('in2')
       setEmailError("");
       window.location.href = "http://localhost:8080/validation";
     }

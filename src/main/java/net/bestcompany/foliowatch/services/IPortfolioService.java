@@ -8,7 +8,7 @@ import net.bestcompany.foliowatch.payload.response.AllPortfoliosResponse;
 import net.bestcompany.foliowatch.payload.response.PortfolioResponse;
 
 public interface IPortfolioService {
-    void createPortfolio(Portfolio portfolio);
+    void createPortfolio(Portfolio portfolio) throws Exception;
 
     Optional<PortfolioResponse> findPortfolio(String id);
 
@@ -16,7 +16,7 @@ public interface IPortfolioService {
 
     void deletePortfolio(String name);
 
-    void updatePortfolio(Portfolio portfolio);
+    void updatePortfolio(Portfolio portfolio) throws Exception;
 
     void getAllCapitalStocks(User user);
 

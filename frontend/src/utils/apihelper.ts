@@ -6,8 +6,8 @@ type AuthResponse = components["schemas"]["JwtResponse"];
 const LOCAL_STORAGE_USER_KEY = "user";
 
 const customFetch = async (input: RequestInfo | URL, init: RequestInit | undefined) => {
+  const userData = getUserData();
   if (init) {
-    const userData = getUserData();
     const extraAuthorizationHeaders: { Authorization: string } | {} = userData
       ? {
           Authorization: `Bearer ${userData.accessToken}`,
@@ -26,19 +26,16 @@ const customFetch = async (input: RequestInfo | URL, init: RequestInit | undefin
   }
   let res = await fetch(input, init);
   const isLogin = input.toString().includes("/api/auth/signin");
-  const isUpdateProfile = input.toString().includes("/updateprofile");
+  const isUpdateProfile = input.toString().includes("api/user/updateprofile");
   const midRes = await middleware(res, isLogin);
   if (midRes === "repeat") {
     res = await fetch(input, init);
   }
-  const userData = getUserData();
   if (isUpdateProfile && res.ok && userData) {
-    const clonedRes = res.clone();
-    const authRes: components["schemas"]["UpdateUserRequest"] =
-      await clonedRes.json();
+    const newUserInfo: components["schemas"]["UpdateUserRequest"] = JSON.parse(init?.body as string);
     setUserData({
       ...userData,
-      ...authRes,
+      ...newUserInfo,
     });
   }
   return res;

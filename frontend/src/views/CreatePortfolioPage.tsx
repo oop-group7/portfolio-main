@@ -4,13 +4,23 @@ import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from 'react-bootstrap-icons'
 import { POST } from "../utils/apihelper";
-import StockInput from './components/StockInput';
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap/dist/js/bootstrap.bundle.js";
 import "./css/CreatePortfolioPage.css";
 import {components} from "../utils/api";
 
-// type desiredStocks = components["schemas"]["DesiredStock"]
+const PORTFOLIO_LIST: {name: string, symbol: string}[] = [{
+  name: "Stock 1",
+  symbol: "stock1"
+}, {
+  name: "Stock 2",
+  symbol: "stock2"
+}, {
+  name: "Stock 3",
+  symbol: "stock3"
+}]
+
+type desiredStocks = components["schemas"]["DesiredStock"]
 function CreatePortfolioPage() {
 
   const navigate = useNavigate();
@@ -21,9 +31,9 @@ function CreatePortfolioPage() {
   const [desiredStock, setDesiredStock] = useState("");
   const [price, setPrice] = useState("");
   const [quantity, setQuantity] = useState("");
-  const [desiredStocks, setDesiredStocks] = useState<{ stockName: string; price: number; quantity: number }[]>([]);
+  const [desiredStocks, setDesiredStocks] = useState<desiredStocks[]>([]);
 
-  const [setPortfolioNameError, portfolioNameError] = useState("");
+  // const [setPortfolioNameError, portfolioNameError] = useState("");
 
   // const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
   //   e.preventDefault();
@@ -62,9 +72,9 @@ function CreatePortfolioPage() {
     if (!res.response.ok) {
       console.log(res.response)
       //setError("Invalid Input");
-    } else{
-      console.log('in')
-      // navigate("/homepage");
+    } else {
+      // console.log('in')
+      navigate("/homepage");
     }
   }
 
@@ -76,7 +86,7 @@ function CreatePortfolioPage() {
       if (stock.stockName === desiredStock) {
         // Stock name already exists, update the quantity
         stockAlreadyExists = true;
-        desiredStocks[index].quantity += parseInt(quantity);
+        desiredStocks[index]!.quantity += parseInt(quantity);
       }
     });
     
@@ -97,7 +107,7 @@ function CreatePortfolioPage() {
   };
 
   const handleRemoveStock = (indexToRemove: number) => {
-    const updatedStocks = desiredStocks.filter((stock, index) => index !== indexToRemove);
+    const updatedStocks = desiredStocks.filter((_, index) => index !== indexToRemove);
     setDesiredStocks(updatedStocks);
   };
 
@@ -163,11 +173,10 @@ function CreatePortfolioPage() {
                 value={desiredStock}
                 onChange={(e) => setDesiredStock(e.target.value)}
               >
-                <option value="">Select a Stock</option>
-                <option value="Stock1">Stock 1</option>
-                <option value="Stock2">Stock 2</option>
-                <option value="Stock3">Stock 3</option>
-                {/* Add more options as needed */}
+                <option value="" disabled selected>Select a Stock</option>
+                {PORTFOLIO_LIST.map((portfolioInfo) => (
+                  <option value={portfolioInfo.symbol}>{portfolioInfo.name}</option>
+                ))}
               </select>
             </div>
 

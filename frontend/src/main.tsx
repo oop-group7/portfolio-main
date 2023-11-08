@@ -7,7 +7,8 @@ import RegisterPage from "./views/RegisterPage.tsx";
 import ValidationPage from "./views/ValidationPage.tsx";
 import ValidationPasswordPage from "./views/ValidationPasswordPage.tsx";
 import HomePage from "./views/HomePage.tsx";
-import ProfilePage from "./views/ProfilePage.tsx"; 
+import ProfilePage from "./views/ProfilePage.tsx";
+import UpdatePasswordPage from "./views/UpdatePasswordPage.tsx"; 
 import PasswordPage from "./views/PasswordPage.tsx"; 
 import CreatePortfolioPage from "./views/CreatePortfolioPage.tsx";
 import PortfolioPage from "./views/IndividualPortfolio.tsx";
@@ -55,6 +56,17 @@ const router = createBrowserRouter([
       <React.StrictMode>
         <Navbar>
           <ProfilePage />
+        </Navbar>
+      </React.StrictMode>
+    ),
+  },
+
+  {
+    path: "/updatepassword",
+    element: (
+      <React.StrictMode>
+        <Navbar>
+          <UpdatePasswordPage />
         </Navbar>
       </React.StrictMode>
     ),

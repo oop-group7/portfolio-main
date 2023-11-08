@@ -59,7 +59,7 @@ public class PortfolioController {
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "201", description = "Successfully created portfolio.", content = {
                                         @Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class)) }),
-                        @ApiResponse(responseCode = "400", description = "One of the stock name provided is invalid.", content = {
+                        @ApiResponse(responseCode = "400", description = "Total utilised capital amount cannot be more than the total capital amount.", content = {
                                         @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) })
         })
         public ResponseEntity<?> createPortfolio(@Valid @RequestBody PortfolioCreateRequest request) {
@@ -74,7 +74,11 @@ public class PortfolioController {
                 portfolio.setUser(user);
                 portfolio.setDesiredStocks(request.getDesiredStocks());
                 portfolio.setCreatedAt(null);
-                portfolioService.createPortfolio(portfolio);
+                try {
+                        portfolioService.createPortfolio(portfolio);
+                } catch (Exception e) {
+                        return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
+                }
                 return ResponseEntity.status(201).body(new MessageResponse("Successfully created portfolio"));
         }
 
@@ -178,8 +182,8 @@ public class PortfolioController {
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "Successfully updated portfolio.", content = {
                                         @Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class)) }),
-                        @ApiResponse(responseCode = "404", description = "Unable to find portfolio.", content = {
-                                        @Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class)) })
+                        @ApiResponse(responseCode = "400", description = "Total utilised capital amount cannot be more than the total capital amount.", content = {
+                                        @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) })
         })
         public ResponseEntity<?> updatePortfolio(@PathVariable String id,
                         @Valid @RequestBody PortfolioUpdateRequest request) {
@@ -198,10 +202,12 @@ public class PortfolioController {
                         if (request.getStrategy() != null) {
                                 prevPortfolio.setStrategy(request.getStrategy());
                         }
-                        portfolioService.updatePortfolio(prevPortfolio);
-                        return ResponseEntity.ok(new MessageResponse("Successfully updated portfolio"));
-                } else {
-                        return ResponseEntity.status(404).body(new MessageResponse("Portfolio does not exist"));
+                        try {
+                                portfolioService.updatePortfolio(prevPortfolio);
+                        } catch (Exception e) {
+                                return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
+                        }
                 }
+                return ResponseEntity.ok(new MessageResponse("Successfully updated portfolio"));
         }
 }

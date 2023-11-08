@@ -1,4 +1,4 @@
-import { Grid, IconButton, InputBase, Link, Paper, Table, TableContainer, TableHead, TableRow, TextField, Typography } from "@mui/material";
+import { Grid, IconButton, InputBase, Link, Paper, Table, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import Stocks from "./components/PortfolioGrid";
 import { useLocation } from 'react-router-dom';
@@ -14,20 +14,28 @@ function IndividualPortfolio() {
   const portfolioId = searchParams.get("portfolioId");
   const [nameEditing, setNameEditing] = useState<boolean>(false);
   const [id, setId] = useState<string | null>(portfolioId);
-  const [name, setName] = useState();
+  const [name, setName] = useState("");
 
   useEffect(() => {
-    GET(`/api/portfolio/get/${id}`, {})
-      .then((response) => {
-        console.log("API Response:", response.data);
+    if (id) {
+      GET("/api/portfolio/get/{id}", {
+        params: {
+          path: {
+            id
+          }
+        }
       })
-      .catch((error) => {
-        console.error("API Error:", error);
-      });
+        .then((response) => {
+          console.log("API Response:", response.data);
+        })
+        .catch((error) => {
+          console.error("API Error:", error);
+        });
+    }
   }, []);
 
 
-  function handleEnter(e: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) {
+  function handleEnter(e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) {
     if (e.key === 'Enter') {
       e.preventDefault()
       setId(e.currentTarget.value)
