@@ -13,13 +13,11 @@ interface PortfoliosProps {
 const columns: GridColDef[] = [
   
   { field: 'portfolioName', headerName: 'Portfolio Name', flex: 1/6, headerAlign: "left", renderCell: (params) => (<Link href={`/portfolio?portfolioId=${params.row.id}`}>{params.value}</Link>)},
-  { field: 'utilizedCapital', headerName: 'Utilized Capital', flex: 1/6, headerAlign: "left" },
-  { field: 'dateCreated', headerName: 'Date Created', flex: 1/6, headerAlign: "left" },
-  { field: 'profitLoss', renderHeader: () => (<div><Typography>Unrealized</Typography><Typography>Gain/Loss</Typography></div>), flex: 1/6, headerAlign: "left", renderCell: (params) => (<Typography fontWeight={700} color={params.value && params?.value < 0 ? "red" : "green"}>{params?.value ? params.value : 0}</Typography>)}
+  { field: 'utilizedCapital', headerName: 'Allocated Capital', flex: 1/6, headerAlign: "left" },
+  { field: 'dateCreated', headerName: 'Date Created', flex: 1/6, headerAlign: "left" }
 ];
 
 export default function Portfolios({ data }: PortfoliosProps) {
-  // console.log(data)
   const rows: GridRowsProp = data.map((item) => ({
     id: item.id,
     portfolioName: item.name,
@@ -36,11 +34,6 @@ export default function Portfolios({ data }: PortfoliosProps) {
     return `${year}-${month}-${day}`;
   }
 
-//const rows: GridRowsProp = [
-//   { id: 1, portfolioName: 'Hello', utilizedCapital: 'World', dateCreated: 100, currentPrice: 1000, marketValue: 999, profitLoss: 10 },
-//   { id: 2, portfolioName: 'Hello1', utilizedCapital: 'World', dateCreated: 100, currentPrice: 1000, marketValue: 999, profitLoss: -20 },
-//   { id: 3, portfolioName: 'Hello3', utilizedCapital: 'World', dateCreated: 100, currentPrice: 1000, marketValue: 999, profitLoss: 1000 },
-// ];
   return (
     <React.Fragment>
       <Box sx={{ height: "90vh", width: "100%" }}>

@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Box, Grid, Typography } from "@mui/material";
+import { Box, Button, Grid, Typography } from "@mui/material";
 import Portfolios from "./components/HompageGrid";
 import HomePageHeader from "./components/HomePageHeader";
-import { LineChart, PieChart } from "@mui/x-charts";
+import { BarChart, LineChart, PieChart } from "@mui/x-charts";
 import { useEffect, useState } from "react";
 import { GET } from "../utils/apihelper";
-import {components} from "../utils/api";
+import { components } from "../utils/api";
 
 const time = [
   new Date(2015, 1, 0),
@@ -47,21 +47,30 @@ function HomePage() {
 
   return (
     <Grid container gap={3}>
+      <Grid item xs={12} container justifyContent={"space-between"}>
+        <Typography variant="h5">Dashboard</Typography>
+        <Button variant={"contained"} href={"/createportfolio"}>Create Portfolio</Button>
+      </Grid>
       <Grid item xs={12}>
-        <HomePageHeader 
-        allocatedCapital={allocatedCapital}
-        utilizedCapital={utilizedCapital}
+        <HomePageHeader
+          allocatedCapital={allocatedCapital}
+          utilizedCapital={utilizedCapital}
         // totalGainLoss={totalGainLoss}
         />
       </Grid>
       <Grid item sm={12} md={7}>
-        <Portfolios data={portfolios}/>
+        <Portfolios data={portfolios} />
       </Grid>
       <Grid item container xs justifyContent={"center"} sx={{ minHeight: "30rem", backgroundColor: "white", borderRadius: "3px", boxShadow: 1 }}>
         <Grid item container justifyContent={"center"} flexDirection={"column"}>
           <Typography textAlign={"center"} pt={1}>Portfolio Summary</Typography>
           <Box sx={{ flex: 1 }}>
-            <LineChart
+            <BarChart
+              sx={{ width: "100%", flex: 1, cursor: "none" }}
+              xAxis={[{ scaleType: 'band', data: portfolios.map((portfolio) => portfolio.name) }]}
+              series={portfolios.map((portfolio) => ({data: [portfolio.utilisedCapitalAmount]}))}
+            />
+            {/* <LineChart
               sx={{ width: "100%", flex: 1, cursor: "none" }}
               xAxis={[{
                 data: time,
@@ -79,7 +88,7 @@ function HomePage() {
                   data: [2, 5.5, 2, 8.5, 1.5, 5, 10, 1, 2, 3],
                 },
               ]}
-            />
+            /> */}
           </Box>
           <Typography textAlign={"center"} pt={1}>Stock Types</Typography>
           <Box sx={{ flex: 1, my: 1 }}>
