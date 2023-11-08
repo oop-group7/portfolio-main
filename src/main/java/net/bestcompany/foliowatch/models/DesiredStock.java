@@ -17,6 +17,9 @@ import lombok.Setter;
 @NoArgsConstructor
 public class DesiredStock {
     @NotBlank
+    private String symbol;
+
+    @NotBlank
     private String stockName;
 
     @NotNull
