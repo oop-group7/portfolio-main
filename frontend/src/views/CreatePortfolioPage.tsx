@@ -8,8 +8,9 @@ import StockInput from './components/StockInput';
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap/dist/js/bootstrap.bundle.js";
 import "./css/CreatePortfolioPage.css";
+import {components} from "../utils/api";
 
-
+// type desiredStocks = components["schemas"]["DesiredStock"]
 function CreatePortfolioPage() {
 
   const navigate = useNavigate();
@@ -62,8 +63,8 @@ function CreatePortfolioPage() {
       console.log(res.response)
       //setError("Invalid Input");
     } else{
-      // console.log('in')
-      navigate("/homepage");
+      console.log('in')
+      // navigate("/homepage");
     }
   }
 
