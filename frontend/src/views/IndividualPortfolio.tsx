@@ -44,8 +44,7 @@ function IndividualPortfolio() {
             const averagePrice = (Stock.totalPrice / Stock.quantity)
             const openPrice = Number(data.open)
             const profitGL = openPrice - averagePrice
-            console.log(profitGL)
-            Stock.profitLoss = profitGL
+            Stock.profitLoss = profitGL.toFixed(2)
             totalGL = totalGL + profitGL
           }
         }
