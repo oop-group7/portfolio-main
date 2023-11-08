@@ -39,9 +39,6 @@ function HomePage(props: HomePageHeaderProps) {
             <Grid item xs={3.75}>
                 <HeaderCard title={"Allocated Capital"} content={`$${props.utilizedCapital}`} icon={"PaidOutlined"}/>
             </Grid>
-            <Grid item xs={3.75}>
-                <HeaderCard title={"Total Gain/Loss"} content={"$100000"} icon={"TrendingUp"}/>
-            </Grid>
         </Grid>
     );
 }

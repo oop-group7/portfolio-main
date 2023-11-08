@@ -14,11 +14,12 @@ function IndividualPortfolio() {
   const portfolioId = searchParams.get("portfolioId");
   const [portfolioDetails, setPortfolioDetails] = useState<any>()
   const [nameEditing, setNameEditing] = useState<boolean>(false);
+  const [name, setName] = useState<string>()
   
   const [displayStocks, setDisplayStocks] = useState<any>([]);
 
   useEffect(() => {
-    if (portfolioDetails) {
+    if (portfolioDetails?.desiredStocks) {
       let resultDisplay: any = {}
       let resultAppend: any= []
       portfolioDetails.desiredStocks.forEach((item) => {
@@ -69,6 +70,8 @@ function IndividualPortfolio() {
   function handleEnter(e: ChangeEvent<HTMLInputElement>) {
     if (e.key === 'Enter') {
       e.preventDefault()
+      setName(e.currentTarget.value)
+      setPortfolioDetails({...portfolioDetails, name: e.currentTarget.value})
       setNameEditing(false)
     }
   }
@@ -93,15 +96,22 @@ function IndividualPortfolio() {
           ) : (
             <Paper
               component="form"
-              sx={{ p: '2px 4px', alignItems: 'center', border: "solid 1px lightgray", boxShadow: "0" }}
+              sx={{ p: '2px 4px', marginLeft: 1, alignItems: 'center', border: "solid 1px lightgray", boxShadow: "0" }}
             >
               <InputBase
                 sx={{ ml: 1, flex: 1 }}
                 value={name}
                 onKeyDown={(e) => {handleEnter(e)}}
-                onChange={(e) => {setPortfolioDetails({...portfolioDetails, name: e.currentTarget.value})}}
+                onChange={(e) => {
+                  if (e.currentTarget.value.length > 0) {
+                    setName(e.currentTarget.value)
+                  }
+                }}
               />
-              <IconButton type="button" onClick={() => setNameEditing(false) } sx={{ p: '10px' }}>
+              <IconButton type="button" onClick={() => {
+                setPortfolioDetails({...portfolioDetails, name: name})
+                setNameEditing(false)
+              }} sx={{ p: '10px' }}>
                 <SaveAltOutlinedIcon />
               </IconButton>
             </Paper>

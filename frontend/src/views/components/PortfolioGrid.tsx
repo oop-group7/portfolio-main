@@ -13,12 +13,13 @@ export default function Stocks(props) {
   }
   
   const columns: GridColDef[] = [
-    { field: 'stockName', headerName: 'Stock Name', flex: 1 / 6, headerAlign: "left" },
-    { field: 'quantity', headerName: 'Quantity', flex: 1 / 6, headerAlign: "left" },
-    { field: 'allocation', headerName: 'Allocation (%)', flex: 1 / 6, headerAlign: "left", valueGetter: getAllocation },
-    { field: 'initialCost', headerName: 'Average Cost ($)', flex: 1 / 6, headerAlign: "left", valueGetter: getAverageCost },
-    { field: 'totalPrice', headerName: 'Total Cost', flex: 1 / 6, headerAlign: "left" },
-    { field: 'profitLoss', renderHeader: () => (<div><Typography>Unrealized</Typography><Typography>Gain/Loss</Typography></div>), flex: 1 / 6, headerAlign: "left", renderCell: (params) => (<Typography fontWeight={700} color={params.value && params?.value < 0 ? "red" : "green"}>{params?.value ? params.value : 0}</Typography>) }
+    { field: 'stockName', headerName: 'Stock Name', flex: 1 / 7, headerAlign: "left" },
+    { field: 'stockSymbol', headerName: 'Symbol', flex: 1 / 7, headerAlign: "left" },
+    { field: 'quantity', headerName: 'Quantity', flex: 1 / 7, headerAlign: "left" },
+    { field: 'allocation', headerName: 'Allocation (%)', flex: 1 / 7, headerAlign: "left", valueGetter: getAllocation },
+    { field: 'initialCost', headerName: 'Average Cost ($)', flex: 1 / 7, headerAlign: "left", valueGetter: getAverageCost },
+    { field: 'totalPrice', headerName: 'Total Cost', flex: 1 / 7, headerAlign: "left" },
+    { field: 'profitLoss', renderHeader: () => (<div><Typography fontSize={"14px"}>Unrealized</Typography><Typography fontSize={"14px"}>Gain/Loss</Typography></div>), flex: 1 / 7, headerAlign: "left", renderCell: (params) => (<Typography fontWeight={700} color={params.value && params?.value < 0 ? "red" : "green"}>{params?.value ? params.value : 0}</Typography>) }
   ];
   
 
