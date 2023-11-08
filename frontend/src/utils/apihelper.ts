@@ -17,7 +17,7 @@ export const { GET, POST, DELETE, PUT } = createClient<paths>({
           }
         : {};
       const extraContentHeaders: { "Content-Type": string } | {} =
-        init.method === "POST"
+        init.method !== "GET"
           ? {
               "Content-Type": "application/json",
             }
