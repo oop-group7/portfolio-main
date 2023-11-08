@@ -132,7 +132,6 @@ export interface components {
   schemas: {
     UpdateUserRequest: {
       firstName: string;
-      username: string;
       email: string;
     };
     MessageResponse: {
@@ -182,7 +181,6 @@ export interface components {
       email: string;
       roles: string[];
       refreshToken: string;
-      username: string;
     };
     LoginRequest: {
       email: string;
