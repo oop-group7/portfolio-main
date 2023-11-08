@@ -95,7 +95,7 @@ export default function HomePage() {
             <Box sx={{ flex: 1 }}>
               <BarChart
                 sx={{ width: "100%", flex: 1, cursor: "none" }}
-                xAxis={[{ scaleType: 'band', data: portfolios.map((portfolio) => portfolio.name) }]}
+                xAxis={[{ scaleType: 'band', data: portfolios.map((portfolio, i) => i + "." + portfolio.name) }]}
                 series={portfolios.map((portfolio) => ({data: [portfolio.utilisedCapitalAmount]}))}
               />
               {/* <LineChart

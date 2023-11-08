@@ -1,4 +1,4 @@
-import { Grid, IconButton, InputBase, Link, Paper, Table, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
+import { Button, Grid, IconButton, InputBase, Link, Paper, Table, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import Stocks from "./components/PortfolioGrid";
 import { useLocation } from 'react-router-dom';
@@ -6,7 +6,7 @@ import StockInput from "./components/StockInput";
 import EditIcon from '@mui/icons-material/Edit';
 import SaveAltOutlinedIcon from '@mui/icons-material/SaveAltOutlined';
 import { useEffect, useState } from 'react';
-import { GET, PUT } from "../utils/apihelper";
+import { DELETE, GET, PUT } from "../utils/apihelper";
 import { PORTFOLIO_LIST, fetchPortfolioInformation } from "../utils/ticker";
 import { components } from "../utils/api";
 
@@ -16,6 +16,8 @@ function IndividualPortfolio() {
   const portfolioId = searchParams.get("portfolioId");
   const [nameEditing, setNameEditing] = useState(false);
   const [name, setName] = useState<string>()
+  const [stratEditing, setStratEditing] = useState<boolean>(false)
+  const [strategy, setStrategy] = useState<string>()
   const [refetch, setRefetch] = useState(false)
   const [GL, setGL] = useState(0)
 
@@ -30,14 +32,39 @@ function IndividualPortfolio() {
   }, [])
 
   useEffect(() => {
+    if (stockInfo) {
+      const resultAppend = displayStocks
+      let totalGL = 0
+      resultAppend.forEach((Stock) => {
+        const info = stockInfo.find((stock) => stock.metadata?.symbol === Stock.stockSymbol)
+        if (info?.timeSeries) {
+          const data = Object.values(info.timeSeries)[0];
+          if (data) {
+            console.log(data.open)
+            console.log((Stock.totalPrice / Stock.quantity))
+            const profitGL = Number(data.open) - (Stock.totalprice / Stock.quantity)
+            console.log(profitGL)
+            Stock.profitLoss = profitGL
+            totalGL = totalGL + profitGL
+          }
+        }
+      })
+      setGL(totalGL)
+      setDisplayStocks(resultAppend)
+      console.log(resultAppend)
+    }
+  }, [stockInfo, displayStocks])
+
+  useEffect(() => {
     if (portfolioDetails?.desiredStocks) {
       let resultDisplay: any = {}
-      let resultAppend: any = []
-      let totalGL = 0
+      const resultAppend: any = []
       portfolioDetails.desiredStocks.forEach((item) => {
+        console.log(item.stockSymbol)
         if (item.stockName in resultDisplay) {
           resultDisplay = {
             ...resultDisplay, [item.stockName]: {
+              ...resultDisplay[item.stockName],
               quantity: resultDisplay[item.stockName].quantity + item.quantity,
               totalPrice: resultDisplay[item.stockName].totalPrice + (item.price * item.quantity)
             }
@@ -53,10 +80,11 @@ function IndividualPortfolio() {
           }
         }
       });
+      console.log(resultDisplay)
       Object.keys(resultDisplay).forEach((key, i) => {
         resultAppend.push({
           id: i,
-          stockSymbol: resultDisplay[key].stockSymbol,
+          stockSymbol: resultDisplay[key].symbol,
           stockName: key,
           quantity: resultDisplay[key].quantity,
           totalPrice: resultDisplay[key].totalPrice
@@ -77,7 +105,7 @@ function IndividualPortfolio() {
       setGL(totalGL)
       setDisplayStocks(resultAppend)
     }
-  }, [portfolioDetails, stockInfo])
+  }, [portfolioDetails])
 
   useEffect(() => {
     if (portfolioId != null) {
@@ -99,7 +127,7 @@ function IndividualPortfolio() {
   }, [refetch])
 
 
-  function handleEnter(e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) {
+  function handleEnter(e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>, type: string) {
     if (e.key === 'Enter') {
       e.preventDefault()
       setName(e.currentTarget.value)
@@ -150,7 +178,7 @@ function IndividualPortfolio() {
               <InputBase
                 sx={{ ml: 1, flex: 1 }}
                 value={name ? name : portfolioDetails?.name}
-                onKeyDown={(e) => { handleEnter(e) }}
+                onKeyDown={(e) => { handleEnter(e, "name") }}
                 onChange={(e) => {
                   if (e.currentTarget.value.length > 0) {
                     setName(e.currentTarget.value)
@@ -168,7 +196,54 @@ function IndividualPortfolio() {
               </IconButton>
             </Paper>
           )}
+          {!stratEditing ? (
+            <>
+              <Typography sx={{ fontSize: "16px" }} ml={1}>{portfolioDetails?.strategy}</Typography>
+              <IconButton
+                size="small"
+                onClick={() => setStratEditing(true)}
+                sx={{
+                  color: "black", boxShadow: 1, backgroundColor: "white", ml: 1, ":hover": { backgroundColor: "whitesmoke" }
+                }}>
+                <EditIcon />
+              </IconButton>
+            </>
+          ) : (
+            <Paper
+              component="form"
+              sx={{ ml: 1, p: '2px 4px', alignItems: 'center', border: "solid 1px lightgray", boxShadow: "0" }}
+            >
+              <InputBase
+                sx={{ ml: 1, flex: 1 }}
+                value={strategy ? strategy : portfolioDetails?.strategy}
+                onKeyDown={(e) => { handleEnter(e, "strat") }}
+                onChange={(e) => {
+                  if (e.currentTarget.value.length > 0) {
+                    setStrategy(e.currentTarget.value)
+                  }
+                }}
+              />
+              <IconButton type="button" onClick={() => {
+                if (portfolioDetails && strategy) {
+                  setPortfolioDetails({ ...portfolioDetails, strategy })
+                }
+                handleInputUpdate({ ...portfolioDetails, strategy: strategy })
+                setStratEditing(false)
+              }} sx={{ p: '10px' }}>
+                <SaveAltOutlinedIcon />
+              </IconButton>
+            </Paper>
+          )}
         </Grid>
+        <Button variant={"contained"} sx={{ marginRight: 2 }} endIcon={<DeleteIcon />} onClick={() => {
+          DELETE("/api/portfolio/deleteportfolio/{id}", {
+            params: {
+              path: {
+                id: portfolioId as string
+              }
+            }
+            });
+        }}>Delete Portfolio</Button>
         <Link href={"/homepage"}>Back to Dashboard</Link>
       </Grid>
       <Grid item sx={{ borderRadius: "5px", backgroundColor: "white", marginBottom: "1rem" }} >
@@ -202,7 +277,7 @@ function IndividualPortfolio() {
           <StockInput stockInfo={stockInfo} details={portfolioDetails} inputUpdate={handleInputUpdate} />
         </Grid>
         <Grid item xs={12} md={8} mb={1}>
-          <Stocks rows={displayStocks} details={portfolioDetails}/>
+          <Stocks rows={displayStocks} details={portfolioDetails} />
         </Grid>
       </Grid>
     </Grid>

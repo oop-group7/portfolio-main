@@ -18,7 +18,6 @@ function UpdatePasswordPage() {
     setShowSuccessModal(false);
     window.location.href = "http://localhost:8080/profile";
   };
-
   async function handleChanges(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     event.preventDefault();
     // Reset previous errors
