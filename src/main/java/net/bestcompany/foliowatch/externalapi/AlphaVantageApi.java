@@ -31,7 +31,7 @@ public class AlphaVantageApi implements IAlphaVantageApi {
         @Cacheable("searchSymbol")
         public SearchTickerResponse searchTicker(String keyword) {
                 var result = client.get()
-                                .uri(uriBuilder -> uriBuilder
+                                .uri(BASE_URL, uriBuilder -> uriBuilder
                                                 .queryParam( "function", "SYMBOL_SEARCH")
                                                 .queryParam("keywords", keyword)
                                                 .queryParam("apikey", apiKey).build())
