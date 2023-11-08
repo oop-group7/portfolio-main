@@ -9,13 +9,11 @@ import { POST } from "../utils/apihelper";
 
 function RegisterPage() {
   const [firstName, setFirstName] = useState("");
-  const [username, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   const [firstNameError, setFirstNameError] = useState("");
-  const [userNameError, setUserNameError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
@@ -23,7 +21,6 @@ function RegisterPage() {
 
     // Reset previous errors
       setFirstNameError("");
-      setUserNameError("");
       setEmailError("");
 
       let passwordErrorMessage ="";
@@ -33,11 +30,6 @@ function RegisterPage() {
         setFirstNameError("First Name is required");
         hasErrors=true;
       }
-
-      if (username.trim()==="") {
-        setUserNameError("Username is required");
-        hasErrors=true;
-        }
 
       if (email.trim()==="") {
         setEmailError("Email is required");
@@ -91,7 +83,6 @@ function RegisterPage() {
     const res = await POST("/api/auth/signup", {
       body: {
         firstName,
-        username,
         email,
         password,
       },
@@ -129,19 +120,6 @@ function RegisterPage() {
                 onChange={(e) => setFirstName(e.target.value)}
                 />
               <p className="error">{firstNameError}</p>
-            </div>
-
-            <div className="mb-4">
-              Username
-              <input
-                type="text"
-                className="form-control"
-                id="username"
-                placeholder="Username"
-                value={username}
-                onChange={(e) => setUserName(e.target.value)}
-              />
-              <p className="error">{userNameError}</p>
             </div>
 
             <div className="mb-4">
