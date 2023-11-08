@@ -46,10 +46,10 @@ function CreatePortfolioPage() {
   //   // }));
 
   // }
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e:React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+    e.preventDefault();
     console.log(portfolioName, strategy, capital,desiredStocks)
     console.log(typeof capital)
-    event.preventDefault();
     const res = await POST("/api/portfolio/create", {
       body: {
         "name": portfolioName,
@@ -62,12 +62,13 @@ function CreatePortfolioPage() {
       console.log(res.response)
       //setError("Invalid Input");
     } else{
+      // console.log('in')
       navigate("/homepage");
     }
   }
 
-  const handleAddStock = () => {
-
+  const handleAddStock = (e:React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault();
     let stockAlreadyExists = false;
 
     desiredStocks.forEach((stock, index) => {
@@ -80,6 +81,7 @@ function CreatePortfolioPage() {
     
     if (! stockAlreadyExists){
       const newStock = {
+        stockSymbol: "trial",
         stockName: desiredStock,
         price: parseFloat(price),
         quantity: parseInt(quantity),
@@ -101,141 +103,141 @@ function CreatePortfolioPage() {
   return (
     <>
     <div className="container position-relative">
-      <div className="portfolio shadow-lg p-3 bg-body rounded">
-        <div className="mt-2 d-flex align-items-center">
-            <ArrowLeft onClick={() => history.back()} className="me-2 fs-3" />
-            <h1 className="heading mx-auto"> Portfolio</h1>
-        </div>
-
-
-        <div className="m-3">
-          <div className="mb-2">
-            Portfolio Name
-            <input
-              type="text"
-              className="form-control"
-              id="portfolioName"
-              placeholder="Portfolio Name"
-              value={portfolioName}
-              onChange={(e) => setPortfolioName(e.target.value)}
-              />
-            {/* <p className="error">{portfolioNameError}</p> */}
-          </div>
-
-          <div className="mb-2">
-            Strategy
-            <input
-              type="text"
-              className="form-control"
-              id="strategy"
-              placeholder="Brief Description"
-              value={strategy}
-              onChange={(e) => setStrategy(e.target.value)}
-            />
-            {/* <p className="error">{userNameError}</p> */}
-          </div>
-
-          <div className="mb-2">
-            Capital
-            <input
-              type="number"
-              step="any"
-              className="form-control"
-              id="capital"
-              placeholder="Amount of Capital"
-              value={capital}
-              onChange={(e) => setCapital(parseInt(e.target.value))}
-            />
-            {/* <p className="error">{userNameError}</p> */}
-          </div>
-
-          <hr></hr>
-
-          <div className="mb-2">
-            Desired Stock:
-            <select
-              className="form-select"
-              id="desiredStock"
-              value={desiredStock}
-              onChange={(e) => setDesiredStock(e.target.value)}
-            >
-              <option value="">Select a Stock</option>
-              <option value="Stock1">Stock 1</option>
-              <option value="Stock2">Stock 2</option>
-              <option value="Stock3">Stock 3</option>
-              {/* Add more options as needed */}
-            </select>
-          </div>
-
-          <div className="mb-2">
-            Price
-            <input
-              type="number"
-              step="any"
-              className="form-control"
-              id="price"
-              placeholder="Price"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-            />
-            {/* <p className="error">{userNameError}</p> */}
-          </div>
-
-          <div className="mb-2">
-          Quantity
-            <input
-              type="number"
-              className="form-control"
-              id="quantity"
-              placeholder="Quantity"
-              value={quantity}
-              onChange={(e) => setQuantity(e.target.value)}
-            />
-            {/* <p className="error">{userNameError}</p> */}
+      <form onSubmit={handleSubmit}>
+        <div className="portfolio shadow-lg p-3 bg-body rounded">
+          <div className="mt-2 d-flex align-items-center">
+              <ArrowLeft onClick={() => history.back()} className="me-2 fs-3" />
+              <h1 className="heading mx-auto"> Portfolio</h1>
           </div>
 
 
-          <div className="d-grid gap-2 mb-3">
-            <button
-              type="submit"
-              className="btn btn-secondary"
-              onClick={handleAddStock}
-            >
-              Add
-            </button>
+          <div className="m-3">
+            <div className="mb-2">
+              Portfolio Name
+              <input
+                type="text"
+                className="form-control"
+                id="portfolioName"
+                placeholder="Portfolio Name"
+                value={portfolioName}
+                onChange={(e) => setPortfolioName(e.target.value)}
+                />
+              {/* <p className="error">{portfolioNameError}</p> */}
+            </div>
 
             <div className="mb-2">
-              Added Stocks:
-              <div className="scrollable-list">
-                <ul>
-                  {desiredStocks.map((stock, index) => (
-                    <li key={index}>
-                      Stock: {stock.stockName}, 
-                      Price: {stock.price}, 
-                      Quantity: {stock.quantity}
-                      <FontAwesomeIcon className="mx-2" icon={faTrash} 
-                      onClick={() => handleRemoveStock(index)}
-                      style={{ cursor: "pointer" }}/>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              Strategy
+              <input
+                type="text"
+                className="form-control"
+                id="strategy"
+                placeholder="Brief Description"
+                value={strategy}
+                onChange={(e) => setStrategy(e.target.value)}
+              />
+              {/* <p className="error">{userNameError}</p> */}
+            </div>
+
+            <div className="mb-2">
+              Capital
+              <input
+                type="number"
+                step="any"
+                className="form-control"
+                id="capital"
+                placeholder="Amount of Capital"
+                value={capital}
+                onChange={(e) => setCapital(parseInt(e.target.value))}
+              />
+              {/* <p className="error">{userNameError}</p> */}
             </div>
 
             <hr></hr>
 
+            <div className="mb-2">
+              Desired Stock:
+              <select
+                className="form-select"
+                id="desiredStock"
+                value={desiredStock}
+                onChange={(e) => setDesiredStock(e.target.value)}
+              >
+                <option value="">Select a Stock</option>
+                <option value="Stock1">Stock 1</option>
+                <option value="Stock2">Stock 2</option>
+                <option value="Stock3">Stock 3</option>
+                {/* Add more options as needed */}
+              </select>
+            </div>
+
+            <div className="mb-2">
+              Price
+              <input
+                type="number"
+                step="any"
+                className="form-control"
+                id="price"
+                placeholder="Price"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+              />
+              {/* <p className="error">{userNameError}</p> */}
+            </div>
+
+            <div className="mb-2">
+            Quantity
+              <input
+                type="number"
+                className="form-control"
+                id="quantity"
+                placeholder="Quantity"
+                value={quantity}
+                onChange={(e) => setQuantity(e.target.value)}
+              />
+              {/* <p className="error">{userNameError}</p> */}
+            </div>
+
+
             <div className="d-grid gap-2 mb-3">
               <button
-                type="submit"
-                className="btn btn-primary"
-                onClick={handleSubmit}
+                className="btn btn-secondary"
+                onClick={handleAddStock}
               >
-                Create Portfolio
+                Add
               </button>
+
+              <div className="mb-2">
+                Added Stocks:
+                <div className="scrollable-list">
+                  <ul>
+                    {desiredStocks.map((stock, index) => (
+                      <li key={index}>
+                        Stock: {stock.stockName}, 
+                        Price: {stock.price}, 
+                        Quantity: {stock.quantity}
+                        <FontAwesomeIcon className="mx-2" icon={faTrash} 
+                        onClick={() => handleRemoveStock(index)}
+                        style={{ cursor: "pointer" }}/>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+
+              <hr></hr>
+
+              <div className="d-grid gap-2 mb-3">
+                <button
+                  type = "submit"
+                  className="btn btn-primary"
+                >
+                  Create Portfolio
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </form>
     </div>
   </>
   );
