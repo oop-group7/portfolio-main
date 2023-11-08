@@ -244,11 +244,12 @@ function IndividualPortfolio() {
             <TableHead>
               <TableRow>
                 <TableCell sx={{ borderRight: "solid 1px lightgray" }}>
-                  <Typography variant="h6" fontWeight={"bold"}>Total</Typography>
+                  <Typography variant="h6" fontWeight={"bold"}>Total Capital</Typography>
+                  <Typography variant="h6" fontWeight={"bold"}>{portfolioDetails?.capitalAmount}</Typography>
                 </TableCell>
                 <TableCell sx={{ borderRight: "solid 1px lightgray" }}>
-                  <Typography fontWeight={"bold"}>Costs</Typography>
-                  <Typography variant="h6" fontWeight={"bold"}>$100,000,000</Typography>
+                  <Typography fontWeight={"bold"}>Utilized Capital</Typography>
+                  <Typography variant="h6" fontWeight={"bold"}>{portfolioDetails?.utilisedCapitalAmount}</Typography>
                 </TableCell>
                 <TableCell>
                   <Typography fontWeight={"bold"}>Unrealized Gains/Loss</Typography>
