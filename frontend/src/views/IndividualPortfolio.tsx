@@ -5,73 +5,40 @@ import { useLocation } from 'react-router-dom';
 import StockInput from "./components/StockInput";
 import EditIcon from '@mui/icons-material/Edit';
 import SaveAltOutlinedIcon from '@mui/icons-material/SaveAltOutlined';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import { GET } from "../utils/apihelper";
 
 function IndividualPortfolio() {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const portfolioId = searchParams.get("portfolioId");
-  const [portfolioDetails, setPortfolioDetails] = useState<any>()
   const [nameEditing, setNameEditing] = useState<boolean>(false);
-  const [name, setName] = useState<string>()
-  
-  const [displayStocks, setDisplayStocks] = useState<any>([]);
+  const [id, setId] = useState<string | null>(portfolioId);
+  const [name, setName] = useState("");
 
   useEffect(() => {
-    if (portfolioDetails?.desiredStocks) {
-      let resultDisplay: any = {}
-      let resultAppend: any= []
-      portfolioDetails.desiredStocks.forEach((item) => {
-        if (item.stockName in resultDisplay) {
-          resultDisplay = {...resultDisplay, [item.stockName]: {
-            quantity: resultDisplay[item.stockName].quantity + item.quantity,
-            totalPrice: resultDisplay[item.stockName].totalPrice + (item.price * item.quantity) 
-          }}
-        }
-        else {
-          resultDisplay = {...resultDisplay, [item.stockName]: {
-            quantity: item.quantity,
-            totalPrice: (item.price * item.quantity)
-          }}
-        }
-      });
-      Object.keys(resultDisplay).forEach((key, i) => {
-        resultAppend.push({
-          id: i,
-          stockName: key,
-          quantity: resultDisplay[key].quantity,
-          totalPrice: resultDisplay[key].totalPrice
-        })
-      })
-      setDisplayStocks(resultAppend)
-    }
-  }, [portfolioDetails])
-
-  useEffect(() => {
-    if (portfolioId != null) {
+    if (id) {
       GET("/api/portfolio/get/{id}", {
         params: {
           path: {
-            id: portfolioId
+            id
           }
         }
       })
         .then((response) => {
-          setPortfolioDetails(response.data)
           console.log("API Response:", response.data);
         })
         .catch((error) => {
           console.error("API Error:", error);
         });
     }
-  }, [])
+  }, []);
 
-  function handleEnter(e: ChangeEvent<HTMLInputElement>) {
+
+  function handleEnter(e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) {
     if (e.key === 'Enter') {
       e.preventDefault()
-      setName(e.currentTarget.value)
-      setPortfolioDetails({...portfolioDetails, name: e.currentTarget.value})
+      setId(e.currentTarget.value)
       setNameEditing(false)
     }
   }
@@ -84,7 +51,7 @@ function IndividualPortfolio() {
           <Typography variant="h5">Portfolio Overview:</Typography>
           {!nameEditing ? (
             <>
-              <Typography variant="h5" ml={1}>{portfolioDetails?.name}</Typography>
+              <Typography variant="h5" ml={1}>{name}</Typography>
               <IconButton 
                 size="small"
                 onClick={() => setNameEditing(true)} 
@@ -96,22 +63,15 @@ function IndividualPortfolio() {
           ) : (
             <Paper
               component="form"
-              sx={{ p: '2px 4px', marginLeft: 1, alignItems: 'center', border: "solid 1px lightgray", boxShadow: "0" }}
+              sx={{ ml: 1, p: '2px 4px', alignItems: 'center', border: "solid 1px lightgray", boxShadow: "0" }}
             >
               <InputBase
                 sx={{ ml: 1, flex: 1 }}
                 value={name}
                 onKeyDown={(e) => {handleEnter(e)}}
-                onChange={(e) => {
-                  if (e.currentTarget.value.length > 0) {
-                    setName(e.currentTarget.value)
-                  }
-                }}
+                onChange={(e) => {setName(e.currentTarget.value)}}
               />
-              <IconButton type="button" onClick={() => {
-                setPortfolioDetails({...portfolioDetails, name: name})
-                setNameEditing(false)
-              }} sx={{ p: '10px' }}>
+              <IconButton type="button" onClick={() => setNameEditing(false) } sx={{ p: '10px' }}>
                 <SaveAltOutlinedIcon />
               </IconButton>
             </Paper>
@@ -130,12 +90,11 @@ function IndividualPortfolio() {
             <TableHead>
               <TableRow>
                 <TableCell sx={{ borderRight: "solid 1px lightgray" }}>
-                  <Typography fontWeight={"bold"}>Total Capital</Typography>
-                  <Typography variant="h6" fontWeight={"bold"}>$ {portfolioDetails?.capitalAmount}</Typography>
+                  <Typography variant="h6" fontWeight={"bold"}>Total</Typography>
                 </TableCell>
                 <TableCell sx={{ borderRight: "solid 1px lightgray" }}>
-                  <Typography fontWeight={"bold"}>Allocated Capital</Typography>
-                  <Typography variant="h6" fontWeight={"bold"}>$ {portfolioDetails?.utilisedCapitalAmount}</Typography>
+                  <Typography fontWeight={"bold"}>Costs</Typography>
+                  <Typography variant="h6" fontWeight={"bold"}>$100,000,000</Typography>
                 </TableCell>
                 <TableCell>
                   <Typography fontWeight={"bold"}>Unrealized Gains/Loss</Typography>
@@ -151,7 +110,7 @@ function IndividualPortfolio() {
           <StockInput />
         </Grid>
         <Grid item xs={12} md={8} mb={1}>
-          <Stocks details={portfolioDetails} rows={displayStocks} />
+          <Stocks />
         </Grid>
       </Grid>
     </Grid>

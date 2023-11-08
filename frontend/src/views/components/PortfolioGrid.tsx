@@ -2,7 +2,7 @@ import { Box, Typography } from '@mui/material';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import React from 'react';
 
-export default function Stocks(props) {
+export default function Stocks(props: any) {
 
   function getAllocation(params: GridValueGetterParams) {
     return `${Math.trunc((params.row.totalPrice / props.details.utilisedCapitalAmount) * 100)}`

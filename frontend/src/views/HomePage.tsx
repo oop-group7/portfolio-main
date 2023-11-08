@@ -7,18 +7,18 @@ import { useEffect, useState } from "react";
 import { GET } from "../utils/apihelper";
 import { components } from "../utils/api";
 
-const time = [
-  new Date(2015, 1, 0),
-  new Date(2015, 1, 1),
-  new Date(2015, 1, 2),
-  new Date(2015, 1, 3),
-  new Date(2015, 2, 0),
-  new Date(2015, 3, 0),
-  new Date(2015, 4, 0),
-  new Date(2015, 5, 0),
-  new Date(2015, 6, 0),
-  new Date(2015, 7, 0),
-];
+// const time = [
+//   new Date(2015, 1, 0),
+//   new Date(2015, 1, 1),
+//   new Date(2015, 1, 2),
+//   new Date(2015, 1, 3),
+//   new Date(2015, 2, 0),
+//   new Date(2015, 3, 0),
+//   new Date(2015, 4, 0),
+//   new Date(2015, 5, 0),
+//   new Date(2015, 6, 0),
+//   new Date(2015, 7, 0),
+// ];
 
 const palette = ["#e86427", "#0d4ea6", "#279c9c", "#279c9c", "#279c9c"]
 

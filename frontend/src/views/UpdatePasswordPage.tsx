@@ -4,7 +4,6 @@ import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 import { ArrowLeft } from 'react-bootstrap-icons'
 import "bootstrap/dist/css/bootstrap.css";
 import { POST } from "../utils/apihelper";
-import { useNavigate } from "react-router-dom";
 
 function UpdatePasswordPage() {
 
@@ -12,11 +11,8 @@ function UpdatePasswordPage() {
   const [newPassword, setNewPassword] = useState("");
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-  const [error, setError] = useState("");
   const [newPasswordError, setNewPasswordError] = useState("");
   const [oldPasswordError, setOldPasswordError] = useState("");
-
-  const navigate = useNavigate();
 
   const handleModalClose = () => {
     setShowSuccessModal(false);
@@ -84,7 +80,6 @@ function UpdatePasswordPage() {
       setOldPasswordError(updatePasswordRes.error?.error)
     }
   }else{
-    setError("");
     // Clear the password fields for security
     setOldPassword("");
     setNewPassword("");

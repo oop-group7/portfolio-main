@@ -169,6 +169,7 @@ function ProfilePage() {
                 <div className="modal-body">
                   Profile updated successfully.
                 </div>
+                <p>{error}</p>
                 <div className="modal-footer">
                   <button type="button" className="btn btn-primary" onClick={handleModalClose}>Close</button>
                 </div>

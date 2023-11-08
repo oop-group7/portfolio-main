@@ -3,22 +3,19 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 // import { Link, useHistory } from "react-router-dom";
 import logo from "../assets/logo.svg";
 import "./css/Navbar.css";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getUserData, logout } from "../utils/apihelper";
+import { logout } from "../utils/apihelper";
 import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
-import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
-import { Box, Divider, Drawer, Grid, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
+import { Box, Drawer, Grid, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 import { Inbox, Mail } from "@mui/icons-material";
 
 
@@ -120,21 +117,6 @@ import { Inbox, Mail } from "@mui/icons-material";
 
 function ResponsiveAppBar(props: React.PropsWithChildren) {
   const navigate = useNavigate();
-
-  function useIsLoggedIn() {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-    useEffect(() => {
-      const userData = getUserData();
-      console.log("User data:", userData);
-      setIsLoggedIn(getUserData() !== null);
-    }, []);
-
-    console.log(isLoggedIn);
-    return isLoggedIn;
-  }
-
-  const userData = getUserData();
 
   // useEffect(() => {
   //   if (userData == null) {
