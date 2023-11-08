@@ -15,7 +15,7 @@ interface PortfoliosProps {
 const columns: GridColDef[] = [
   
   { field: 'portfolioName', headerName: 'Portfolio Name', flex: 1/6, headerAlign: "left", renderCell: (params) => (<Link href={`/portfolio?portfolioId=${params.row.id}`}>{params.value}</Link>)},
-  { field: 'utilizedCapital', headerName: 'Utilized Capital', flex: 1/6, headerAlign: "left" },
+  { field: 'utilizedCapital', headerName: 'Utilized Capital', flex: 1/6, headerAlign: "left", valueGetter: (params) => {return params.row.utilizedCapital.toFixed(2) } },
   { field: 'dateCreated', headerName: 'Date Created', flex: 1/6, headerAlign: "left" },
 ];
 
