@@ -31,29 +31,31 @@ function IndividualPortfolio() {
     })
   }, [])
 
-  useEffect(() => {
-    if (stockInfo) {
-      const resultAppend = displayStocks
-      let totalGL = 0
-      resultAppend.forEach((Stock) => {
-        const info = stockInfo.find((stock) => stock.metadata?.symbol === Stock.stockSymbol)
-        if (info?.timeSeries) {
-          const data = Object.values(info.timeSeries)[0];
-          if (data) {
-            console.log(data.open)
-            console.log((Stock.totalPrice / Stock.quantity))
-            const profitGL = Number(data.open) - (Stock.totalprice / Stock.quantity)
-            console.log(profitGL)
-            Stock.profitLoss = profitGL
-            totalGL = totalGL + profitGL
-          }
-        }
-      })
-      setGL(totalGL)
-      setDisplayStocks(resultAppend)
-      console.log(resultAppend)
-    }
-  }, [stockInfo, displayStocks])
+  // useEffect(() => {
+  //   if (stockInfo) {
+  //     const resultAppend = displayStocks
+  //     let totalGL = 0
+  //     resultAppend.forEach((Stock) => {
+  //       const info = stockInfo.find((stock) => stock.metadata?.symbol === Stock.stockSymbol)
+  //       if (info?.timeSeries) {
+  //         const data = Object.values(info.timeSeries)[0];
+  //         if (data) {
+  //           console.log(data.open)
+  //           console.log(Stock.totalPrice)
+  //           console.log(Stock.quantity)
+  //           console.log((Stock.totalPrice / Stock.quantity))
+  //           const profitGL = Number(data.open) - Number((Stock.totalprice / Stock.quantity))
+  //           console.log(profitGL)
+  //           Stock.profitLoss = profitGL
+  //           totalGL = totalGL + profitGL
+  //         }
+  //       }
+  //     })
+  //     setGL(totalGL)
+  //     setDisplayStocks(resultAppend)
+  //     console.log(resultAppend)
+  //   }
+  // }, [stockInfo, displayStocks])
 
   useEffect(() => {
     if (portfolioDetails?.desiredStocks) {
