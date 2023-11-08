@@ -15,6 +15,7 @@ function IndividualPortfolio() {
   const [portfolioDetails, setPortfolioDetails] = useState<any>()
   const [nameEditing, setNameEditing] = useState<boolean>(false);
 <<<<<<< HEAD
+<<<<<<< HEAD
   const [id, setId] = useState<string | null>(portfolioId);
   const [name, setName] = useState("");
 
@@ -37,6 +38,8 @@ function IndividualPortfolio() {
   }, []);
 =======
   const [name, setName] = useState<string | null>()
+=======
+>>>>>>> 4d8bb08 (push 1049)
   const [displayStocks, setDisplayStocks] = useState<any>([]);
 
   useEffect(() => {
@@ -44,7 +47,6 @@ function IndividualPortfolio() {
       let resultDisplay: any = {}
       let resultAppend: any= []
       portfolioDetails.desiredStocks.forEach((item) => {
-        console.log(resultDisplay)
         if (item.stockName in resultDisplay) {
           resultDisplay = {...resultDisplay, [item.stockName]: {
             quantity: resultDisplay[item.stockName].quantity + item.quantity,
@@ -109,7 +111,7 @@ function IndividualPortfolio() {
           <Typography variant="h5">Portfolio Overview:</Typography>
           {!nameEditing ? (
             <>
-              <Typography variant="h5" ml={1}>{name}</Typography>
+              <Typography variant="h5" ml={1}>{portfolioDetails?.name}</Typography>
               <IconButton 
                 size="small"
                 onClick={() => setNameEditing(true)} 
@@ -127,7 +129,7 @@ function IndividualPortfolio() {
                 sx={{ ml: 1, flex: 1 }}
                 value={name}
                 onKeyDown={(e) => {handleEnter(e)}}
-                onChange={(e) => {setName(e.currentTarget.value)}}
+                onChange={(e) => {setPortfolioDetails({...portfolioDetails, name: e.currentTarget.value})}}
               />
               <IconButton type="button" onClick={() => setNameEditing(false) } sx={{ p: '10px' }}>
                 <SaveAltOutlinedIcon />
@@ -149,11 +151,11 @@ function IndividualPortfolio() {
               <TableRow>
                 <TableCell sx={{ borderRight: "solid 1px lightgray" }}>
                   <Typography fontWeight={"bold"}>Total Capital</Typography>
-                  <Typography variant="h6" fontWeight={"bold"}>{portfolioDetails.capitalAmount}</Typography>
+                  <Typography variant="h6" fontWeight={"bold"}>$ {portfolioDetails?.capitalAmount}</Typography>
                 </TableCell>
                 <TableCell sx={{ borderRight: "solid 1px lightgray" }}>
                   <Typography fontWeight={"bold"}>Allocated Capital</Typography>
-                  <Typography variant="h6" fontWeight={"bold"}>$0</Typography>
+                  <Typography variant="h6" fontWeight={"bold"}>$ {portfolioDetails?.utilisedCapitalAmount}</Typography>
                 </TableCell>
                 <TableCell>
                   <Typography fontWeight={"bold"}>Unrealized Gains/Loss</Typography>

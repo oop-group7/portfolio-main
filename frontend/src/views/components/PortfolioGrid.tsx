@@ -1,19 +1,23 @@
 import { Box, Typography } from '@mui/material';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 export default function Stocks(props) {
 
   function getAllocation(params: GridValueGetterParams) {
-    return `${params.row.totalPrice / props.details.utilisedCapitalAmount}`
+    return `${Math.trunc((params.row.totalPrice / props.details.utilisedCapitalAmount) * 100)}`
+  }
+
+  function getAverageCost(params: GridValueGetterParams) {
+    return `$ ${(params.row.totalPrice / params.row.quantity).toFixed(2)}`
   }
   
   const columns: GridColDef[] = [
     { field: 'stockName', headerName: 'Stock Name', flex: 1 / 6, headerAlign: "left" },
     { field: 'quantity', headerName: 'Quantity', flex: 1 / 6, headerAlign: "left" },
-    { field: 'allocation', headerName: '% Allocation', flex: 1 / 6, headerAlign: "left", valueGetter: getAllocation },
-    { field: 'totaPrice', headerName: 'Average Cost', flex: 1 / 6, headerAlign: "left" },
-    { field: 'currentPrice', headerName: 'Total Cost', flex: 1 / 6, headerAlign: "left" },
+    { field: 'allocation', headerName: 'Allocation (%)', flex: 1 / 6, headerAlign: "left", valueGetter: getAllocation },
+    { field: 'initialCost', headerName: 'Average Cost ($)', flex: 1 / 6, headerAlign: "left", valueGetter: getAverageCost },
+    { field: 'totalPrice', headerName: 'Total Cost', flex: 1 / 6, headerAlign: "left" },
     { field: 'profitLoss', renderHeader: () => (<div><Typography>Unrealized</Typography><Typography>Gain/Loss</Typography></div>), flex: 1 / 6, headerAlign: "left", renderCell: (params) => (<Typography fontWeight={700} color={params.value && params?.value < 0 ? "red" : "green"}>{params?.value ? params.value : 0}</Typography>) }
   ];
   

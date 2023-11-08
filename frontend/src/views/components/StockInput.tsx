@@ -5,6 +5,7 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import AddIcon from '@mui/icons-material/Add';
 import AddCardOutlinedIcon from '@mui/icons-material/AddCardOutlined';
 import React, { ChangeEvent, useState } from 'react';
+import { GET } from '../../utils/apihelper';
 
 const stockFields = [
   "Symbol",
@@ -28,8 +29,25 @@ const InputBase = styled(MuiInputBase)({
 
 export default function Stocks() {
   const [addedStocks, setAddedStocks] = useState<string>("0")
+  const [searched, setSearched] = useState<string>()
 
-  function handleChange(event: ChangeEvent<HTMLInputElement>) {
+  function handleSearch() {
+    GET("/api/alphaVantageApi/searchticker/{keyword}", {
+      params: {
+        path: {
+          keyword: searched as string
+        }
+      }
+    }).then((response) => {
+      console.log(response.data)
+    })
+  }
+
+  function handleSearchChange(event: ChangeEvent<HTMLInputElement>) {
+    setSearched(event.currentTarget.value)
+  }
+
+  function handleQuantityChange(event: ChangeEvent<HTMLInputElement>) {
     const addedNumber = Number(event.currentTarget.value)
     if (addedNumber < 0) {
       setAddedStocks("0")
@@ -67,9 +85,11 @@ export default function Stocks() {
         <InputBase
           sx={{ ml: 1, flex: 1 }}
           placeholder="Search for stocks"
+          value={searched}
           onKeyDown={(e) => { e.key === 'Enter' && e.preventDefault()}}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => handleSearchChange(e)}
         />
-        <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
+        <IconButton onClick={() => handleSearch()} type="button" sx={{ p: '10px' }} aria-label="search">
           <SearchIcon />
         </IconButton>
       </Paper>
@@ -90,7 +110,7 @@ export default function Stocks() {
         </IconButton>
         <InputBase
           onKeyDown={(e) => { e.key === 'Enter' && e.preventDefault()}}
-          onChange={(e: ChangeEvent<HTMLInputElement>) => handleChange(e)}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => handleQuantityChange(e)}
           value={addedStocks}
           type='number'
           sx={{ ml: 1, flex: 1 }}

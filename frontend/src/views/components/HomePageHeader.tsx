@@ -1,6 +1,5 @@
 import { Card, CardContent, Grid, Typography } from "@mui/material";
 import * as Icons from "@mui/icons-material";
-import { useEffect, useState } from "react";
 
 
 type HeaderProps = {
@@ -35,10 +34,10 @@ function HomePage(props: HomePageHeaderProps) {
     return (
         <Grid container justifyContent={"space-between"} gap={1}>
             <Grid item xs={3.75}>
-                <HeaderCard title={"Allocated Capital"} content={`$${props.allocatedCapital}`} icon={"AttachMoney"}/>
+                <HeaderCard title={"Total Capital"} content={`$${props.allocatedCapital}`} icon={"AttachMoney"}/>
             </Grid>
             <Grid item xs={3.75}>
-                <HeaderCard title={"Utilized Capital"} content={`$${props.utilizedCapital}`} icon={"PaidOutlined"}/>
+                <HeaderCard title={"Allocated Capital"} content={`$${props.utilizedCapital}`} icon={"PaidOutlined"}/>
             </Grid>
             <Grid item xs={3.75}>
                 <HeaderCard title={"Total Gain/Loss"} content={"$100000"} icon={"TrendingUp"}/>
