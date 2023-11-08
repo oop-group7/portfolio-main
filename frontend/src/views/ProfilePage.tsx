@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
+import { ArrowLeft } from 'react-bootstrap-icons'
 import "bootstrap/dist/css/bootstrap.css";
 import { PUT, DELETE, POST } from "../utils/apihelper";
 import { getUserData } from '../utils/apihelper';
@@ -129,7 +130,7 @@ function ProfilePage() {
   });
 
   if (!updateProfileRes.response.ok) {
-    console.log(updateProfileRes.error)
+    console.log(updateProfileRes.error  )
     const updateProfileError = updateProfileRes.error;
     setError(updateProfileError.message);
   }
@@ -164,8 +165,12 @@ function ProfilePage() {
 
   return (
       <div className="container position-relative">
+        
         <div className="register shadow-lg p-3 bg-body rounded">
-          <h1 className="heading">Profile</h1>
+          <div className="mt-2 d-flex align-items-center">
+              <ArrowLeft onClick={() => history.back()} className="me-2 fs-3" />
+              <h1 className="heading mx-auto"> Profile</h1>
+          </div>
 
           <div className="m-3">
             <div className="mb-3">

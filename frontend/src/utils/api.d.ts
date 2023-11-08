@@ -139,6 +139,7 @@ export interface components {
       message: string;
     };
     DesiredStock: {
+      stockSymbol: string;
       stockName: string;
       /** Format: double */
       price: number;
@@ -170,7 +171,6 @@ export interface components {
     };
     SignupRequest: {
       firstName: string;
-      username: string;
       email: string;
       password: string;
     };
