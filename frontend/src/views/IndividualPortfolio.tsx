@@ -5,14 +5,16 @@ import { useLocation } from 'react-router-dom';
 import StockInput from "./components/StockInput";
 import EditIcon from '@mui/icons-material/Edit';
 import SaveAltOutlinedIcon from '@mui/icons-material/SaveAltOutlined';
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from 'react';
 import { GET } from "../utils/apihelper";
 
 function IndividualPortfolio() {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const portfolioId = searchParams.get("portfolioId");
+  const [portfolioDetails, setPortfolioDetails] = useState<any>()
   const [nameEditing, setNameEditing] = useState<boolean>(false);
+<<<<<<< HEAD
   const [id, setId] = useState<string | null>(portfolioId);
   const [name, setName] = useState("");
 
@@ -33,12 +35,68 @@ function IndividualPortfolio() {
         });
     }
   }, []);
+=======
+  const [name, setName] = useState<string | null>()
+  const [displayStocks, setDisplayStocks] = useState<any>([]);
 
+  useEffect(() => {
+    if (portfolioDetails) {
+      let resultDisplay: any = {}
+      let resultAppend: any= []
+      portfolioDetails.desiredStocks.forEach((item) => {
+        console.log(resultDisplay)
+        if (item.stockName in resultDisplay) {
+          resultDisplay = {...resultDisplay, [item.stockName]: {
+            quantity: resultDisplay[item.stockName].quantity + item.quantity,
+            totalPrice: resultDisplay[item.stockName].totalPrice + (item.price * item.quantity) 
+          }}
+        }
+        else {
+          resultDisplay = {...resultDisplay, [item.stockName]: {
+            quantity: item.quantity,
+            totalPrice: (item.price * item.quantity)
+          }}
+        }
+      });
+      Object.keys(resultDisplay).forEach((key, i) => {
+        resultAppend.push({
+          id: i,
+          stockName: key,
+          quantity: resultDisplay[key].quantity,
+          totalPrice: resultDisplay[key].totalPrice
+        })
+      })
+      setDisplayStocks(resultAppend)
+    }
+  }, [portfolioDetails])
+>>>>>>> 47749ab (conflict resolve)
 
+  useEffect(() => {
+    if (portfolioId != null) {
+      GET("/api/portfolio/get/{id}", {
+        params: {
+          path: {
+            id: portfolioId
+          }
+        }
+      })
+        .then((response) => {
+          setPortfolioDetails(response.data)
+          console.log("API Response:", response.data);
+        })
+        .catch((error) => {
+          console.error("API Error:", error);
+        });
+    }
+  }, [])
+
+<<<<<<< HEAD
   function handleEnter(e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) {
+=======
+  function handleEnter(e: ChangeEvent<HTMLInputElement>) {
+>>>>>>> 47749ab (conflict resolve)
     if (e.key === 'Enter') {
       e.preventDefault()
-      setId(e.currentTarget.value)
       setNameEditing(false)
     }
   }
@@ -63,7 +121,7 @@ function IndividualPortfolio() {
           ) : (
             <Paper
               component="form"
-              sx={{ ml: 1, p: '2px 4px', alignItems: 'center', border: "solid 1px lightgray", boxShadow: "0" }}
+              sx={{ p: '2px 4px', alignItems: 'center', border: "solid 1px lightgray", boxShadow: "0" }}
             >
               <InputBase
                 sx={{ ml: 1, flex: 1 }}
@@ -90,11 +148,12 @@ function IndividualPortfolio() {
             <TableHead>
               <TableRow>
                 <TableCell sx={{ borderRight: "solid 1px lightgray" }}>
-                  <Typography variant="h6" fontWeight={"bold"}>Total</Typography>
+                  <Typography fontWeight={"bold"}>Total Capital</Typography>
+                  <Typography variant="h6" fontWeight={"bold"}>{portfolioDetails.capitalAmount}</Typography>
                 </TableCell>
                 <TableCell sx={{ borderRight: "solid 1px lightgray" }}>
-                  <Typography fontWeight={"bold"}>Costs</Typography>
-                  <Typography variant="h6" fontWeight={"bold"}>$100,000,000</Typography>
+                  <Typography fontWeight={"bold"}>Allocated Capital</Typography>
+                  <Typography variant="h6" fontWeight={"bold"}>$0</Typography>
                 </TableCell>
                 <TableCell>
                   <Typography fontWeight={"bold"}>Unrealized Gains/Loss</Typography>
@@ -110,7 +169,7 @@ function IndividualPortfolio() {
           <StockInput />
         </Grid>
         <Grid item xs={12} md={8} mb={1}>
-          <Stocks />
+          <Stocks details={portfolioDetails} rows={displayStocks} />
         </Grid>
       </Grid>
     </Grid>
