@@ -1,6 +1,8 @@
+import { useEffect, useState } from 'react';
 import { Box, Link, Typography } from '@mui/material';
 import { DataGrid, GridRowsProp, GridColDef } from '@mui/x-data-grid';
 import {components} from "../../utils/api";
+import {PORTFOLIO_LIST} from "../../utils/ticker"
 
 import React from 'react';
 
@@ -19,13 +21,35 @@ const columns: GridColDef[] = [
 ];
 
 export default function Portfolios({ data }: PortfoliosProps) {
-  console.log(data)
+  // console.log(data)
   const rows: GridRowsProp = data.map((item) => ({
     id: item.id,
     portfolioName: item.name,
     utilizedCapital: item.utilisedCapitalAmount,
     dateCreated: formatDate(item.createdAt),
   }));
+
+  
+  const groupDictionary: { key: string; value: number }[] = [];
+  for (const port of data) {
+    const ds = port?.desiredStocks
+    for (const st of ds){
+      for (const portfolio of PORTFOLIO_LIST){
+        if (portfolio.name == st.stockName){
+          const existingEntry = groupDictionary.find((entry) => entry.key === portfolio.type);
+          if (existingEntry) {
+            // If an entry with the same key already exists, update its value
+            existingEntry.value += st.quantity;
+          } else {
+            // If no entry with the same key exists, add a new entry
+            groupDictionary.push({ key: portfolio.type, value: st.quantity });
+          }
+        }
+      }
+    }
+  }
+  console.log(groupDictionary)
+  
 
   function formatDate(dateString: string) {
     const date = new Date(dateString);

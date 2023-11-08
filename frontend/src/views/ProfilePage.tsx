@@ -12,8 +12,6 @@ function ProfilePage() {
   
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [error, setError] = useState("");
-  const [firstNameError, setFirstNameError] = useState("");
-  const [emailError, setEmailError] = useState("");
 
   const navigate = useNavigate();
 
@@ -57,37 +55,6 @@ function ProfilePage() {
 
   async function handleChanges(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     event.preventDefault();
-    // Reset previous errors
-    setFirstNameError("");
-    setEmailError("");
-
-    let hasErrors = false;
-    // let newPasswordErrorMessage = "";
-
-    if (firstName.trim()==="") {
-      setFirstNameError("First Name is required");
-      hasErrors=true;
-    }
-
-    if (email.trim()==="") {
-      setEmailError("Email is required");
-      hasErrors=true;
-      }
-
-    else if(!email.includes("@")){
-      setEmailError("Invalid Email. Email must include the @ symbol");
-      hasErrors=true;
-    }
-
-    else if(!(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/).test(email)){
-      setEmailError("Invalid Email. Please check again");
-      hasErrors=true;
-    }
-
-   // If there are errors, return early
-    if (hasErrors) {
-      return;
-    }
   
   // Update Profile Information
   const updateProfileRes = await PUT("/api/user/updateprofile", {
@@ -122,22 +89,22 @@ function ProfilePage() {
                 id="firstName"
                 placeholder={firstName}
                 value={firstName}
+                required
                 onChange={(e) => setFirstName(e.target.value)}
               />
-              <p className="error">{firstNameError}</p>
             </div>
 
             <div className="mb-3">
               <label htmlFor="email">Email</label>
               <input
-                type="text"
+                type="email"
                 className="form-control"
                 id="email"
                 placeholder={email}
                 value={email}
+                required
                 onChange={(e) => setEmail(e.target.value)}
               />
-              <p className="error">{emailError}</p>
             </div>
 
             <div className="d-grid gap-2 mb-3">

@@ -19,11 +19,6 @@ function UpdatePasswordPage() {
     window.location.href = "http://localhost:8080/profile";
   };
 
-  const handleModalClose = () => {
-    setShowSuccessModal(false);
-    window.location.href = "http://localhost:8080/profile";
-  };
-
   async function handleChanges(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     event.preventDefault();
     // Reset previous errors
