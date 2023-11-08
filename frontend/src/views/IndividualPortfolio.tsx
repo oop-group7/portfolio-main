@@ -8,6 +8,7 @@ import SaveAltOutlinedIcon from '@mui/icons-material/SaveAltOutlined';
 import { useEffect, useState } from 'react';
 import { DELETE, GET, PUT } from "../utils/apihelper";
 import { PORTFOLIO_LIST, fetchPortfolioInformation } from "../utils/ticker";
+import DeleteIcon from '@mui/icons-material/Delete';
 import { components } from "../utils/api";
 
 function IndividualPortfolio() {
@@ -31,31 +32,29 @@ function IndividualPortfolio() {
     })
   }, [])
 
-  // useEffect(() => {
-  //   if (stockInfo) {
-  //     const resultAppend = displayStocks
-  //     let totalGL = 0
-  //     resultAppend.forEach((Stock) => {
-  //       const info = stockInfo.find((stock) => stock.metadata?.symbol === Stock.stockSymbol)
-  //       if (info?.timeSeries) {
-  //         const data = Object.values(info.timeSeries)[0];
-  //         if (data) {
-  //           console.log(data.open)
-  //           console.log(Stock.totalPrice)
-  //           console.log(Stock.quantity)
-  //           console.log((Stock.totalPrice / Stock.quantity))
-  //           const profitGL = Number(data.open) - Number((Stock.totalprice / Stock.quantity))
-  //           console.log(profitGL)
-  //           Stock.profitLoss = profitGL
-  //           totalGL = totalGL + profitGL
-  //         }
-  //       }
-  //     })
-  //     setGL(totalGL)
-  //     setDisplayStocks(resultAppend)
-  //     console.log(resultAppend)
-  //   }
-  // }, [stockInfo, displayStocks])
+  useEffect(() => {
+    if (stockInfo) {
+      const resultAppend = displayStocks
+      let totalGL = 0
+      resultAppend.forEach((Stock) => {
+        const info = stockInfo.find((stock) => stock.metadata?.symbol === Stock.stockSymbol)
+        if (info?.timeSeries) {
+          const data = Object.values(info.timeSeries)[0];
+          if (data) {
+            const averagePrice = (Stock.totalPrice / Stock.quantity)
+            const openPrice = Number(data.open)
+            const profitGL = openPrice - averagePrice
+            console.log(profitGL)
+            Stock.profitLoss = profitGL
+            totalGL = totalGL + profitGL
+          }
+        }
+      })
+      setGL(totalGL)
+      setDisplayStocks(resultAppend)
+      console.log(resultAppend)
+    }
+  }, [stockInfo, displayStocks])
 
   useEffect(() => {
     if (portfolioDetails?.desiredStocks) {
@@ -92,19 +91,6 @@ function IndividualPortfolio() {
           totalPrice: resultDisplay[key].totalPrice
         })
       })
-      resultAppend.forEach((Stock: any) => {
-        if (stockInfo) {
-          const info = stockInfo.find((stock) => stock.metadata?.symbol === Stock.stockSymbol)
-          if (info?.timeSeries) {
-            const data = Object.values(info.timeSeries)[0];
-            if (data) {
-              const profitGL = Number(data.open) - (Stock.totalprice / Stock.quantity)
-              Stock.profitLoss = profitGL
-              totalGL = totalGL + profitGL
-            }
-          }
-        }})
-      setGL(totalGL)
       setDisplayStocks(resultAppend)
     }
   }, [portfolioDetails])
