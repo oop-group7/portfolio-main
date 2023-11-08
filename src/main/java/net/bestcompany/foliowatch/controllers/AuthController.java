@@ -99,7 +99,7 @@ public class AuthController {
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
         return ResponseEntity.ok(
                 new JwtResponse(jwt, userDetails.getId(), userDetails.getFirstName(), userDetails.getEmail(), roles,
-                        refreshToken.getToken(), userDetails.getUsername()));
+                        refreshToken.getToken()));
     }
 
     @PostMapping("/refresh")

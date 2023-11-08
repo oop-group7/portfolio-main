@@ -89,7 +89,6 @@ public class UserController {
                                 .orElseThrow();
                 user.setEmail(request.getEmail());
                 user.setFirstName(request.getFirstName());
-                user.setUserName(request.getUsername());
                 userService.updateUser(user);
                 return ResponseEntity.ok(new MessageResponse("Successfully updated profile"));
         }
