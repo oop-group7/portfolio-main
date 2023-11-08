@@ -20,7 +20,7 @@ function IndividualPortfolio() {
   const [stratEditing, setStratEditing] = useState<boolean>(false)
   const [strategy, setStrategy] = useState<string>()
   const [refetch, setRefetch] = useState(false)
-  const [GL, setGL] = useState(0)
+  const [GL, setGL] = useState("0")
 
   const [portfolioDetails, setPortfolioDetails] = useState<components["schemas"]["PortfolioResponse"]>()
   const [displayStocks, setDisplayStocks] = useState<any>([]);
@@ -229,7 +229,8 @@ function IndividualPortfolio() {
                 id: portfolioId as string
               }
             }
-            });
+            })
+          window.location.href = "http://localhost:8080/homepage";
         }}>Delete Portfolio</Button>
         <Link href={"/homepage"}>Back to Dashboard</Link>
       </Grid>
@@ -249,7 +250,7 @@ function IndividualPortfolio() {
                 </TableCell>
                 <TableCell sx={{ borderRight: "solid 1px lightgray" }}>
                   <Typography fontWeight={"bold"}>Utilized Capital</Typography>
-                  <Typography variant="h6" fontWeight={"bold"}>{portfolioDetails?.utilisedCapitalAmount}</Typography>
+                  <Typography variant="h6" fontWeight={"bold"}>{portfolioDetails?.utilisedCapitalAmount.toFixed(2)}</Typography>
                 </TableCell>
                 <TableCell>
                   <Typography fontWeight={"bold"}>Unrealized Gains/Loss</Typography>
