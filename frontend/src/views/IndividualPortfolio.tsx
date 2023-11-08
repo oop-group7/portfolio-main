@@ -49,7 +49,7 @@ function IndividualPortfolio() {
           }
         }
       })
-      setGL(totalGL)
+      setGL(totalGL.toFixed(2))
       setDisplayStocks(resultAppend)
       console.log(resultAppend)
     }
