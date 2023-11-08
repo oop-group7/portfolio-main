@@ -14,10 +14,6 @@ function IndividualPortfolio() {
   const portfolioId = searchParams.get("portfolioId");
   const [portfolioDetails, setPortfolioDetails] = useState<any>()
   const [nameEditing, setNameEditing] = useState<boolean>(false);
-<<<<<<< HEAD
-<<<<<<< HEAD
-  const [id, setId] = useState<string | null>(portfolioId);
-  const [name, setName] = useState("");
 
   useEffect(() => {
     if (id) {
@@ -36,10 +32,7 @@ function IndividualPortfolio() {
         });
     }
   }, []);
-=======
-  const [name, setName] = useState<string | null>()
-=======
->>>>>>> 4d8bb08 (push 1049)
+  
   const [displayStocks, setDisplayStocks] = useState<any>([]);
 
   useEffect(() => {
@@ -71,7 +64,6 @@ function IndividualPortfolio() {
       setDisplayStocks(resultAppend)
     }
   }, [portfolioDetails])
->>>>>>> 47749ab (conflict resolve)
 
   useEffect(() => {
     if (portfolioId != null) {
@@ -92,11 +84,7 @@ function IndividualPortfolio() {
     }
   }, [])
 
-<<<<<<< HEAD
-  function handleEnter(e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) {
-=======
   function handleEnter(e: ChangeEvent<HTMLInputElement>) {
->>>>>>> 47749ab (conflict resolve)
     if (e.key === 'Enter') {
       e.preventDefault()
       setNameEditing(false)
