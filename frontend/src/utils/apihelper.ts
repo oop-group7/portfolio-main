@@ -24,15 +24,11 @@ const customFetch = async (input: RequestInfo | URL, init: RequestInit | undefin
       ...extraContentHeaders,
     };
   }
-  console.log(input)
   let res = await fetch(input, init);
-  console.log(res.status)
   const isLogin = input.toString().includes("/api/auth/signin");
   const isUpdateProfile = input.toString().includes("/updateprofile");
   const midRes = await middleware(res, isLogin);
-  console.log("First")
   if (midRes === "repeat") {
-    console.log("Second")
     res = await fetch(input, init);
   }
   const userData = getUserData();
@@ -58,7 +54,7 @@ async function middleware(
   res: Response,
   isLogin: boolean
 ): Promise<"repeat" | "done"> {
-  if (res.status === 401 || !isLogin) {
+  if (res.status === 401 && !isLogin) {
     let userData = getUserData();
     if (userData === null) {
       //window.location.href = "/";
