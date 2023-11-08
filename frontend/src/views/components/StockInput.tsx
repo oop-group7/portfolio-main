@@ -1,22 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Box, Button, Grid, IconButton, InputBase as MuiInputBase, Paper, styled } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
+import { Box, Button, FormControl, Grid, IconButton, InputLabel, MenuItem, InputBase as MuiInputBase, Paper, Select, SelectChangeEvent, styled } from '@mui/material';
 import RemoveIcon from '@mui/icons-material/Remove';
 import AddIcon from '@mui/icons-material/Add';
 import AddCardOutlinedIcon from '@mui/icons-material/AddCardOutlined';
-import React, { ChangeEvent, useState } from 'react';
-import { GET } from '../../utils/apihelper';
+import { ChangeEvent, useEffect, useState } from 'react';
+import { PORTFOLIO_LIST } from '../../utils/ticker';
 
-const stockFields = [
-  "Symbol",
-  "Name",
-  "Type",
-  "Region",
-  "Market Open",
-  "Market Close",
-  "Timezone",
-  "Currency",
-]
 
 const InputBase = styled(MuiInputBase)({
   "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
@@ -27,30 +16,15 @@ const InputBase = styled(MuiInputBase)({
   },
 })
 
-export default function Stocks() {
-  const [addedStocks, setAddedStocks] = useState<string>("0")
+export default function Stocks(props) {
+  const [addedStocks, setAddedStocks] = useState<string>("1")
   const [searched, setSearched] = useState<string>()
-
-  function handleSearch() {
-    GET("/api/alphaVantageApi/searchticker/{keyword}", {
-      params: {
-        path: {
-          keyword: searched as string
-        }
-      }
-    }).then((response) => {
-      console.log(response.data)
-    })
-  }
-
-  function handleSearchChange(event: ChangeEvent<HTMLInputElement>) {
-    setSearched(event.currentTarget.value)
-  }
+  const [price, setPrice] = useState<any>()
 
   function handleQuantityChange(event: ChangeEvent<HTMLInputElement>) {
     const addedNumber = Number(event.currentTarget.value)
-    if (addedNumber < 0) {
-      setAddedStocks("0")
+    if (addedNumber < 1) {
+      setAddedStocks("1")
     }
     else {
       setAddedStocks(addedNumber.toString())
@@ -62,11 +36,30 @@ export default function Stocks() {
       setAddedStocks((Number(addedStocks) + 1).toString())
     }
     else {
-      if (Number(addedStocks) > 0) {
+      if (Number(addedStocks) > 1) {
         setAddedStocks((Number(addedStocks) - 1).toString())
       }
     }
   }
+
+  function handleUpdate() {
+    props.inputUpdate({...props.details, desiredStocks: [ ...props.details.desiredStocks, {stockSymbol:searched?.split(":")[0]!.trim(), stockName: searched?.split(":")[1]!.trim(), price: price, quantity: Number(addedStocks)}]})
+  }
+
+  useEffect(() => {
+    if (searched !== "") {
+      const selectedTicker = searched?.split(":")[0]!.trim();
+      if (props.stockInfo) {
+        const info = props.stockInfo.find((stock) => stock.metadata?.symbol === selectedTicker)
+        if (info?.timeSeries) {
+          const data = Object.values(info.timeSeries)[0];
+          if (data) {
+            setPrice(data.open)
+          }
+        }
+      }
+    }
+  }, [searched])
 
   return (
     <Box sx={{
@@ -78,28 +71,29 @@ export default function Stocks() {
       py: 2,
       px: 1
     }}>
-      <Paper
-        component="form"
-        sx={{ p: '2px 4px', display: "flex", alignItems: 'center', border: "solid 1px lightgray", boxShadow: "0" }}
-      >
-        <InputBase
-          sx={{ ml: 1, flex: 1 }}
-          placeholder="Search for stocks"
+      <FormControl fullWidth>
+        <InputLabel id="demo-simple-select-label">Select Stocks</InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
           value={searched}
-          onKeyDown={(e) => { e.key === 'Enter' && e.preventDefault()}}
-          onChange={(e: ChangeEvent<HTMLInputElement>) => handleSearchChange(e)}
-        />
-        <IconButton onClick={() => handleSearch()} type="button" sx={{ p: '10px' }} aria-label="search">
-          <SearchIcon />
-        </IconButton>
-      </Paper>
+          label="Select Stocks"
+          onChange={(e: SelectChangeEvent) => setSearched(e?.target?.value)}
+        >
+          {PORTFOLIO_LIST.map((portfolioInfo) => (
+            <MenuItem value={`${portfolioInfo.symbol} : ${portfolioInfo.name} : ${portfolioInfo.type}`}>{`${portfolioInfo.symbol} : ${portfolioInfo.name}`}</MenuItem>
+          ))}
+        </Select>
+      </FormControl>
       <Grid container p={1}>
-        {stockFields.map((field) => {
-          return <React.Fragment key={field}>
-            <Grid item md={6} xs={3}>{field}:</Grid>
-            <Grid item md={6} xs={3}></Grid>
-          </React.Fragment>
-        })}
+        <Grid item md={6} xs={3}>Name:</Grid>
+        <Grid item md={6} xs={3}>{searched?.split(":")[1]!.trim()}</Grid>
+        <Grid item md={6} xs={3}>Symbol:</Grid>
+        <Grid item md={6} xs={3}>{searched?.split(":")[0]!.trim()}</Grid>
+        <Grid item md={6} xs={3}>Type:</Grid>
+        <Grid item md={6} xs={3}>{searched?.split(":")[2]!.trim()}</Grid>
+        <Grid item md={6} xs={3}>Price:</Grid>
+        <Grid item md={6} xs={3}>{price}</Grid>
       </Grid>
       <Paper
         component="form"
@@ -109,7 +103,7 @@ export default function Stocks() {
           <RemoveIcon />
         </IconButton>
         <InputBase
-          onKeyDown={(e) => { e.key === 'Enter' && e.preventDefault()}}
+          onKeyDown={(e) => { e.key === 'Enter' && e.preventDefault() }}
           onChange={(e: ChangeEvent<HTMLInputElement>) => handleQuantityChange(e)}
           value={addedStocks}
           type='number'
@@ -120,7 +114,7 @@ export default function Stocks() {
           <AddIcon />
         </IconButton>
       </Paper>
-      <Button variant="contained" fullWidth endIcon={<AddCardOutlinedIcon sx={{ ml: 1 }} />}>
+      <Button variant="contained" onClick={handleUpdate} fullWidth endIcon={<AddCardOutlinedIcon sx={{ ml: 1 }} />}>
         Add to portfolio
       </Button>
     </Box>

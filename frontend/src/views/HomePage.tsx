@@ -45,76 +45,72 @@ export default function HomePage() {
       });
   }, []);
 
-  if (portfolios && allocatedCapital && utilizedCapital) {
-    return (
-      <Grid container gap={3}>
-        <Grid item xs={12} container justifyContent={"space-between"}>
-          <Typography variant="h5">Dashboard</Typography>
-          <Button variant={"contained"} href={"/createportfolio"}>Create Portfolio</Button>
-        </Grid>
-        <Grid item xs={12}>
-          <HomePageHeader
-            allocatedCapital={allocatedCapital}
-            utilizedCapital={utilizedCapital}
-          // totalGainLoss={totalGainLoss}
-          />
-        </Grid>
-        <Grid item sm={12} md={7}>
-          <Portfolios data={portfolios} />
-        </Grid>
-        <Grid item container xs justifyContent={"center"} sx={{ minHeight: "30rem", backgroundColor: "white", borderRadius: "3px", boxShadow: 1 }}>
-          <Grid item container justifyContent={"center"} flexDirection={"column"}>
-            <Typography textAlign={"center"} pt={1}>Portfolio Summary</Typography>
-            <Box sx={{ flex: 1 }}>
-              <BarChart
-                sx={{ width: "100%", flex: 1, cursor: "none" }}
-                xAxis={[{ scaleType: 'band', data: portfolios.map((portfolio) => portfolio.name) }]}
-                series={portfolios.map((portfolio) => ({data: [portfolio.utilisedCapitalAmount]}))}
-              />
-              {/* <LineChart
-                sx={{ width: "100%", flex: 1, cursor: "none" }}
-                xAxis={[{
-                  data: time,
-                  scaleType: "time",
-                  tickInterval: "auto",
-                  min: time?.[0]?.getTime(),
-                  max: time?.[time.length - 1]?.getTime(),
-                }]}
-                series={[
-                  {
-                    showMark: false,
-                    area: true,
-                    color: "#0D4EA6",
-                    curve: "linear",
-                    data: [2, 5.5, 2, 8.5, 1.5, 5, 10, 1, 2, 3],
-                  },
-                ]}
-              /> */}
-            </Box>
-            <Typography textAlign={"center"} pt={1}>Stock Types</Typography>
-            <Box sx={{ flex: 1, my: 1 }}>
-              <PieChart
-                colors={palette}
-                sx={{ width: "100%", flex: 1, cursor: "none" }}
-                series={[
-                  {
-                    innerRadius: 50,
-                    paddingAngle: 2,
-                    cornerRadius: 5,
-                    data: [
-                      { id: 0, value: 10, label: 'series A' },
-                      { id: 1, value: 15, label: 'series B' },
-                      { id: 2, value: 20, label: 'series C' },
-                    ],
-                  },
-                ]}
-              />
-            </Box>
-          </Grid>
+  return (
+    <Grid container gap={3}>
+      <Grid item xs={12} container justifyContent={"space-between"}>
+        <Typography variant="h5">Dashboard</Typography>
+        <Button variant={"contained"} href={"/createportfolio"}>Create Portfolio</Button>
+      </Grid>
+      <Grid item xs={12}>
+        <HomePageHeader
+          allocatedCapital={allocatedCapital}
+          utilizedCapital={utilizedCapital}
+        // totalGainLoss={totalGainLoss}
+        />
+      </Grid>
+      <Grid item sm={12} md={7}>
+        <Portfolios data={portfolios} />
+      </Grid>
+      <Grid item container xs justifyContent={"center"} sx={{ minHeight: "30rem", backgroundColor: "white", borderRadius: "3px", boxShadow: 1 }}>
+        <Grid item container justifyContent={"center"} flexDirection={"column"}>
+          <Typography textAlign={"center"} pt={1}>Portfolio Summary</Typography>
+          <Box sx={{ flex: 1 }}>
+            <BarChart
+              sx={{ width: "100%", flex: 1, cursor: "none" }}
+              xAxis={[{ scaleType: 'band', data: portfolios.length > 0 ? portfolios?.map((portfolio, i) => i + "." + portfolio.name) : ["1"] }]}
+              series={[{ data: portfolios.length > 0 ? portfolios?.map((portfolio) => portfolio.utilisedCapitalAmount) : [1] }]}
+            />
+            {/* <LineChart
+              sx={{ width: "100%", flex: 1, cursor: "none" }}
+              xAxis={[{
+                data: time,
+                scaleType: "time",
+                tickInterval: "auto",
+                min: time?.[0]?.getTime(),
+                max: time?.[time.length - 1]?.getTime(),
+              }]}
+              series={[
+                {
+                  showMark: false,
+                  area: true,
+                  color: "#0D4EA6",
+                  curve: "linear",
+                  data: [2, 5.5, 2, 8.5, 1.5, 5, 10, 1, 2, 3],
+                },
+              ]}
+            /> */}
+          </Box>
+          <Typography textAlign={"center"} pt={1}>Stock Types</Typography>
+          <Box sx={{ flex: 1, my: 1 }}>
+            <PieChart
+              colors={palette}
+              sx={{ width: "100%", flex: 1, cursor: "none" }}
+              series={[
+                {
+                  innerRadius: 50,
+                  paddingAngle: 2,
+                  cornerRadius: 5,
+                  data: [
+                    { id: 0, value: 10, label: 'series A' },
+                    { id: 1, value: 15, label: 'series B' },
+                    { id: 2, value: 20, label: 'series C' },
+                  ],
+                },
+              ]}
+            />
+          </Box>
         </Grid>
       </Grid>
+    </Grid>
     );
-  } else {
-    <></>
-  }
 }

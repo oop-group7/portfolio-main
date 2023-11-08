@@ -33,10 +33,10 @@ interface HomePageHeaderProps {
 function HomePage(props: HomePageHeaderProps) {
     return (
         <Grid container justifyContent={"space-between"} gap={1}>
-            <Grid item xs={3.75}>
+            <Grid item sm={12} md={5.95}>
                 <HeaderCard title={"Total Capital"} content={`$${props.allocatedCapital}`} icon={"AttachMoney"}/>
             </Grid>
-            <Grid item xs={3.75}>
+            <Grid item sm={12} md={5.95}>
                 <HeaderCard title={"Allocated Capital"} content={`$${props.utilizedCapital}`} icon={"PaidOutlined"}/>
             </Grid>
         </Grid>

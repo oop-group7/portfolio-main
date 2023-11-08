@@ -159,7 +159,6 @@ function CreatePortfolioPage() {
                 required
                 onChange={(e) => setCapital(parseInt(e.target.value))}
               />
-              <p className="error">{capitalAmountError}</p>
             </div>
 
             <hr></hr>

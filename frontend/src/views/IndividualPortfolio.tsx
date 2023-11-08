@@ -5,42 +5,120 @@ import { useLocation } from 'react-router-dom';
 import StockInput from "./components/StockInput";
 import EditIcon from '@mui/icons-material/Edit';
 import SaveAltOutlinedIcon from '@mui/icons-material/SaveAltOutlined';
-import { useEffect, useState } from "react";
-import { GET } from "../utils/apihelper";
+import { ChangeEvent, useEffect, useState } from 'react';
+import { GET, PUT } from "../utils/apihelper";
+import { PORTFOLIO_LIST, fetchPortfolioInformation } from "../utils/ticker";
 
 function IndividualPortfolio() {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const portfolioId = searchParams.get("portfolioId");
   const [nameEditing, setNameEditing] = useState<boolean>(false);
-  const [id, setId] = useState<string | null>(portfolioId);
-  const [name, setName] = useState("");
+  const [name, setName] = useState<string>()
+  const [refetch, setRefetch] = useState(false)
+  const [GL, setGL] = useState(0)
+
+  const [portfolioDetails, setPortfolioDetails] = useState<any>({})
+  const [displayStocks, setDisplayStocks] = useState<any>([]);
+  const [stockInfo, setStockInfo] = useState<Awaited<ReturnType<typeof fetchPortfolioInformation>>>()
 
   useEffect(() => {
-    if (id) {
+    fetchPortfolioInformation(PORTFOLIO_LIST).then((res) => {
+      setStockInfo(res)
+    })
+  }, [])
+
+  useEffect(() => {
+    if (portfolioDetails?.desiredStocks) {
+      let resultDisplay: any = {}
+      let resultAppend: any = []
+      let totalGL = 0
+      portfolioDetails.desiredStocks.forEach((item) => {
+        if (item.stockName in resultDisplay) {
+          resultDisplay = {
+            ...resultDisplay, [item.stockName]: {
+              quantity: resultDisplay[item.stockName].quantity + item.quantity,
+              totalPrice: resultDisplay[item.stockName].totalPrice + (item.price * item.quantity)
+            }
+          }
+        }
+        else {
+          resultDisplay = {
+            ...resultDisplay, [item.stockName]: {
+              symbol: item.stockSymbol,
+              quantity: item.quantity,
+              totalPrice: (item.price * item.quantity)
+            }
+          }
+        }
+      });
+      Object.keys(resultDisplay).forEach((key, i) => {
+        resultAppend.push({
+          id: i,
+          stockSymbol: resultDisplay[key].stockSymbol,
+          stockName: key,
+          quantity: resultDisplay[key].quantity,
+          totalPrice: resultDisplay[key].totalPrice
+        })
+      })
+      resultAppend.forEach((Stock) => {
+        if (stockInfo) {
+          const info = stockInfo.find((stock) => stock.metadata?.symbol === Stock.stockSymbol)
+          if (info?.timeSeries) {
+            const data = Object.values(info.timeSeries)[0];
+            if (data) {
+              const profitGL = Number(data.open) - (Stock.totalprice / Stock.quantity)
+              Stock.profitLoss = profitGL
+              totalGL = totalGL + profitGL
+            }
+          }
+        }})
+      setGL(totalGL)
+      setDisplayStocks(resultAppend)
+    }
+  }, [portfolioDetails, stockInfo])
+
+  useEffect(() => {
+    if (portfolioId != null) {
       GET("/api/portfolio/get/{id}", {
         params: {
           path: {
-            id
+            id: portfolioId as string
           }
         }
       })
         .then((response) => {
+          setPortfolioDetails(response?.data)
           console.log("API Response:", response.data);
         })
         .catch((error) => {
           console.error("API Error:", error);
         });
     }
-  }, []);
+  }, [refetch])
 
 
   function handleEnter(e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) {
     if (e.key === 'Enter') {
       e.preventDefault()
-      setId(e.currentTarget.value)
+      setName(e.currentTarget.value)
+      setPortfolioDetails({ ...portfolioDetails, name: e.currentTarget.value })
+      handleInputUpdate({ ...portfolioDetails, name: e.currentTarget.value })
       setNameEditing(false)
     }
+  }
+
+  function handleInputUpdate(data) {
+    PUT("/api/portfolio/updateportfolio/{id}", {
+      params: {
+        path: {
+          id: portfolioId as string
+        }
+      },
+      body: data
+    }).then(() => {
+      setRefetch(!refetch)
+    })
   }
 
   return (
@@ -51,12 +129,13 @@ function IndividualPortfolio() {
           <Typography variant="h5">Portfolio Overview:</Typography>
           {!nameEditing ? (
             <>
-              <Typography variant="h5" ml={1}>{name}</Typography>
-              <IconButton 
+              <Typography variant="h5" ml={1}>{portfolioDetails?.name}</Typography>
+              <IconButton
                 size="small"
-                onClick={() => setNameEditing(true)} 
-                sx={{ color: "black", boxShadow: 1, backgroundColor: "white", ml: 1, ":hover": { backgroundColor: "whitesmoke" } 
-              }}>
+                onClick={() => setNameEditing(true)}
+                sx={{
+                  color: "black", boxShadow: 1, backgroundColor: "white", ml: 1, ":hover": { backgroundColor: "whitesmoke" }
+                }}>
                 <EditIcon />
               </IconButton>
             </>
@@ -67,11 +146,19 @@ function IndividualPortfolio() {
             >
               <InputBase
                 sx={{ ml: 1, flex: 1 }}
-                value={name}
-                onKeyDown={(e) => {handleEnter(e)}}
-                onChange={(e) => {setName(e.currentTarget.value)}}
+                value={name ? name : portfolioDetails?.name}
+                onKeyDown={(e) => { handleEnter(e) }}
+                onChange={(e) => {
+                  if (e.currentTarget.value.length > 0) {
+                    setName(e.currentTarget.value)
+                  }
+                }}
               />
-              <IconButton type="button" onClick={() => setNameEditing(false) } sx={{ p: '10px' }}>
+              <IconButton type="button" onClick={() => {
+                setPortfolioDetails({ ...portfolioDetails, name: name })
+                handleInputUpdate({ ...portfolioDetails, name: name })
+                setNameEditing(false)
+              }} sx={{ p: '10px' }}>
                 <SaveAltOutlinedIcon />
               </IconButton>
             </Paper>
@@ -98,7 +185,7 @@ function IndividualPortfolio() {
                 </TableCell>
                 <TableCell>
                   <Typography fontWeight={"bold"}>Unrealized Gains/Loss</Typography>
-                  <Typography variant="h6" fontWeight={"bold"} color={"red"}>-$100,000,000</Typography>
+                  <Typography variant="h6" fontWeight={"bold"} color={GL > 0 ? "green" : "red"}>{GL}</Typography>
                 </TableCell>
               </TableRow>
             </TableHead>
@@ -107,10 +194,10 @@ function IndividualPortfolio() {
       </Grid>
       <Grid item container xs={12} justifyContent={"space-between"}>
         <Grid item xs={12} md={3.9} mb={1}>
-          <StockInput />
+          <StockInput stockInfo={stockInfo} details={portfolioDetails} inputUpdate={handleInputUpdate} />
         </Grid>
         <Grid item xs={12} md={8} mb={1}>
-          <Stocks />
+          <Stocks rows={displayStocks} details={portfolioDetails}/>
         </Grid>
       </Grid>
     </Grid>
