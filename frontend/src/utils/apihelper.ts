@@ -31,7 +31,9 @@ export const { GET, POST, DELETE, PUT } = createClient<paths>({
     const isLogin = input.toString().includes("/api/auth/signin");
     const isUpdateProfile = input.toString().includes("/updateprofile");
     const midRes = await middleware(res, isLogin);
+    console.log("First")
     if (midRes === "repeat") {
+      console.log("Second")
       res = await fetch(input, init);
     }
     const userData = getUserData();
