@@ -32,7 +32,7 @@ public class AlphaVantageApi implements IAlphaVantageApi {
         public SearchTickerResponse searchTicker(String keyword) {
                 var result = client.get()
                                 .uri(uriBuilder -> uriBuilder
-                                                .queryParam(BASE_URL, "function", "SYMBOL_SEARCH")
+                                                .queryParam( "function", "SYMBOL_SEARCH")
                                                 .queryParam("keywords", keyword)
                                                 .queryParam("apikey", apiKey).build())
                                 .retrieve()
