@@ -172,6 +172,7 @@ export interface components {
       firstName: string;
       email: string;
       password: string;
+      roles?: string[];
     };
     JwtResponse: {
       accessToken: string;

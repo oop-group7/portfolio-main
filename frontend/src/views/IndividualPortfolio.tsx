@@ -254,7 +254,7 @@ function IndividualPortfolio() {
                 </TableCell>
                 <TableCell>
                   <Typography fontWeight={"bold"}>Unrealized Gains/Loss</Typography>
-                  <Typography variant="h6" fontWeight={"bold"} color={GL > 0 ? "green" : "red"}>{GL}</Typography>
+                  <Typography variant="h6" fontWeight={"bold"} color={Number(GL) > 0 ? "green" : "red"}>{GL}</Typography>
                 </TableCell>
               </TableRow>
             </TableHead>
