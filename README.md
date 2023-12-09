@@ -77,7 +77,7 @@ Documentation of an interactive, machine and human-readable API documentation.
 
 ## 🤓 How to Use Our Web Application
 
-Upon visiting our website, the user will be brought to the login page. If the user is a new visitor, he can sign up for an account with us by clicking on the 'Register' button. If the user already has an account, he can simply key his credentials and click on the 'LOGIN' button. In additon, if the user forgets his password, he/she may click the "Forgot password"
+Upon visiting our website, the user will be brought to the login page. If the user is a new visitor, he can sign up for an account with us by clicking on the 'Register' button. If the user already has an account, he can simply key in his credentials and click on the 'Login' button. In additon, if the user forgets his password, he/she may click the "Forgot password" button.
 ![Login Page](./ReadME_Images/Webpage/LoginPage.png)
 
 At the sign up page, the user is required to fill in their email, first name and password!
