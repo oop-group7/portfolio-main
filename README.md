@@ -73,3 +73,49 @@ Documentation of an interactive, machine and human-readable API documentation.
 
 ## ER Diagram
 <img src="ReadME_Images/ER Diagram.png" alt="Container">
+
+
+🤓 How to Use Our Web Application
+Upon visiting our website, the user will be brought to the login page. If the user is a new visitor, he can sign up for an account with us by clicking on the 'Register' button. If the user already has an account, he can simply key his credentials and click on the 'LOGIN' button. In additon, if the user forgets his password, he/she may click the "Forgot password"
+![Login Page](./ReadME_Images/Webpage/LoginPage.png)
+
+At the sign up page, the user is required to fill in their email, first name and password!
+![Register Page](./ReadME_Images/Webpage/RegisterPage.png)
+
+If any of the fields does not satisfy the criteria, an error will be displayed.
+![Register Error Page](./ReadME_Images/Webpage/RegisterError.png)
+
+After the account registration, it will then send an email to the user for validation.
+![Registration Validation Page](./ReadME_Images/Webpage/RegisterValidation.png)
+
+Proceed to click on the link sent to your email.
+![Email Confirmation Page](./ReadME_Images/Webpage/EmailRegistration.png)
+The user will then be brought back to the login page and now he/she will be able to login using his/her credentials.
+
+If the user forgets his/her password, he will be required to enter his/her email.
+![Forgot password Page](./ReadME_Images/Webpage/ForgotPassword.png)
+
+After clicking the "Send" button, it will then send an email to the user for validation.
+![Forgot Password Validation Page](./ReadME_Images/Webpage/ResetPasswordValidation.png)
+
+Proceed to click on the link sent to your email.
+![Email Confirmation Page](./ReadME_Images/Webpage/ResetPasswordEmail.png)
+
+The user will then be brought to reset his/her password.
+![Reset Password Page](./ReadME_Images/Webpage/ResetPassword.png)
+Upon pressing the "Submit button" the user can now login using his/her new password.
+
+Upon logging in, the webpage will display a dashboard which shows the portfolios that were created by the user, a summary of portfolios and stock types.
+![Dashboard Page](./ReadME_Images/Webpage/Dashboard.gif)
+
+The user can create a new portfolio be selecting the "Create portfolio" button.
+![Create Portfolio Page](./ReadME_Images/Webpage/PortfolioCreation.png)
+
+The user can view each individual portfolio and it will display the stock name, symbol, quantity, allocation, average cost, total cost and unrealized gain/loss. In addition, the user may add more stocks, edit the portfolio name and strategy.
+![Portfolio Page](./ReadME_Images/Webpage/PortfolioView.png)
+
+The user may edit his account by clicking on the top right icon.
+![Account Page](./ReadME_Images/Webpage/Account.png)
+
+The user may also change his password.
+![Account Page](./ReadME_Images/Webpage/ChangePassword.png)
